@@ -12,9 +12,9 @@ before_build:
   - dotnet --info
 
 build_script:
-- cmd: >-
-    rake ci
+ - cmd: powershell -NoProfile -ExecutionPolicy unrestricted -Command .\build.ps1
+ 
 test: off
 
 artifacts:
-  - path: '**/unleash-dotnet.*.nupkg' # find all NuGet packages recursively
+  - path: '**/Unleash.*.nupkg' # find all NuGet packages recursively

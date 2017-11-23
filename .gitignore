@@ -255,3 +255,6 @@ somewhere.xml
 .DS_Store
 
 doc-target
+
+# Cake build
+tools/
