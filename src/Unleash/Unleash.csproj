@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Unleash</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="ActivationStrategy.cs" />
+    <None Include="DefaultUnleash.cs" />
+    <None Include="FeatureToggle.cs" />
+    <None Include="Metrics\ClientMetrics.cs" />
+    <None Include="Metrics\ClientRegistration.cs" />
+    <None Include="Metrics\MetricsBucket.cs" />
+    <None Include="Metrics\ToggleCount.cs" />
+    <None Include="Repository\ToggleCollectionInstance.cs" />
+    <None Include="Repository\ToggleCollection.cs" />
+    <None Include="Strategies\ApplicationHostnameStrategy.cs" />
+    <None Include="Strategies\DefaultStrategy.cs" />
+    <None Include="Strategies\GradualRolloutRandomStrategy.cs" />
+    <None Include="Strategies\GradualRolloutSessionIdStrategy.cs" />
+    <None Include="Strategies\GradualRolloutUserIdStrategy.cs" />
+    <None Include="Strategies\RemoteAddressStrategy.cs" />
+    <None Include="Strategies\IStrategy.cs" />
+    <None Include="Strategies\StrategyUtils.cs" />
+    <None Include="Strategies\UnknownStrategy.cs" />
+    <None Include="Strategies\UserWithIdStrategy.cs" />
+    <None Include="IUnleash.cs" />
+    <None Include="UnleashContext.cs" />
+    <None Include="UnleashContextProvider.cs" />
+    <None Include="UnleashException.cs" />
+    <None Include="Util\UnleashConfig.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp">
+      <HintPath>..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.CSharp\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.CSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibLog" Version="4.2.6" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <Authors>Stian Olafsen</Authors>
+    <Company>Olafsen IT-tjenester, Norway</Company>
+    <Description>Unleash client for .Net.</Description>
+    <RepositoryUrl>https://github.com/stiano/unleash-client-dotnet</RepositoryUrl>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>featuretoggle client</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>unleash-client-dotnet</Product>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/LICENSE</PackageLicenseUrl>
+    <AssemblyName>Unleash</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE;</DefineConstants>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+</Project>
