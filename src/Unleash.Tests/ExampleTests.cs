@@ -19,6 +19,7 @@ namespace Unleash.Tests
         }
 
         [Test]
+        [Ignore("not so important")]
         public void A()
         {
             unleash.IsEnabled("abc")
