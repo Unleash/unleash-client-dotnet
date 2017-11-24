@@ -39,6 +39,7 @@
 
 #pragma warning disable 1591
 #pragma warning disable 0169
+#pragma warning disable 1573
 
 using System.Diagnostics.CodeAnalysis;
 

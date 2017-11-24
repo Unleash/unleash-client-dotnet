@@ -3,12 +3,15 @@ namespace Unleash.Strategies
     using System;
     using System.Collections.Generic;
 
+    /// <inheritdoc />
     public class UserWithIdStrategy : IStrategy
     {
         internal readonly string UserIdsConst = "userIds";
 
+        /// <inheritdoc />
         public string Name => "userWithId";
 
+        /// <inheritdoc />
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
             var userId = context?.UserId;
