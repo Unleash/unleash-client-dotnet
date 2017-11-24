@@ -77,9 +77,10 @@
     <Owner>Stian Olafsen</Owner>
     <Description>
       Unleash Feature Toggle Client for .Net. It supports runtime feature toggling throug multiple activation strategies, and enables you to decouple deployment of code from release of new features.
-
-      Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash
     </Description>
+    <Summary>
+      Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash
+    </Summary>
     <RepositoryUrl>https://github.com/stiano/unleash-client-dotnet</RepositoryUrl>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -88,17 +89,29 @@
     <Copyright>Copyright 2017</Copyright>
     <PackageTags>feature-toggle client finn.no</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
     <Product>Unleash Feature Toggle Client</Product>
     <PackageIconUrl>https://github.com/stiano/unleash-client-dotnet/raw/master/resources/logo.png</PackageIconUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/LICENSE</PackageLicenseUrl>
     <AssemblyName>Unleash.FeatureToggle.Client</AssemblyName>
     <PackageProjectUrl>https://github.com/stiano/unleash-client-dotnet</PackageProjectUrl>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <WarningsAsErrors>NU1605</WarningsAsErrors>
   </PropertyGroup>
-
+  
+  <!--<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>bin\Debug\Unleash.FeatureToggle.Client.xml</DocumentationFile>
+  </PropertyGroup>-->
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\Unleash.FeatureToggle.Client.xml</DocumentationFile>
+  </PropertyGroup>
+  
 </Project>
