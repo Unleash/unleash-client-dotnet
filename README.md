@@ -1,8 +1,18 @@
-# Unleash Client for .Net
+# Unleash FeatureToggle Client for .Net
 
 [![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/StianOlafsen/unleash-client-dotnet)
 
 ## Introduction
+
+Unleash is a feature toggle system, that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. This is for now, `an unofficial client`.
+
+The main motivation for doing feature toggling is to decouple the process for deploying code to production and releasing new features. This helps reducing risk, and allow us to easily manage which features to enable.
+
+Feature toggles decouple deployment of code from release of new features.
+
+Take a look at the demonstration site at [unleash.herokuapp.com](http://unleash.herokuapp.com/)
+
+Read more of the main project at [github.com/unleash/unleash](https://github.com/Unleash/unleash)
 
 ## Getting started
 Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/).
@@ -126,7 +136,6 @@ UnleashConfig config = new UnleashConfig()
                 
 ```
 
-
 ## Local backup
 By default unleash-client fetches the feature toggles from unleash-server every 20s, and stores the result in temporary .json file which is located in `System.IO.Path.GetTempPath()` directory. This means that if the unleash-server becomes unavailable, the unleash-client will still be able to toggle the features based on the values stored in .json file. As a result of this, the second argument of `IsEnabled` will be returned in two cases:
 
@@ -137,6 +146,9 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
 
 Your implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
+
+## Run unleash server with Docker locally
+The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.
 
 ## Development
 
