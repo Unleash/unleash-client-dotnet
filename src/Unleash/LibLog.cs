@@ -38,6 +38,7 @@
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
 #pragma warning disable 1591
+#pragma warning disable 0169
 
 using System.Diagnostics.CodeAnalysis;
 

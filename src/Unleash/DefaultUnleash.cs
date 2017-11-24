@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading;
 using Unleash.Logging;
 using Unleash.Metrics;
 
@@ -37,31 +36,27 @@ namespace Unleash
             this.unleashConfig = unleashConfig;
             this.unleashConfig.ValidateUserInputAndSetDefaults();
 
-            Logger.Info($"Unleash is configured with: {unleashConfig}");
+            Logger.Info($"UNLEASH: Unleash is initialized and configured with: {unleashConfig}");
 
-            this.strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
+            strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
             toggleRepository = new ToggleCollectionInstance(unleashConfig);
 
-            RegisterBackgroundTask(new ClientRegistrationBackgroundTask(unleashConfig, strategyMap.Select(pair => pair.Key).ToList()), TimeSpan.Zero, true, unleashConfig.Services.CancellationToken );
-            RegisterBackgroundTask(new ClientMetricsBackgroundTask(unleashConfig), unleashConfig.SendMetricsInterval, false, unleashConfig.Services.CancellationToken );
-            RegisterBackgroundTask(new FetchFeatureTogglesTask(unleashConfig, toggleRepository), TimeSpan.FromSeconds(20), true, unleashConfig.Services.CancellationToken);
+            if (!unleashConfig.DisableBackgroundTasks)
+            {
+                RegisterBackgroundTask(new FetchFeatureTogglesTask(unleashConfig, toggleRepository), unleashConfig.FetchTogglesInterval, executeImmediatly: true);
+                RegisterBackgroundTask(new ClientRegistrationBackgroundTask(unleashConfig, strategyMap.Select(pair => pair.Key).ToList()), TimeSpan.Zero, executeImmediatly: true);
+                RegisterBackgroundTask(new ClientMetricsBackgroundTask(unleashConfig), unleashConfig.SendMetricsInterval, executeImmediatly: false);
+            }
         }
 
-        internal DefaultUnleash(UnleashConfig unleashConfig, ToggleCollectionInstance toggleRepository, params IStrategy[] strategies)
+        private void RegisterBackgroundTask(IBackgroundTask backgroundTask, TimeSpan interval, bool executeImmediatly)
         {
-            this.unleashConfig = unleashConfig;
-            this.toggleRepository = toggleRepository;
-            this.strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
-            toggleRepository = new ToggleCollectionInstance(unleashConfig);
+            var taskRunner = new TimerTaskRunner(
+                backgroundTask, 
+                interval, 
+                executeImmediatly, 
+                unleashConfig.Services.CancellationToken);
 
-            RegisterBackgroundTask(new ClientRegistrationBackgroundTask(unleashConfig, strategyMap.Select(pair => pair.Key).ToList()), TimeSpan.Zero, true, unleashConfig.Services.CancellationToken);
-            RegisterBackgroundTask(new ClientMetricsBackgroundTask(unleashConfig), unleashConfig.SendMetricsInterval, false, unleashConfig.Services.CancellationToken);
-            RegisterBackgroundTask(new FetchFeatureTogglesTask(unleashConfig, toggleRepository), TimeSpan.FromSeconds(20), true, unleashConfig.Services.CancellationToken);
-        }
-
-        private void RegisterBackgroundTask(IBackgroundTask task, TimeSpan interval, bool executeImmediatly, CancellationToken cancellationToken)
-        {
-            var taskRunner = new TimerTaskRunner(task, interval, executeImmediatly, cancellationToken);
             tasksRunners.Add(taskRunner);
         }
 
@@ -72,10 +67,10 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, bool defaultSetting)
         {
-            return isEnabled(toggleName, unleashConfig.ContextProvider.Context, defaultSetting);
+            return CheckIsEnabled(toggleName, unleashConfig.ContextProvider.Context, defaultSetting);
         }
 
-        private bool isEnabled(string toggleName, UnleashContext context, bool defaultSetting)
+        private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
             var featureToggle = toggleRepository.ToggleCollection.GetToggleByName(toggleName);
 

@@ -1,19 +1,21 @@
 ﻿using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Unleash.Repository;
+using Unleash.Logging;
+using Unleash.Util;
 
-namespace Unleash.Util
+namespace Unleash.Repository
 {
     internal class FetchFeatureTogglesTask : IBackgroundTask
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
+
         internal const string FeaturesUri = "/api/client/features";
 
         // In-memory representation of the etag of a given request.
-        private string etag;
+        internal string Etag { get; private set; }
 
         private readonly UnleashConfig config;
         private readonly ToggleCollectionInstance toggleCollectionInstance;
@@ -25,7 +27,7 @@ namespace Unleash.Util
             this.config = config;
             this.toggleCollectionInstance = toggleCollectionInstance;
 
-            etag = config.Services.FileSystem.ReadAllText(config.BackupFile);
+            Etag = config.Services.FileSystem.ReadAllText(config.BackupFile);
         }
 
         public async Task Execute(CancellationToken cancellationToken)
@@ -34,19 +36,27 @@ namespace Unleash.Util
             {
                 request.SetRequestProperties(config);
 
-                if (EntityTagHeaderValue.TryParse(etag, out var etagHeaderValue))
+                if (EntityTagHeaderValue.TryParse(Etag, out var etagHeaderValue))
                     request.Headers.IfNoneMatch.Add(etagHeaderValue);
 
-                using (var result = await config.Services.HttpClient.SendAsync(request, cancellationToken))
+                using (var response = await config.Services.HttpClient.SendAsync(request, cancellationToken))
                 {
-                    if (result.Headers.ETag?.Tag == etag)
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchFeatureTogglesTask)}': " + error);
+
+                        return;
+                    }
+
+                    if (response.Headers.ETag?.Tag == Etag)
                         return;
                     
                     using (var fileStream = File.Open(config.BackupFile, FileMode.Create))
-                        await result.Content.CopyToAsync(fileStream);
+                        await response.Content.CopyToAsync(fileStream);
 
-                    etag = result.Headers.ETag?.Tag;
-                    config.Services.FileSystem.WriteAllText(config.BackupEtagFile, etag);
+                    Etag = response.Headers.ETag?.Tag;
+                    config.Services.FileSystem.WriteAllText(config.BackupEtagFile, Etag);
 
                     using (var fileStream = config.Services.FileSystem.FileOpenRead(config.BackupFile))
                     {

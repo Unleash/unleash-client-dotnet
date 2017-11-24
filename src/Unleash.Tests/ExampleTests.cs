@@ -1,29 +1,36 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
-using Unleash.Util;
 
 namespace Unleash.Tests
 {
-    public class ExampleTests
+    public class ExampleTests : IDisposable
     {
-        private readonly global::Unleash.IUnleash unleash;
+        private readonly IUnleash unleash;
 
         public ExampleTests()
         {
-            var config = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance 1")
-                .SetUnleashApi("http://unleash.herokuapp.com/");
-
+            var config = new UnleashTestConfig();
             unleash = new DefaultUnleash(config);
         }
 
         [Test]
-        [Ignore("not so important")]
-        public void A()
+        public void UserAEnabled()
         {
-            unleash.IsEnabled("abc")
+            unleash.IsEnabled("one-enabled")
                 .Should().BeTrue();
+        }
+
+        [Test]
+        public void DisabledFeature()
+        {
+            unleash.IsEnabled("one-disabled")
+                .Should().BeFalse();
+        }
+
+        public void Dispose()
+        {
+            unleash?.Dispose();
         }
     }
 }

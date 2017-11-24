@@ -1,15 +1,17 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using Unleash.Metrics;
+using Unleash.Repository;
 using Unleash.Serialization;
+using Unleash.Util;
 
-namespace Unleash.Util
+namespace Unleash
 {
     internal class UnleashConfigServices
     {
@@ -29,7 +31,7 @@ namespace Unleash.Util
 
     public class UnleashConfig
     {
-        private const int ApiVersion = 2;
+        private const int ApiVersion = 1;
         private bool isInitialized;
 
         internal readonly Encoding Encoding = Encoding.UTF8;
@@ -55,10 +57,10 @@ namespace Unleash.Util
         internal void ValidateUserInputAndSetDefaults()
         {
             if (UnleashApi == null)
-                throw new ArgumentNullException("You are required to specify the unleashAPI Uri");
+                throw new UnleashException("You are required to specify the unleashAPI Uri");
 
             if (AppName == null)
-                throw new ArgumentNullException("You are required to specify the unleash appName");
+                throw new UnleashException("You are required to specify the unleash appName");
 
             if (Services.JsonSerializer == null)
             {
@@ -74,8 +76,8 @@ namespace Unleash.Util
                 // None?
                 if (Services.JsonSerializer == null)
                 {
-                    var serializers = string.Join(", ", DynamicJsonSerializers.Select(x => x.NugetPackageName));
-                    throw new Exception($"Tried to load '{serializers}' json library(ies) but could not find any.{Environment.NewLine}Please add a reference to one of these nuget packages, or implement the '{nameof(IJsonSerializer)}' interface with your favorite json library. This needs to be wired up through the bootstrapping config through {nameof(SetJsonSerializer)}.");
+                    var serializers = string.Join(", ", Enumerable.Select<IDynamicJsonSerializer, string>(DynamicJsonSerializers, x => x.NugetPackageName));
+                    throw new UnleashException($"Tried to load '{serializers}' json library(ies) but could not find any.{Environment.NewLine}Please add a reference to one of these nuget packages, or implement the '{nameof(IJsonSerializer)}' interface with your favorite json library. This needs to be wired up through the bootstrapping config through {nameof(SetJsonSerializer)}.");
                 }
             }
 
@@ -115,7 +117,7 @@ namespace Unleash.Util
             set
             {
                 if (isInitialized)
-                    throw new InvalidOperationException("Cannot change Api after unleash is instantiated.");
+                    throw new UnleashException("Cannot change the api uri after unleash is instantiated.");
 
                 unleashApi = value;
             }
@@ -156,6 +158,9 @@ namespace Unleash.Util
         public string BackupFile { get; set; }
         internal string BackupEtagFile => BackupFile + ".etag.txt";
 
+        internal bool DisableBackgroundTasks { get; set; }
+        internal ToggleCollection InMemoryTogglesForUnitTestingPurposes { get; set; }
+
         public Dictionary<string, string> CustomHttpHeaders { get; set; }
         public IUnleashContextProvider ContextProvider { get; set; }
 
@@ -167,7 +172,7 @@ namespace Unleash.Util
                 if (existingValue == value)
                     return this;
 
-                throw new Exception($"Given key '{name}' has already been added with value '{existingValue}'. You tried to enter '{value}'.");
+                throw new UnleashException($"Given key '{name}' has already been added with value '{existingValue}'. You tried to enter '{value}'.");
             }
 
             CustomHttpHeaders.Add(name, value);
@@ -219,6 +224,12 @@ namespace Unleash.Util
         internal UnleashConfig SetFileSystem(IFileSystem fileSystem)
         {
             Services.FileSystem = fileSystem;
+            return this;
+        }
+
+        internal UnleashConfig SetBackgroundTasksDisabled()
+        {
+            DisableBackgroundTasks = true;
             return this;
         }
 

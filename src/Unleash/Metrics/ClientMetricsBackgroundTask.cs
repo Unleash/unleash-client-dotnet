@@ -1,12 +1,15 @@
 ﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Logging;
 using Unleash.Util;
 
 namespace Unleash.Metrics
 {
     internal class ClientMetricsBackgroundTask : IBackgroundTask
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(ClientMetricsBackgroundTask));
+
         private readonly UnleashConfig config;
 
         public ClientMetricsBackgroundTask(UnleashConfig config)
@@ -45,6 +48,7 @@ namespace Unleash.Metrics
                     }
 
                     var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(ClientMetricsBackgroundTask)}': " + error);
                 }
             }
         }

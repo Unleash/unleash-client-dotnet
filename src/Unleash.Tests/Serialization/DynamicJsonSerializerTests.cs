@@ -7,12 +7,21 @@ using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
 using Unleash.Repository;
 using Unleash.Serialization;
-using Unleash.Tests.TestHelpers;
 
 namespace Unleash.Tests.Serialization
 {
     public class DynamicJsonSerializerTests : BaseTest
     {
+        [Test]
+        public void Asserter()
+        {
+            JsonSerializerTester.Assert(new JsonNetSerializer());
+
+            var serializer = new NewtonsoftByDynamicJsonSerializer();
+            serializer.TryLoad();
+            JsonSerializerTester.Assert(serializer);
+        }
+
         [TestCase(typeof(JsonNetSerializer))]
         [TestCase(typeof(NewtonsoftByDynamicJsonSerializer))]
         public void Deserialize_SameAs_NewtonSoft(Type type)

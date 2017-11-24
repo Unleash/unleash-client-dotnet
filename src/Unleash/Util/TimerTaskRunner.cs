@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading;
 using Unleash.Logging;
 
@@ -8,14 +7,15 @@ namespace Unleash.Util
     internal class TimerTaskRunner : IDisposable
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(TimerTaskRunner));
+        private static readonly TimeSpan TimeSpanExecuteImmediately = TimeSpan.Zero;
 
-        private readonly string taskName;
         private readonly Timer timer;
         private bool disposeEnded;
+        public string Name { get; }
 
         public TimerTaskRunner(IBackgroundTask task, TimeSpan interval, bool executeImmediately, CancellationToken cancellationToken)
         {
-            taskName = task.GetType().Name;
+            Name = task.GetType().Name;
 
             async void Callback(object state)
             {
@@ -28,29 +28,29 @@ namespace Unleash.Util
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException($"Unhandled exception from task runner '{taskName}'.", ex);
+                    Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{Name}'.", ex);
                 }
                 finally
                 {
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        if (interval == TimeSpan.Zero)
+                        if (interval == TimeSpanExecuteImmediately)
                         {
                             
                             SafeTimerChange(-1, Timeout.Infinite);
-                            Logger.Trace($"Stopped task '{taskName}'...");
+                            Logger.Trace($"UNLEASH: Stopped background task '{Name}'...");
                         }
                         else
                         {
                             SafeTimerChange(interval, Timeout.InfiniteTimeSpan);
-                            Logger.Trace($"Scheduled task '{taskName}' to run after '{interval.TotalSeconds}' seconds...");
+                            Logger.Trace($"UNLEASH: Scheduled background task '{Name}' to run after '{interval.TotalSeconds}' seconds...");
                         }
                     }
                 }
             }
 
             var dueTime = executeImmediately 
-                ? TimeSpan.Zero 
+                ? TimeSpanExecuteImmediately 
                 : interval;
 
             timer = new Timer(
@@ -121,7 +121,7 @@ namespace Unleash.Util
                 {
                     if (!waitHandle.WaitOne(TimeSpan.FromSeconds(1)))
                     {
-                        throw new TimeoutException($"Timeout waiting for timer '{taskName}' to stop..");
+                        throw new TimeoutException($"UNLEASH: Timeout waiting for task '{Name}' to stop..");
                     }
 
                     disposeEnded = true;

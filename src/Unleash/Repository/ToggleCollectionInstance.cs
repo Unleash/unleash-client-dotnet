@@ -2,22 +2,28 @@ using System.Threading;
 
 namespace Unleash.Repository
 {
-    using Util;
-
     internal class ToggleCollectionInstance
     {
         private ToggleCollection toggleCollection = new ToggleCollection();
 
         public ToggleCollectionInstance(UnleashConfig config)
         {
-            using (var fileStream = config.Services.FileSystem.FileOpenRead(config.BackupFile))
+            if (config.InMemoryTogglesForUnitTestingPurposes != null)
             {
-                var collection = config.Services.JsonSerializer.Deserialize<ToggleCollection>(fileStream);
-                if (collection == null)
-                    return;
-
-                Update(collection);
+                Update(config.InMemoryTogglesForUnitTestingPurposes);
             }
+            else
+            {
+                using (var fileStream = config.Services.FileSystem.FileOpenRead(config.BackupFile))
+                {
+                    var collection = config.Services.JsonSerializer.Deserialize<ToggleCollection>(fileStream);
+                    if (collection == null)
+                        return;
+
+                    Update(collection);
+                }
+            }
+
         }
 
         private static readonly ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();

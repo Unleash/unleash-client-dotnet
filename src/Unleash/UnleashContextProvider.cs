@@ -7,13 +7,13 @@ namespace Unleash
 
     internal class DefaultUnleashContextProvider : IUnleashContextProvider
     {
-        public UnleashContext Context
+        private readonly UnleashContext context;
+
+        public DefaultUnleashContextProvider(UnleashContext context = null)
         {
-            get
-            {
-                var context = UnleashContext.New().Build();
-                return context;
-            }
+            this.context = context;
         }
+
+        public UnleashContext Context => context ?? UnleashContext.New().Build();
     }
 }

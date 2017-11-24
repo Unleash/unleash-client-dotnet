@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Unleash.Util;
 
-namespace Unleash.Tests.Util
+namespace Unleash.Tests.TestHelpers
 {
     class MockFileSystem : IFileSystem
     {

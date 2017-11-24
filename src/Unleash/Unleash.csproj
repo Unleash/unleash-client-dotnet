@@ -1,9 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net47;net461;net46;net451;net45</TargetFrameworks>
     <RootNamespace>Unleash</RootNamespace>
   </PropertyGroup>
+
+  <!-- Need to conditionally bring in references for the .NET Framework 4.* targets -->
+ <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Util\UnleashConfig.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="ActivationStrategy.cs" />
@@ -29,7 +54,7 @@
     <None Include="UnleashContext.cs" />
     <None Include="UnleashContextProvider.cs" />
     <None Include="UnleashException.cs" />
-    <None Include="Util\UnleashConfig.cs" />
+    <None Include="UnleashConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,25 +64,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibLog" Version="4.2.6" />
+    <PackageReference Include="LibLog" Version="4.2.6">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <PackageId>Unleash.FeatureToggle.Client</PackageId>
     <Authors>Stian Olafsen</Authors>
-    <Company>Olafsen IT-tjenester, Norway</Company>
-    <Description>Unleash client for .Net.</Description>
+    <Owner>Stian Olafsen</Owner>
+    <Description>
+      Unleash Feature Toggle Client for .Net. It supports runtime feature toggling throug multiple activation strategies, and enables you to decouple deployment of code from release of new features.
+
+      Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash
+    </Description>
     <RepositoryUrl>https://github.com/stiano/unleash-client-dotnet</RepositoryUrl>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>featuretoggle client</PackageTags>
+    <Copyright>Copyright 2017</Copyright>
+    <PackageTags>feature-toggle client finn.no</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Product>unleash-client-dotnet</Product>
-    <PackageIconUrl></PackageIconUrl>
+    <Product>Unleash Feature Toggle Client</Product>
+    <PackageIconUrl>https://github.com/stiano/unleash-client-dotnet/raw/master/resources/logo.png</PackageIconUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/LICENSE</PackageLicenseUrl>
-    <AssemblyName>Unleash</AssemblyName>
+    <AssemblyName>Unleash.FeatureToggle.Client</AssemblyName>
+    <PackageProjectUrl>https://github.com/stiano/unleash-client-dotnet</PackageProjectUrl>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

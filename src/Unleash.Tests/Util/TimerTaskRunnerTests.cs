@@ -35,7 +35,7 @@ namespace Unleash.Tests.Util
             }
         }
 
-        internal class FailureBackgroundTask : IBackgroundTask
+        class FailureBackgroundTask : IBackgroundTask
         {
             public int Counter { get; set; }
 
