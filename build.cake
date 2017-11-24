@@ -8,7 +8,8 @@ var configuration = Argument("configuration", "Release");
 
 var outputDir = "./artifacts/";
 var solutionPath = "./src/Unleash.sln";
-var specifyProjectJson = "./src/Unleash/Unleash.csproj";
+var unleashProjectFile = "./src/Unleash/Unleash.csproj";
+var appVeyorFile = "./appveyor.yml";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
 //
@@ -30,17 +31,16 @@ Task("Restore-NuGet-Packages")
 Task("Version")
     .Does(() => 
 {
-    // GitVersion(new GitVersionSettings{
-    //     UpdateAssemblyInfo = true,
-    //     OutputType = GitVersionOutput.BuildServer
-    // });
+    var versionInfo = GitVersion(new GitVersionSettings 
+    { 
+        OutputType = GitVersionOutput.Json 
+    });
+    
+    var updatedProjectFile = System.IO.File.ReadAllText(unleashProjectFile).Replace("1.0.0", versionInfo.NuGetVersion);
+    System.IO.File.WriteAllText(unleashProjectFile, updatedProjectFile);
 
-    var versionInfo = GitVersion(new GitVersionSettings{ OutputType = GitVersionOutput.Json });
-    // Update project.json
-    var updatedProjectJson = System.IO.File.ReadAllText(specifyProjectJson)
-        .Replace("1.0.0", versionInfo.NuGetVersion);
-
-    System.IO.File.WriteAllText(specifyProjectJson, updatedProjectJson);
+    var updatedAppVeyorFile = System.IO.File.ReadAllText(appVeyorFile).Replace("1.0.0", versionInfo.NuGetVersion);
+    System.IO.File.WriteAllText(appVeyorFile, updatedAppVeyorFile);
 });
 
 Task("Build")
