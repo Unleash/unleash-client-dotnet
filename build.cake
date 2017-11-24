@@ -6,10 +6,8 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-var outputDir = "./artifacts/";
 var solutionPath = "./src/Unleash.sln";
 var unleashProjectFile = "./src/Unleash/Unleash.csproj";
-var appVeyorFile = "./appveyor.yml";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
 //
@@ -36,11 +34,10 @@ Task("Version")
         OutputType = GitVersionOutput.Json 
     });
     
-    var updatedProjectFile = System.IO.File.ReadAllText(unleashProjectFile).Replace("1.0.0", versionInfo.NuGetVersion);
-    System.IO.File.WriteAllText(unleashProjectFile, updatedProjectFile);
+    var updatedProjectFile = System.IO.File.ReadAllText(unleashProjectFile)
+        .Replace("1.0.0", versionInfo.NuGetVersion);
 
-    var updatedAppVeyorFile = System.IO.File.ReadAllText(appVeyorFile).Replace("1.0.0", versionInfo.NuGetVersion);
-    System.IO.File.WriteAllText(appVeyorFile, updatedAppVeyorFile);
+    System.IO.File.WriteAllText(unleashProjectFile, updatedProjectFile);
 });
 
 Task("Build")
