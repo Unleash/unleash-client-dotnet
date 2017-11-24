@@ -13,7 +13,6 @@ install:
 
 before_build:
   - dotnet --info
-  - nuget restore
   - ps: gitversion /l console /output buildserver 
 
 build_script:
