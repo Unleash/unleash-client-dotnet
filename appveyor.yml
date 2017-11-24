@@ -1,4 +1,4 @@
-version: 1.0.0.{build}
+version: 1.0.{build}
 
 configuration: Release
 
@@ -12,7 +12,7 @@ before_build:
   - dotnet --info
 
 build_script:
- - cmd: powershell -NoProfile -ExecutionPolicy unrestricted -Command .\build.ps1
+ - ps: .\build.ps1 -Target "AppVeyor"
  
 test: off
 

@@ -30,15 +30,15 @@ Task("Restore-NuGet-Packages")
 Task("Version")
     .Does(() => 
 {
-    GitVersion(new GitVersionSettings{
-        UpdateAssemblyInfo = true,
-        OutputType = GitVersionOutput.BuildServer
-    });
+    // GitVersion(new GitVersionSettings{
+    //     UpdateAssemblyInfo = true,
+    //     OutputType = GitVersionOutput.BuildServer
+    // });
 
     var versionInfo = GitVersion(new GitVersionSettings{ OutputType = GitVersionOutput.Json });
     // Update project.json
     var updatedProjectJson = System.IO.File.ReadAllText(specifyProjectJson)
-        .Replace("1.0.0.1", versionInfo.NuGetVersion);
+        .Replace("1.0.0", versionInfo.NuGetVersion);
 
     System.IO.File.WriteAllText(specifyProjectJson, updatedProjectJson);
 });
@@ -75,6 +75,10 @@ Task("Run-Unit-Tests")
 //
 Task("Default")
     .IsDependentOn("Run-Unit-Tests");
+
+Task("AppVeyor")  
+    .IsDependentOn("Version")
+    .IsDependentOn("Default");
 
 //
 // EXECUTION
