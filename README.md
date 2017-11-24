@@ -2,8 +2,10 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/StianOlafsen/unleash-client-dotnet)
 
+## Introduction
+
 ## Getting started
-Install the latest version from nuget.org.
+Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/).
 
 ### Create a new a Unleash instance
 
@@ -18,6 +20,12 @@ UnleashConfig config = new UnleashConfig()
                 .SetUnleashApi("http://unleash.herokuapp.com/");
 
 IUnleash unleash = new DefaultUnleash(config);
+```
+
+When your application shuts down, remember to dispose the unleash instance.
+
+```csharp
+unleash?.Dispose()
 ```
 
 ### Feature toggle api
@@ -120,7 +128,7 @@ UnleashConfig config = new UnleashConfig()
 
 
 ## Local backup
-By default unleash-client fetches the feature toggles from unleash-server every 20s, and stores the result in temporary .json file which is located in `System..IO.Path.GetTempPath()` directory. This means that if the unleash-server becomes unavailable, the unleash-client will still be able to toggle the features based on the values stored in .json file. As a result of this, the second argument of `IsEnabled` will be returned in two cases:
+By default unleash-client fetches the feature toggles from unleash-server every 20s, and stores the result in temporary .json file which is located in `System.IO.Path.GetTempPath()` directory. This means that if the unleash-server becomes unavailable, the unleash-client will still be able to toggle the features based on the values stored in .json file. As a result of this, the second argument of `IsEnabled` will be returned in two cases:
 
 * When .json file does not exists
 * When the named feature toggle does not exist in .json file
