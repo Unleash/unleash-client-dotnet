@@ -145,7 +145,66 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 ## Json Serialization
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
 
-Your implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
+With Newtonsoft.Json version 7.0.0.0, the following implementation can be used:
+
+```csharp
+var config = new UnleashConfig()
+                .SetAppName("dotnet-test")
+                .SetInstanceId("instance z")
+                .SetJsonSerializer(new NewtonsoftJson7Serializer());
+
+public class NewtonsoftJson7Serializer : IJsonSerializer
+{
+    private readonly Encoding utf8 = Encoding.UTF8;
+
+    private static readonly JsonSerializer Serializer = new JsonSerializer()
+    {
+        ContractResolver = new CamelCaseExceptDictionaryKeysResolver()
+    };
+
+    public T Deserialize<T>(Stream stream)
+    {
+        using (var streamReader = new StreamReader(stream, utf8))
+        using (var textReader = new JsonTextReader(streamReader))
+        {
+            return Serializer.Deserialize<T>(textReader);
+        }
+    }
+
+    public Stream Serialize<T>(T instance)
+    {
+        var memoryStream = new MemoryStream();
+
+        using (var writer = new StreamWriter(memoryStream, utf8, 1024 * 4, leaveOpen: true))
+        using (var jsonWriter = new JsonTextWriter(writer))
+        {
+            Serializer.Serialize(jsonWriter, instance);
+            jsonWriter.Flush();
+        }
+
+        memoryStream.Position = 0;
+
+        return memoryStream;
+    }
+
+    class CamelCaseExceptDictionaryKeysResolver : CamelCasePropertyNamesContractResolver
+    {
+        protected override JsonDictionaryContract CreateDictionaryContract(Type objectType)
+        {
+            var contract = base.CreateDictionaryContract(objectType);
+
+            contract.DictionaryKeyResolver = propertyName =>
+            {
+                return propertyName;
+            };
+
+            return contract;
+        }
+    }
+}
+```
+
+The server api needs camel cased json, but not for certain dictionary keys. The implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
 
 ## Run unleash server with Docker locally
 The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.
