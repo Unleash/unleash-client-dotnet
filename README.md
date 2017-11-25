@@ -1,6 +1,6 @@
 # Unleash FeatureToggle Client for .Net
 
-[![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/StianOlafsen/unleash-client-dotnet)
+[![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/stiano/unleash-client-dotnet)
 
 ## Introduction
 
