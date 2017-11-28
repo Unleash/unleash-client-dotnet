@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Unleash.Serialization
 {
-    internal class NewtonsoftByDynamicJsonSerializer : IDynamicJsonSerializer
+    internal class DynamicNewtonsoftJsonSerializer : IDynamicJsonSerializer
     {
         public string NugetPackageName => "Newtonsoft.Json (>= 9.0.1)";
 

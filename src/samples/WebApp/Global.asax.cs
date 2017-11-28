@@ -11,7 +11,7 @@ namespace WebApp
     public class WebApiApplication : HttpApplication
     {
         public static IUnleash Unleash { get; private set; }
-        public static UnleashConfig UnleashConfig { get; private set; }
+        public static UnleashSettings UnleashSettings { get; private set; }
 
         protected void Application_Start()
         {
@@ -21,20 +21,23 @@ namespace WebApp
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            UnleashConfig = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance 1")
-                .SetFetchTogglesInterval(TimeSpan.FromSeconds(20))
-                .SetSendMetricsInterval(TimeSpan.FromSeconds(10))
-                .EnableMetrics()
-                .UnleashContextProvider(new AspNetContextProvider())
-                //.SetUnleashApi("http://localhost:4242/")
-                .SetUnleashApi("http://unleash.herokuapp.com/")
-                //.SetJsonSerializer(new JsonNetSerializer());
-                ;
+            UnleashSettings = new UnleashSettings()
+            {
+                UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+                //UnleashApi = new Uri("http://localhost:4242/"),
+                AppName = "dotnet-api-test",
+                InstanceTag = "instance 1",
+                SendMetricsInterval = TimeSpan.FromSeconds(20),
+                UnleashContextProvider = new AspNetContextProvider(),
+                //JsonSerializer = new JsonNetSerializer()
+            };
+
+            UnleashInfo = UnleashSettings.ToString();
             
-            Unleash = new DefaultUnleash(UnleashConfig);
+            Unleash = new DefaultUnleash(UnleashSettings);
         }
+
+        public static string UnleashInfo;
 
         protected void Application_End()
         {

@@ -1,4 +1,6 @@
 using System.Threading;
+using Unleash.Serialization;
+using Unleash.Util;
 
 namespace Unleash.Repository
 {
@@ -6,24 +8,16 @@ namespace Unleash.Repository
     {
         private ToggleCollection toggleCollection = new ToggleCollection();
 
-        public ToggleCollectionInstance(UnleashConfig config)
+        public ToggleCollectionInstance(IJsonSerializer jsonSerializer, IFileSystem fileSystem, string toggleFile)
         {
-            if (config.InMemoryTogglesForUnitTestingPurposes != null)
+            using (var fileStream = fileSystem.FileOpenRead(toggleFile))
             {
-                Update(config.InMemoryTogglesForUnitTestingPurposes);
-            }
-            else
-            {
-                using (var fileStream = config.Services.FileSystem.FileOpenRead(config.BackupFile))
-                {
-                    var collection = config.Services.JsonSerializer.Deserialize<ToggleCollection>(fileStream);
-                    if (collection == null)
-                        return;
+                var collection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
+                if (collection == null)
+                    return;
 
-                    Update(collection);
-                }
+                Update(collection);
             }
-
         }
 
         private static readonly ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();

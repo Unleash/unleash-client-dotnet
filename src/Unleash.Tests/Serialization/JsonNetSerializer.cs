@@ -46,6 +46,8 @@ namespace Unleash.Tests.Serialization
             return memoryStream;
         }
 
+        
+
         public string NugetPackageName => "Newtonsoft.Json 4 Real";
 
         public bool TryLoad()

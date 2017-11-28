@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -6,7 +7,7 @@ using Unleash.Repository;
 
 namespace Unleash.Tests
 {
-    public class UnleashTestConfig : UnleashConfig
+    public class UnleashTestConfig : UnleashSettings
     {
         private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
         {
@@ -27,12 +28,12 @@ namespace Unleash.Tests
 
         public UnleashTestConfig()
         {
-            SetAppName("test");
-            SetInstanceId("test instance 1");
-            SetUnleashApi("http://localhost:4242/");
-            SetBackgroundTasksDisabled();
+            AppName = "test";
+            InstanceTag = "test instance 1";
+            UnleashApi = new Uri("http://localhost:4242/");
             SetDataSource(Toggles);
-            ContextProvider = new DefaultUnleashContextProvider(
+
+            UnleashContextProvider = new DefaultUnleashContextProvider(
                 new UnleashContext(
                     "userA", 
                     "sessionId", 
@@ -50,7 +51,7 @@ namespace Unleash.Tests
 
         public UnleashTestConfig SetDataSource(ToggleCollection collection)
         {
-            InMemoryTogglesForUnitTestingPurposes = collection;
+            //InMemoryTogglesForUnitTestingPurposes = collection;
 
             return this;
         }

@@ -20,16 +20,18 @@ namespace WinFormsApp
 
             var form = new UnleashForm();
 
-            var unleashConfig = new UnleashConfig()
-                    .SetAppName("dotnet-forms-test")
-                    .SetInstanceId("instance 1")
-                    .SetFetchTogglesInterval(TimeSpan.FromSeconds(2))
-                    .SetSendMetricsInterval(TimeSpan.FromSeconds(20))
-                    .EnableMetrics()
-                    .UnleashContextProvider(new WinFormsContextProvider(form))
-                    .SetUnleashApi("http://unleash.herokuapp.com/");
+            var unleashSettings = new UnleashSettings
+            {
+                UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+                //UnleashApi = new Uri("http://localhost:4242/"),
+                AppName = "dotnet-forms-test",
+                InstanceTag = "instance 1",
+                SendMetricsInterval = TimeSpan.FromSeconds(20),
+                UnleashContextProvider = new WinFormsContextProvider(form),
+                //JsonSerializer = new JsonNetSerializer()
+            };
 
-            unleash = new DefaultUnleash(unleashConfig);
+            unleash = new DefaultUnleash(unleashSettings);
             form.Unleash = unleash;
 
             Application.ApplicationExit += (sender, args) =>

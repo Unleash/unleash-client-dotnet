@@ -17,13 +17,13 @@ namespace Unleash.Tests.Serialization
         {
             JsonSerializerTester.Assert(new JsonNetSerializer());
 
-            var serializer = new NewtonsoftByDynamicJsonSerializer();
+            var serializer = new DynamicNewtonsoftJsonSerializer();
             serializer.TryLoad();
             JsonSerializerTester.Assert(serializer);
         }
 
         [TestCase(typeof(JsonNetSerializer))]
-        [TestCase(typeof(NewtonsoftByDynamicJsonSerializer))]
+        [TestCase(typeof(DynamicNewtonsoftJsonSerializer))]
         public void Deserialize_SameAs_NewtonSoft(Type type)
         {
             Console.WriteLine(type.FullName);
@@ -45,7 +45,7 @@ namespace Unleash.Tests.Serialization
         }
 
         [TestCase(typeof(JsonNetSerializer))]
-        [TestCase(typeof(NewtonsoftByDynamicJsonSerializer))]
+        [TestCase(typeof(DynamicNewtonsoftJsonSerializer))]
         public void Serialize_SameAsNewtonSoft(Type type)
         {
             Console.WriteLine(type.FullName);

@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="UnleashConfig.cs" />
     <Compile Remove="Util\UnleashConfig.cs" />
   </ItemGroup>
 
@@ -54,7 +55,7 @@
     <None Include="UnleashContext.cs" />
     <None Include="UnleashContextProvider.cs" />
     <None Include="UnleashException.cs" />
-    <None Include="UnleashConfig.cs" />
+    <None Include="UnleashServices.cs" />
   </ItemGroup>
 
   <ItemGroup>

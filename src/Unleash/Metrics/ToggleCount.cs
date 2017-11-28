@@ -4,8 +4,7 @@ namespace Unleash.Metrics
     {
         public ToggleCount()
         {
-            Yes = 0;
-            No = 0;
+            Clear();
         }
 
         public void Register(bool active)
@@ -18,6 +17,12 @@ namespace Unleash.Metrics
             {
                 No++;
             }
+        }
+
+        public void Clear()
+        {
+            Yes = 0;
+            No = 0;
         }
 
         public long Yes { get; private set; }

@@ -1,15 +1,10 @@
-using System;
-using System.Linq;
-using Unleash.Logging;
-using Unleash.Metrics;
-
 namespace Unleash
 {
+    using Logging;
     using Strategies;
-    using Util;
-    using Repository;
     using System.Collections.Generic;
 
+    /// <inheritdoc />
     public class DefaultUnleash : IUnleash
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(DefaultUnleash));
@@ -18,61 +13,50 @@ namespace Unleash
 
         private static readonly IStrategy[] DefaultStragegies = {
             new DefaultStrategy(),
-            new ApplicationHostnameStrategy(),
-            new GradualRolloutRandomStrategy(),
-            new GradualRolloutSessionIdStrategy(),
-            new GradualRolloutUserIdStrategy(),
-            new RemoteAddressStrategy(),
             new UserWithIdStrategy(),
+            new GradualRolloutUserIdStrategy(),
+            new GradualRolloutRandomStrategy(),
+            new ApplicationHostnameStrategy(),
+            new GradualRolloutSessionIdStrategy(),
+            new RemoteAddressStrategy(),
         };
 
-        private readonly List<TimerTaskRunner> tasksRunners = new List<TimerTaskRunner>();
-        private readonly ToggleCollectionInstance toggleRepository;
         private readonly Dictionary<string, IStrategy> strategyMap;
-        private readonly UnleashConfig unleashConfig;
-        
-        public DefaultUnleash(UnleashConfig unleashConfig, params IStrategy[] strategies)
-        {
-            this.unleashConfig = unleashConfig;
-            this.unleashConfig.ValidateUserInputAndSetDefaults();
 
-            Logger.Info($"UNLEASH: Unleash is initialized and configured with: {unleashConfig}");
+        private readonly UnleashServices services;
+
+        ///// <summary>
+        ///// Initializes a new instance of Unleash client. 
+        ///// </summary>
+        ///// <param name="config">Unleash settings</param>
+        ///// <param name="strategies">Available strategies. When none defined, all default strategies will be added.</param>
+        public DefaultUnleash(UnleashSettings settings, params IStrategy[] strategies)
+        {
+            var settingsValidator = new UnleashSettingsValidator();
+            settingsValidator.Validate(settings);
 
             strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
-            toggleRepository = new ToggleCollectionInstance(unleashConfig);
 
-            if (!unleashConfig.DisableBackgroundTasks)
-            {
-                RegisterBackgroundTask(new FetchFeatureTogglesTask(unleashConfig, toggleRepository), unleashConfig.FetchTogglesInterval, executeImmediatly: true);
-                RegisterBackgroundTask(new ClientRegistrationBackgroundTask(unleashConfig, strategyMap.Select(pair => pair.Key).ToList()), TimeSpan.Zero, executeImmediatly: true);
-                RegisterBackgroundTask(new ClientMetricsBackgroundTask(unleashConfig), unleashConfig.SendMetricsInterval, executeImmediatly: false);
-            }
+            services = new UnleashServices(settings, strategyMap);
+
+            Logger.Info($"UNLEASH: Unleash is initialized and configured with: {settings}");
         }
 
-        private void RegisterBackgroundTask(IBackgroundTask backgroundTask, TimeSpan interval, bool executeImmediatly)
-        {
-            var taskRunner = new TimerTaskRunner(
-                backgroundTask, 
-                interval, 
-                executeImmediatly, 
-                unleashConfig.Services.CancellationToken);
-
-            tasksRunners.Add(taskRunner);
-        }
-
+        /// <inheritdoc />
         public bool IsEnabled(string toggleName)
         {
             return IsEnabled(toggleName, false);
         }
 
+        /// <inheritdoc />
         public bool IsEnabled(string toggleName, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, unleashConfig.ContextProvider.Context, defaultSetting);
+            return CheckIsEnabled(toggleName, services.ContextProvider.Context, defaultSetting);
         }
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var featureToggle = toggleRepository.ToggleCollection.GetToggleByName(toggleName);
+            var featureToggle = services.ToggleCollectionInstance.ToggleCollection.GetToggleByName(toggleName);
 
             bool enabled = false;
             if (featureToggle == null)
@@ -105,10 +89,10 @@ namespace Unleash
 
         private void RegisterCount(string toggleName, bool enabled)
         {
-            if (unleashConfig.IsMetricsDisabled)
+            if (services.IsMetricsDisabled)
                 return;
 
-            unleashConfig.Services.MetricsBucket.RegisterCount(toggleName, enabled);
+            services.MetricsBucket.RegisterCount(toggleName, enabled);
         }
 
         private static Dictionary<string, IStrategy> BuildStrategyMap(IStrategy[] defaultStragegies, IStrategy[] strategies)
@@ -142,16 +126,7 @@ namespace Unleash
 
         public void Dispose()
         {
-            if (!unleashConfig.Services.CancellationTokenSource.IsCancellationRequested)
-            {
-                unleashConfig.Services.CancellationTokenSource.Cancel();
-            }
-
-            foreach (var taskRunner in tasksRunners)
-                taskRunner.Dispose();
-
-            // Avoid disposing timers twice.
-            tasksRunners.Clear();
+            services?.Dispose(); 
         }
     }
 }

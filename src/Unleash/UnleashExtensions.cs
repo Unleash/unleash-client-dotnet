@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using Unleash.Logging;
+using Unleash.Repository;
 
 namespace Unleash
 {
@@ -33,23 +34,6 @@ namespace Unleash
             }
             stream.Position = 0;
             return stream;
-        }
-
-        internal static void SetRequestProperties(this HttpRequestMessage requestMessage, UnleashConfig config)
-        {
-            const string appNameHeader = "UNLEASH-APPNAME";
-            const string instanceIdHeader = "UNLEASH-INSTANCEID";
-            const string userAgentHeader = "User-Agent";
-
-            requestMessage.Headers.TryAddWithoutValidation(appNameHeader, config.AppName);
-            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, config.InstanceId);
-            requestMessage.Headers.TryAddWithoutValidation(userAgentHeader, config.AppName);
-
-            if (config.CustomHttpHeaders.Count == 0)
-                return;
-
-            foreach (var header in config.CustomHttpHeaders)
-                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
         internal static string GetLocalIpAddress()

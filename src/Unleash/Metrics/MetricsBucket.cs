@@ -40,8 +40,10 @@ namespace Unleash.Metrics
         public void Clear()
         {
             Start = DateTimeOffset.UtcNow;
-            Toggles.Clear();
-        }
+            Stop = DateTimeOffset.MinValue;
 
+            foreach (var item in Toggles)
+                item.Value.Clear();
+        }
     }
 }

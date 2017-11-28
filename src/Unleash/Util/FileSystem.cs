@@ -7,9 +7,9 @@ namespace Unleash.Util
     {
         private readonly Encoding encoding;
 
-        public FileSystem(UnleashConfig config)
+        public FileSystem(Encoding encoding)
         {
-            encoding = config.Encoding;
+            this.encoding = encoding;
         }
 
         public bool FileExists(string path)
