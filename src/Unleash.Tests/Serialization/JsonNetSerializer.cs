@@ -30,23 +30,17 @@ namespace Unleash.Tests.Serialization
             }
         }
 
-        public Stream Serialize<T>(T instance)
+        public void Serialize<T>(Stream stream, T instance)
         {
-            var memoryStream = new MemoryStream();
-
-            using (var writer = new StreamWriter(memoryStream, utf8, 1024 * 4, leaveOpen: true))
+            using (var writer = new StreamWriter(stream, utf8, 1024 * 4, leaveOpen: true))
             using (var jsonWriter = new JsonTextWriter(writer))
             {
                 Serializer.Serialize(jsonWriter, instance);
+
                 jsonWriter.Flush();
+                stream.Position = 0;
             }
-
-            memoryStream.Position = 0;
-
-            return memoryStream;
         }
-
-        
 
         public string NugetPackageName => "Newtonsoft.Json 4 Real";
 

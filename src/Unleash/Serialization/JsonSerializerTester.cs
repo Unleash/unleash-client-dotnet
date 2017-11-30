@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Unleash.Internal;
 
 namespace Unleash.Serialization
@@ -27,7 +28,10 @@ namespace Unleash.Serialization
 
         public static void Assert(IJsonSerializer serializer)
         {
-            var json = serializer.Serialize(Toggles).ConvertToString();
+            var memoryStream = new MemoryStream();
+            serializer.Serialize(memoryStream, Toggles);
+            var json = memoryStream.ConvertToString();
+
 
             ShouldContain(json, "\"name\":\"one\"");
 

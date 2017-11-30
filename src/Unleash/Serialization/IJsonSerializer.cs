@@ -5,6 +5,6 @@ namespace Unleash.Serialization
     public interface IJsonSerializer
     {
         T Deserialize<T>(Stream stream);
-        Stream Serialize<T>(T instance);
+        void Serialize<T>(Stream stream, T instance);
     }
 }

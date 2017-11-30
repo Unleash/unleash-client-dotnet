@@ -86,9 +86,11 @@ namespace Unleash.Tests.Serialization
             expected.Should().Contain("\"Demo\":\"Demo\"");
             expected.Should().Contain("\"demo\":\"demo\"");
 
-            using (var stream = serializer.Serialize(collection))
+            using (var ms = new MemoryStream())
             {
-                var resultingJson = stream.ConvertToString();
+                serializer.Serialize(ms, collection);
+
+                var resultingJson = ms.ConvertToString();
                 Console.WriteLine(resultingJson);
 
                 resultingJson.Should().Contain("\"Demo\":\"Demo\"");

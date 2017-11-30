@@ -1,4 +1,7 @@
-﻿using Unleash.Internal;
+﻿using System;
+using System.IO;
+using Newtonsoft.Json;
+using Unleash.Internal;
 using Unleash.Serialization;
 
 namespace Unleash.Tests
@@ -7,10 +10,16 @@ namespace Unleash.Tests
     {
         public static string SerializeObjectToString(this IJsonSerializer serializer, object o)
         {
-            using (var stream = serializer.Serialize(o))
+            using (var ms = new MemoryStream())
             {
-                return stream.ConvertToString();
+                serializer.Serialize(ms, o);
+                return ms.ConvertToString();
             }
+        }
+
+        public static void TraceToJson(this object o)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(o, Formatting.Indented));
         }
     }
 }

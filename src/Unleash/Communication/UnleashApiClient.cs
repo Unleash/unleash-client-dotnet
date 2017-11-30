@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,9 +93,10 @@ namespace Unleash.Communication
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, resourceUri))
             {
-                var jsonStream = jsonSerializer.Serialize(requestContent);
+                var memoryStream = new MemoryStream();
+                jsonSerializer.Serialize(memoryStream, requestContent);
 
-                request.Content = new StreamContent(jsonStream, bufferSize);
+                request.Content = new StreamContent(memoryStream, bufferSize);
                 request.Content.Headers.AddContentTypeJson();
 
                 SetRequestHeaders(request, clientRequestHeaders);

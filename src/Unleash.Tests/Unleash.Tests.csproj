@@ -64,10 +64,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="Communication\BaseUnleashApiClientTest.cs" />
+    <Compile Include="Communication\UnleashApiClient_RegisterClient_Tests.cs" />
+    <Compile Include="Communication\UnleashApiClient_SendMetrics_Tests.cs" />
     <Compile Include="ExampleTests.cs" />
     <Compile Include="Mock\MockApiClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Communication\UnleashApiClientTests.cs" />
+    <Compile Include="Communication\UnleashApiClient_FetchToggles_Tests.cs" />
     <Compile Include="Serialization\JsonNetSerializer.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="MockedUnleashSettings.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Scheduling\TimerTaskRunnerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="App_Data\empty-v1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

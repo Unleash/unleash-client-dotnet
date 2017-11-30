@@ -48,10 +48,9 @@ namespace Unleash.Scheduling
 
             toggleCollectionInstance.Update(result.ToggleCollection);
 
-            using (var stream = jsonSerializer.Serialize(result.ToggleCollection))
             using (var fileStream = File.Open(toggleFile, FileMode.Create))
             {
-                await stream.CopyToAsync(fileStream, 1024 * 4, cancellationToken).ConfigureAwait(false);
+                jsonSerializer.Serialize(fileStream, result.ToggleCollection);
             }
 
             Etag = result.Etag;

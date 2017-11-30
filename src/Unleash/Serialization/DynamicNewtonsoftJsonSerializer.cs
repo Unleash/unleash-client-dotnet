@@ -59,7 +59,7 @@ namespace Unleash.Serialization
             }
         }
 
-        public Stream Serialize<T>(T instance)
+        public void Serialize<T>(Stream stream, T instance)
         {
             // Default
             const int bufferSize = 1024 * 4;
@@ -67,25 +67,22 @@ namespace Unleash.Serialization
             // Client code needs to dispose this.
             const bool leaveOpen = true;
 
-            var memoryStream = new MemoryStream();
-            using (var writer = new StreamWriter(memoryStream, encoding, bufferSize, leaveOpen: leaveOpen))
+            using (var writer = new StreamWriter(stream, encoding, bufferSize, leaveOpen: leaveOpen))
             {
                 dynamic jsonWriter = Activator.CreateInstance(jsonTextWriterType, writer);
 
                 try
                 {
                     serializer.Serialize(jsonWriter, instance);
+
                     jsonWriter.Flush();
+                    stream.Position = 0;
                 }
                 finally
                 {
                     (jsonWriter as IDisposable)?.Dispose();
                 }
             }
-
-            memoryStream.Position = 0;
-
-            return memoryStream;
         }
     }
 }
