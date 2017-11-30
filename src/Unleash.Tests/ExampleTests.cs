@@ -10,8 +10,7 @@ namespace Unleash.Tests
 
         public ExampleTests()
         {
-            var config = new UnleashTestConfig();
-            unleash = new DefaultUnleash(config);
+            unleash = new DefaultUnleash(new MockedUnleashSettings());
         }
 
         [Test]

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unleash.Repository;
+using Unleash.Internal;
 
 namespace Unleash.Serialization
 {

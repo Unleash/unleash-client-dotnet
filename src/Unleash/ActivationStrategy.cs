@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+
 namespace Unleash
 {
-    using System.Collections.Generic;
-
-    public class ActivationStrategy
+    internal class ActivationStrategy
     {
         public ActivationStrategy(string name, Dictionary<string, string> parameters)
         {

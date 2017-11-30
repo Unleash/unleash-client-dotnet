@@ -14,12 +14,7 @@ namespace WinFormsApp
             InitializeComponent();
         }
 
-        private void IsEnabledButton_Click(object sender, EventArgs e)
-        {
-            UpdateLabel();
-        }
-
-        private void TimerTick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             UpdateLabel();
         }
@@ -27,19 +22,17 @@ namespace WinFormsApp
         private void UpdateLabel()
         {
             var enabled = Unleash.IsEnabled(ToggleNameTextBox.Text);
-            var enabledString = enabled ? "enabled" : "disabled";
+
+            var enabledString = enabled 
+                ? "enabled" 
+                : "disabled";
 
             ResultLabel.Text = $"{ToggleNameTextBox.Text} is {enabledString} for user {UsernameTextBox.Text}";
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://unleash.herokuapp.com/#/features/view/" + ToggleNameTextBox.Text);
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
+            Process.Start($"http://unleash.herokuapp.com/#/features/view/{ToggleNameTextBox.Text}");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace WinFormsApp
                 //UnleashApi = new Uri("http://localhost:4242/"),
                 AppName = "dotnet-forms-test",
                 InstanceTag = "instance 1",
-                SendMetricsInterval = TimeSpan.FromSeconds(20),
+                SendMetricsInterval = TimeSpan.FromSeconds(10),
                 UnleashContextProvider = new WinFormsContextProvider(form),
                 //JsonSerializer = new JsonNetSerializer()
             };
@@ -52,10 +52,12 @@ namespace WinFormsApp
             this.form = form;
         }
 
-        public UnleashContext Context => new UnleashContext(
-            form.UsernameTextBox.Text, 
-            "session1", 
-            "remoteAddress", 
-            new Dictionary<string, string>());
+        public UnleashContext Context => new UnleashContext()
+        {
+            UserId = form.UsernameTextBox.Text,
+            SessionId = "session1",
+            RemoteAddress = "remoteAddress",
+            Properties = new Dictionary<string, string>()
+        };
     }
 }

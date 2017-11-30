@@ -1,3 +1,5 @@
+using Unleash.Internal;
+
 namespace Unleash
 {
     using Logging;
@@ -34,7 +36,7 @@ namespace Unleash
         {
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
-
+            
             strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
 
             services = new UnleashServices(settings, strategyMap);

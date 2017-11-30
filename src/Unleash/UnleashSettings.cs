@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Unleash.Repository;
+using Unleash.Communication;
+using Unleash.Internal;
+using Unleash.Scheduling;
 using Unleash.Serialization;
 
 namespace Unleash
@@ -82,9 +84,27 @@ namespace Unleash
         public IJsonSerializer JsonSerializer { get; set; } = new DynamicNewtonsoftJsonSerializer();
 
         /// <summary>
-        /// Get or sets a factory class for creating the HttpClient instance used for communicating with the backendd.
+        /// Get or sets a factory class for creating the HttpClient instance used for communicating with the backend.
         /// </summary>
         public IHttpClientFactory HttpClientFactory { get; set; } = new DefaultHttpClientFactory();
+
+        /// <summary>
+        /// Gets or sets the scheduled task manager used for syncing feature toggles and metrics with the backend in the background.
+        /// Default: An implementation based on System.Threading.Timers
+        /// </summary>
+        public IUnleashScheduledTaskManager ScheduledTaskManager { get; set; } = new SystemTimerScheduledTaskManager();
+
+
+        /// <summary>
+        /// INTERNAL: Gets or sets an api client instance. Can be used for testing/mocking etc.
+        /// </summary>
+        internal IUnleashApiClient UnleashApiClient { get; set; }
+
+        /// <summary>
+        /// INTERNAL: Gets or sets the file system abstraction. Can be used for testing/mocking etc.
+        /// </summary>
+        internal IFileSystem FileSystem { get; set; } 
+
 
         private static string GetSdkVersion()
         {

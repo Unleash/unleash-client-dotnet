@@ -5,8 +5,8 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
-using Unleash.Repository;
 using Unleash.Serialization;
+using Unleash.Internal;
 
 namespace Unleash.Tests.Serialization
 {

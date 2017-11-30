@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Unleash.Communication;
+using Unleash.Internal;
 using Unleash.Metrics;
-using Unleash.Repository;
+using Unleash.Scheduling;
 using Unleash.Strategies;
-using Unleash.Util;
 
 namespace Unleash
 {
@@ -16,10 +17,11 @@ namespace Unleash
         internal CancellationToken CancellationToken { get; }
 
         internal IUnleashApiClient ApiClient { get; set; }
-        internal IBackgroundTaskRunner TaskRunner { get; set; }
+        //internal IBackgroundTaskRunner TaskRunner { get; set; }
         internal IFileSystem FileSystem { get; set; }
         internal MetricsBucket MetricsBucket { get; set; }
         internal ToggleCollectionInstance ToggleCollectionInstance { get; set; }
+        internal IUnleashScheduledTaskManager ScheduledTaskManager { get; set; }
 
         internal string BackupFile { get; set; }
         internal string EtagBackupFile { get; set; }
@@ -32,26 +34,36 @@ namespace Unleash
             CancellationToken = CancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            FileSystem = new FileSystem(settings.Encoding);
+            FileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
 
             EnsureFilesAndFolderExists(settings, FileSystem);
 
             MetricsBucket = new MetricsBucket();
 
-            ApiClient = new UnleashApiClient(settings.UnleashApi, settings.HttpClientFactory, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
-            {
-                AppName = settings.AppName,
-                InstanceId = settings.InstanceTag,
-                UserAgent = null,
-                CustomHttpHeaders = settings.CustomHttpHeaders
-            });
-
             ToggleCollectionInstance = new ToggleCollectionInstance(
-                settings.JsonSerializer, 
-                FileSystem, 
+                settings.JsonSerializer,
+                FileSystem,
                 BackupFile);
 
-            TaskRunner = new BackgroundTaskRunnerV2(CancellationToken);
+            if (settings.UnleashApiClient == null)
+            {
+                var httpClient = settings.HttpClientFactory.Create(settings.UnleashApi);
+                ApiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
+                {
+                    AppName = settings.AppName,
+                    InstanceId = settings.InstanceTag,
+                    CustomHttpHeaders = settings.CustomHttpHeaders
+                });
+            }
+            else
+            {
+                // Mocked backend: fill instance collection
+                ApiClient = settings.UnleashApiClient;
+                var toggles = ApiClient.FetchToggles("", CancellationToken.None);
+                ToggleCollectionInstance.Update(toggles.Result.ToggleCollection);
+            }
+
+            ScheduledTaskManager = settings.ScheduledTaskManager;
 
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
@@ -61,8 +73,16 @@ namespace Unleash
                 settings.JsonSerializer, 
                 FileSystem, 
                 BackupFile, 
-                EtagBackupFile);
-            TaskRunner.Register(fetchFeatureTogglesTask, settings.FetchTogglesInterval, executeImmediately: true);
+                EtagBackupFile)
+            {
+                ExecuteDuringStartup = true,
+                Interval = settings.FetchTogglesInterval,
+            };
+
+
+            var scheduledTasks = new List<IUnleashScheduledTask>(){
+                fetchFeatureTogglesTask
+            };
 
             if (settings.SendMetricsInterval != null)
             {
@@ -70,15 +90,27 @@ namespace Unleash
                     ApiClient, 
                     settings, 
                     MetricsBucket, 
-                    strategyMap.Select(pair => pair.Key).ToList());
-                TaskRunner.Register(clientRegistrationBackgroundTask, TimeSpan.Zero, executeImmediately: true);
+                    strategyMap.Select(pair => pair.Key).ToList())
+                {
+                    Interval = TimeSpan.Zero,
+                    ExecuteDuringStartup = true
+                };
+
+                scheduledTasks.Add(clientRegistrationBackgroundTask);
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
                     ApiClient, 
                     settings, 
-                    MetricsBucket);
-                TaskRunner.Register(clientMetricsBackgroundTask, settings.SendMetricsInterval.Value, executeImmediately: false);
+                    MetricsBucket)
+                {
+                    ExecuteDuringStartup = false,
+                    Interval = settings.SendMetricsInterval.Value
+                };
+
+                scheduledTasks.Add(clientMetricsBackgroundTask);
             }
+
+            ScheduledTaskManager.Configure(scheduledTasks, CancellationToken);
         }
 
         internal void EnsureFilesAndFolderExists(UnleashSettings settings, IFileSystem fileSystem)
@@ -115,7 +147,7 @@ namespace Unleash
                 CancellationTokenSource.Cancel();
             }
 
-            TaskRunner.Dispose();
+            ScheduledTaskManager.Dispose();
         }
     }
 }

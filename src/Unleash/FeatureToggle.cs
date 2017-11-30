@@ -1,8 +1,9 @@
+using System.Collections.Generic;
+using Unleash.Internal;
+
 namespace Unleash
 {
-    using System.Collections.Generic;
-
-    public class FeatureToggle
+    internal class FeatureToggle
     {
         public FeatureToggle(string name, bool enabled, List<ActivationStrategy> strategies)
         {

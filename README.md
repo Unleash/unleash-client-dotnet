@@ -21,15 +21,17 @@ Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](ht
 
 It is easy to get a new instance of Unleash. In your app you typically *just want one instance of Unelash*, and inject that where you need it. You will typically use a dependency injection frameworks to manage this. 
 
-To create a new instance of Unleash you need to pass in a config object:
+To create a new instance of Unleash you need to pass in a settings object:
 ```csharp
 
-UnleashConfig config = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance z")
-                .SetUnleashApi("http://unleash.herokuapp.com/");
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+};
 
-IUnleash unleash = new DefaultUnleash(config);
+IUnleash unleash = new DefaultUnleash(settings);
 ```
 
 When your application shuts down, remember to dispose the unleash instance.
@@ -105,34 +107,42 @@ public class AspNetContextProvider : IUnleashContextProvider
 
 protected void Application_BeginRequest(object sender, EventArgs e)
 {
-    HttpContext.Current.Items["UnleashContext"] = new UnleashContext.Builder()
-            .UserId(HttpContext.Current.User?.Identity?.Name)
-            .SessionId(HttpContext.Current.Session?.SessionID)
-            .RemoteAddress(HttpContext.Current.Request.UserHostAddress)
-            .AddProperty("CustomPropertyForCustomStrategy", "some-interesting-value") // Optional
-            .Build()
-        ;
+    HttpContext.Current.Items["UnleashContext"] = new UnleashContext
+    {
+        UserId = HttpContext.Current.User?.Identity?.Name,
+        SessionId = HttpContext.Current.Session?.SessionID,
+        RemoteAddress = HttpContext.Current.Request.UserHostAddress,
+        Properties = new Dictionary<string, string>()
+        {
+            {"UserRoles", "A, B, C"}
+        }
+    };
 }
 
-var contextProvider = new AspNetContextProvider();
-
-UnleashConfig config = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance z")
-                .SetUnleashApi("http://unleash.herokuapp.com/")
-                .UnleashContextProvider(new AspNetContextProvider());
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashContextProvider = new AspNetContextProvider(),
+};
 ``` 
 
 ### Custom HTTP headers
-If you want the client to send custom HTTP Headers with all requests to the Unleash api you can define that by setting them via the `UnleashConfig`. 
+If you want the client to send custom HTTP Headers with all requests to the Unleash api you can define that by setting them via the `UnleashSettings`. 
 
 ```csharp
-UnleashConfig config = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance z")
-                .SetUnleashApi("http://unleash.herokuapp.com/")
-                .UnleashContextProvider(new AspNetContextProvider())
-                .AddCustomHttpHeader("Authorization", "some-secret");
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashContextProvider = new AspNetContextProvider(),
+    CustomHttpHeaders = new Dictionary<string, string>()
+    {
+        {"Authorization","some-secret" }
+    }
+};
                 
 ```
 
@@ -145,13 +155,16 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 ## Json Serialization
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
 
-With Newtonsoft.Json version 7.0.0.0, the following implementation can be used:
+With Newtonsoft.Json version 7.0.0.0, the following implementation can be used. For older versions, consider to upgrade.
 
 ```csharp
-var config = new UnleashConfig()
-                .SetAppName("dotnet-test")
-                .SetInstanceId("instance z")
-                .SetJsonSerializer(new NewtonsoftJson7Serializer());
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    JsonSerializer = new NewtonsoftJson7Serializer()
+};
 
 public class NewtonsoftJson7Serializer : IJsonSerializer
 {
@@ -211,4 +224,5 @@ The Unleash team have made a separate project which runs unleash server inside d
 
 ## Development
 
-Visual Studio 2017
+Visual Studio 2017 / Code
+Cakebuild

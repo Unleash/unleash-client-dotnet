@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using Unleash.Strategies;
+using Unleash.Internal;
 
 namespace Unleash.Tests.Strategy
 {

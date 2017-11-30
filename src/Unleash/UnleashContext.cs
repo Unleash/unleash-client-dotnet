@@ -2,27 +2,24 @@ namespace Unleash
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// A context which the feature request should be validated againt. Usually scoped to a web request through an implementation of IUnleashContextProvider.
+    /// </summary>
     public class UnleashContext
     {
-        public UnleashContext(string userId, string sessionId, string remoteAddress, Dictionary<string, string> properties)
-        {
-            UserId = userId;
-            SessionId = sessionId;
-            RemoteAddress = remoteAddress;
-            Properties = properties;
-        }
+        public string UserId { get; set; }
+        public string SessionId { get; set; }
+        public string RemoteAddress { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
 
-        public string UserId { get; }
-        public string SessionId { get; }
-        public string RemoteAddress { get; }
-        public Dictionary<string, string> Properties { get; }
+        #region Builder pattern: used in tests
 
-        public static Builder New()
+        internal static Builder New()
         {
             return new Builder();
         }
 
-        public class Builder
+        internal class Builder
         {
             private string userId;
             private string sessionId;
@@ -55,8 +52,16 @@ namespace Unleash
 
             public UnleashContext Build()
             {
-                return new UnleashContext(userId, sessionId, remoteAddress, properties);
+                return new UnleashContext()
+                {
+                    UserId = userId,
+                    SessionId = sessionId,
+                    RemoteAddress = remoteAddress,
+                    Properties = properties,
+                };
             }
         }
     }
+
+    #endregion
 }

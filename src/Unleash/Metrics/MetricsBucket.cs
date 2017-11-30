@@ -6,6 +6,7 @@ namespace Unleash.Metrics
     internal class MetricsBucket
     {
         public ConcurrentDictionary<string, ToggleCount> Toggles { get; }
+
         public DateTimeOffset Start { get; private set; }
         public DateTimeOffset Stop { get; private set; }
 

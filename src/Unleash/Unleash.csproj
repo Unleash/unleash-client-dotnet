@@ -27,33 +27,35 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ActivationStrategy.cs" />
+    <Compile Remove="FeatureToggle.cs" />
+    <Compile Remove="IUnleashScheduledTask.cs" />
     <Compile Remove="UnleashConfig.cs" />
-    <Compile Remove="Util\UnleashConfig.cs" />
+    <Compile Remove="UnleashExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="ActivationStrategy.cs" />
+    <None Include="Internal\ActivationStrategy.cs" />
     <None Include="DefaultUnleash.cs" />
-    <None Include="FeatureToggle.cs" />
+    <None Include="Internal\FeatureToggle.cs" />
     <None Include="Metrics\ClientMetrics.cs" />
     <None Include="Metrics\ClientRegistration.cs" />
     <None Include="Metrics\MetricsBucket.cs" />
     <None Include="Metrics\ToggleCount.cs" />
-    <None Include="Repository\ToggleCollectionInstance.cs" />
-    <None Include="Repository\ToggleCollection.cs" />
+    <None Include="Internal\ToggleCollectionInstance.cs" />
+    <None Include="Internal\ToggleCollection.cs" />
     <None Include="Strategies\ApplicationHostnameStrategy.cs" />
     <None Include="Strategies\DefaultStrategy.cs" />
     <None Include="Strategies\GradualRolloutRandomStrategy.cs" />
     <None Include="Strategies\GradualRolloutSessionIdStrategy.cs" />
     <None Include="Strategies\GradualRolloutUserIdStrategy.cs" />
     <None Include="Strategies\RemoteAddressStrategy.cs" />
-    <None Include="Strategies\IStrategy.cs" />
     <None Include="Strategies\StrategyUtils.cs" />
     <None Include="Strategies\UnknownStrategy.cs" />
     <None Include="Strategies\UserWithIdStrategy.cs" />
     <None Include="IUnleash.cs" />
     <None Include="UnleashContext.cs" />
-    <None Include="UnleashContextProvider.cs" />
+    <None Include="DefaultUnleashContextProvider.cs" />
     <None Include="UnleashException.cs" />
     <None Include="UnleashServices.cs" />
   </ItemGroup>
@@ -76,20 +78,15 @@
     <PackageId>Unleash.FeatureToggle.Client</PackageId>
     <Authors>Stian Olafsen</Authors>
     <Owner>Stian Olafsen</Owner>
-    <Description>
-      Unleash Feature Toggle Client for .Net. It supports runtime feature toggling throug multiple activation strategies, and enables you to decouple deployment of code from release of new features.
-    </Description>
-    <Summary>
-      Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash
-    </Summary>
+    <Description>Flexible feature toggle client. It supports enabling features runtime, through multiple activation strategies, and allows you to decouple deployment of code from release of new features. Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash/</Description>
     <RepositoryUrl>https://github.com/stiano/unleash-client-dotnet</RepositoryUrl>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright 2017</Copyright>
-    <PackageTags>feature-toggle client finn.no</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageTags>feature-toggle runtime-toggling feature-flags continous delivery</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     
     <Product>Unleash Feature Toggle Client</Product>
     <PackageIconUrl>https://github.com/stiano/unleash-client-dotnet/raw/master/resources/logo.png</PackageIconUrl>

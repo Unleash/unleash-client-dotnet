@@ -65,14 +65,15 @@
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
     <Compile Include="ExampleTests.cs" />
+    <Compile Include="Mock\MockApiClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\UnleashApiClientTests.cs" />
+    <Compile Include="Communication\UnleashApiClientTests.cs" />
     <Compile Include="Serialization\JsonNetSerializer.cs" />
-    <Compile Include="TestHelpers\Extensions.cs" />
-    <Compile Include="UnleashTestConfig.cs" />
-    <Compile Include="TestHelpers\MockFileSystem.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="MockedUnleashSettings.cs" />
+    <Compile Include="Mock\MockFileSystem.cs" />
     <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
-    <Compile Include="Util\TimerTaskRunnerTests.cs" />
+    <Compile Include="Scheduling\TimerTaskRunnerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Data\empty-v1.json">

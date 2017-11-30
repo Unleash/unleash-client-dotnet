@@ -35,8 +35,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.ToggleNameTextBox = new System.Windows.Forms.TextBox();
             this.ResultLabel = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -65,9 +65,9 @@
             this.UsernameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UsernameTextBox.Location = new System.Drawing.Point(123, 65);
             this.UsernameTextBox.Name = "UsernameTextBox";
-            this.UsernameTextBox.Size = new System.Drawing.Size(157, 26);
+            this.UsernameTextBox.Size = new System.Drawing.Size(216, 26);
             this.UsernameTextBox.TabIndex = 2;
-            this.UsernameTextBox.Text = "TestUserA";
+            this.UsernameTextBox.Text = "merkel";
             // 
             // label3
             // 
@@ -84,9 +84,9 @@
             this.ToggleNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ToggleNameTextBox.Location = new System.Drawing.Point(123, 104);
             this.ToggleNameTextBox.Name = "ToggleNameTextBox";
-            this.ToggleNameTextBox.Size = new System.Drawing.Size(157, 26);
+            this.ToggleNameTextBox.Size = new System.Drawing.Size(216, 26);
             this.ToggleNameTextBox.TabIndex = 2;
-            this.ToggleNameTextBox.Text = "Demo123";
+            this.ToggleNameTextBox.Text = "SuperAwesomeFeature";
             // 
             // ResultLabel
             // 
@@ -97,12 +97,6 @@
             this.ResultLabel.Name = "ResultLabel";
             this.ResultLabel.Size = new System.Drawing.Size(0, 25);
             this.ResultLabel.TabIndex = 3;
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.TimerTick);
             // 
             // linkLabel1
             // 
@@ -115,6 +109,12 @@
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Go to unleash server";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 2000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // UnleashForm
             // 
@@ -130,7 +130,6 @@
             this.Controls.Add(this.label1);
             this.Name = "UnleashForm";
             this.Text = "Unleash.FeatureToggle.Client";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,8 +143,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label ResultLabel;
         protected System.Windows.Forms.TextBox ToggleNameTextBox;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

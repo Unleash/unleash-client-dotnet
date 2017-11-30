@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -46,13 +47,16 @@ namespace WebApp
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-            HttpContext.Current.Items["UnleashContext"] = new UnleashContext.Builder()
-                    .UserId("ABC")
-                    .SessionId(HttpContext.Current.Session?.SessionID)
-                    .RemoteAddress(HttpContext.Current.Request.UserHostAddress)
-                    .AddProperty("UserRoles", "A, B, C")
-                    .Build()
-                ;
+            HttpContext.Current.Items["UnleashContext"] = new UnleashContext
+            {
+                UserId = "ABC",
+                SessionId = HttpContext.Current.Session?.SessionID,
+                RemoteAddress = HttpContext.Current.Request.UserHostAddress,
+                Properties = new Dictionary<string, string>()
+                {
+                    {"UserRoles", "A, B, C"}
+                }
+            };
         }
     }
 

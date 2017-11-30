@@ -1,3 +1,5 @@
+using Unleash.Internal;
+
 namespace Unleash.Strategies
 {
     using System;
