@@ -14,6 +14,8 @@ Take a look at the demonstration site at [unleash.herokuapp.com](http://unleash.
 
 Read more of the main project at [github.com/unleash/unleash](https://github.com/Unleash/unleash)
 
+![dashboard](https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/resources/dashboard.png "Unleash Server Dashboard")
+
 ## Getting started
 Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/).
 
