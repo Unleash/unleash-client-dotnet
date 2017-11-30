@@ -86,7 +86,7 @@
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright 2017</Copyright>
     <PackageTags>feature-toggle runtime-toggling feature-flags continous delivery</PackageTags>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     
     <Product>Unleash Feature Toggle Client</Product>
     <PackageIconUrl>https://github.com/stiano/unleash-client-dotnet/raw/master/resources/logo.png</PackageIconUrl>
