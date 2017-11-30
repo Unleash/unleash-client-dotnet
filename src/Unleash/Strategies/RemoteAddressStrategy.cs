@@ -1,6 +1,5 @@
 namespace Unleash.Strategies
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -13,13 +12,14 @@ namespace Unleash.Strategies
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
             var remoteAddress = context?.RemoteAddress;
-            if (remoteAddress == null)
+
+            if (string.IsNullOrEmpty(remoteAddress))
                 return false;
 
             if (parameters.TryGetValue(PARAM, out var remoteAddresses))
             {
                 return remoteAddresses
-                    .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(',')
                     .Select(x => x.Trim())
                     .Contains(remoteAddress);
             }

@@ -4,9 +4,9 @@ namespace Unleash.Strategies
 
     public class DefaultStrategy : IStrategy
     {
-        private static string STRATEGY_NAME = "default";
+        private static readonly string StrategyName = "default";
 
-        public string Name => STRATEGY_NAME;
+        public string Name => StrategyName;
 
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {

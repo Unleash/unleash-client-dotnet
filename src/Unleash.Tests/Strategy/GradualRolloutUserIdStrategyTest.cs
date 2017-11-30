@@ -186,8 +186,8 @@ namespace Unleash.Tests.Strategy
         {
             var paramseters = new Dictionary<string, string>();
 
-            paramseters.Add(GradualRolloutUserIdStrategy.PERCENTAGE, percentage.ToString());
-            paramseters.Add(GradualRolloutUserIdStrategy.GROUP_ID, groupId);
+            paramseters.Add(GradualRolloutUserIdStrategy.PercentageConst, percentage.ToString());
+            paramseters.Add(GradualRolloutUserIdStrategy.GroupIdConst, groupId);
 
             return paramseters;
         }

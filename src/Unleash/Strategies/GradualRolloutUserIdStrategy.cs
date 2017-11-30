@@ -16,20 +16,20 @@ namespace Unleash.Strategies
      */
     public class GradualRolloutUserIdStrategy : IStrategy
     {
-        public static string PERCENTAGE = "percentage";
-        public static string GROUP_ID = "groupId";
+        public static readonly string PercentageConst = "percentage";
+        public static readonly string GroupIdConst = "groupId";
 
         public string Name => "gradualRolloutUserId";
 
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
             var userId = context?.UserId;
-            if (userId == null)
+            if (userId == null || userId == string.Empty)
                 return false;
 
-            var percentageString = parameters[PERCENTAGE];
+            var percentageString = parameters[PercentageConst];
             var percentage = StrategyUtils.GetPercentage(percentageString);
-            var groupId = parameters[GROUP_ID] ?? string.Empty;
+            var groupId = parameters[GroupIdConst] ?? string.Empty;
 
             var normalizedUserId = StrategyUtils.GetNormalizedNumber(userId, groupId);
 

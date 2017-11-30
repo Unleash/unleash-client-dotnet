@@ -150,8 +150,8 @@ namespace Unleash.Tests.Strategy
         private Dictionary<string, string> buildParams(int percentage, string groupId)
         {
             var parameters = new Dictionary<string, string>();
-            parameters.Add(GradualRolloutSessionIdStrategy.PERCENTAGE, percentage.ToString());
-            parameters.Add(GradualRolloutSessionIdStrategy.GROUP_ID, groupId);
+            parameters.Add(GradualRolloutSessionIdStrategy.Percentage, percentage.ToString());
+            parameters.Add(GradualRolloutSessionIdStrategy.GroupId, groupId);
 
             return parameters;
         }

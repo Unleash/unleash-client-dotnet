@@ -9,30 +9,31 @@ namespace Unleash.Strategies
     /// <inheritdoc />
     public class ApplicationHostnameStrategy : IStrategy
     {
-        public static string HOST_NAMES_PARAM = "hostNames";
-        protected string NAME = "applicationHostname";
-        private string hostname;
+        public static string HostNamesParam = "hostNames";
+
+        protected readonly string NameConst = "applicationHostname";
+        private readonly string hostname;
 
         /// <inheritdoc />
         public ApplicationHostnameStrategy()
         {
-            this.hostname = UnleashExtensions.GetLocalIpAddress();
+            hostname = UnleashExtensions.GetLocalIpAddress();
         }
 
         /// <inheritdoc />
-        public string Name => NAME;
+        public string Name => NameConst;
 
         /// <inheritdoc />
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
-            if (parameters.TryGetValue(HOST_NAMES_PARAM, out var hostnames))
+            if (parameters.TryGetValue(HostNamesParam, out var hostnames))
             {
-                if (hostnames == null)
+                if (hostnames == null || hostnames == string.Empty)
                     return false;
 
                 return hostnames
                     .ToLowerInvariant()
-                    .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(',')
                     .Select(x => x.Trim())
                     .Contains(hostname.ToLowerInvariant());
             }

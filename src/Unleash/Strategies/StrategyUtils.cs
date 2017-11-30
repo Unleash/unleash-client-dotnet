@@ -42,7 +42,8 @@ namespace Unleash.Strategies
          */
         public static int GetNormalizedNumber(string identifier, string groupId)
         {
-            int hashCode = Math.Abs((groupId + ':' + identifier).GetHashCode());
+            const string separator = ":";
+            var hashCode = Math.Abs(string.Concat(groupId, separator, identifier).GetHashCode());
             return hashCode % OneHundred + 1;
         }
 

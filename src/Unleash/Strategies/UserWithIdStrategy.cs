@@ -15,7 +15,7 @@ namespace Unleash.Strategies
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
             var userId = context?.UserId;
-            if (userId == null)
+            if (userId == null || userId == string.Empty)
                 return false;
 
             if (!parameters.TryGetValue(UserIdsConst, out var userIds))
