@@ -192,8 +192,8 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
         using (var jsonWriter = new JsonTextWriter(writer))
         {
             Serializer.Serialize(jsonWriter, instance);
-     
-			jsonWriter.Flush();
+            
+            jsonWriter.Flush();
 			stream.Position = 0;
         }
     }
@@ -223,4 +223,5 @@ The Unleash team have made a separate project which runs unleash server inside d
 ## Development
 
 Visual Studio 2017 / Code
+
 Cakebuild
