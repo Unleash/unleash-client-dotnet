@@ -11,6 +11,10 @@ environment:
 install:
   - choco install gitversion.portable -pre -y
 
+skip_commits:
+  files:
+    - '**/*.md'
+    
 before_build:
   - dotnet --info
   - ps: gitversion /l console /output buildserver 
@@ -21,4 +25,4 @@ build_script:
 test: off
 
 artifacts:
-  - path: '**/Unleash.*.nupkg' # find all NuGet packages recursively
+  - path: '**/unleash.featuretoggle.client.*.nupkg' # find all NuGet packages recursively
