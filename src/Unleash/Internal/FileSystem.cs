@@ -22,6 +22,11 @@ namespace Unleash.Internal
             return File.OpenRead(path);
         }
 
+        public Stream FileOpenCreate(string path)
+        {
+            return File.Open(path, FileMode.Create);
+        }
+
         public void WriteAllText(string path, string content)
         {
             File.WriteAllText(path, content, encoding);

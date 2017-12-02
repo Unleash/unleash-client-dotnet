@@ -58,7 +58,7 @@ namespace Unleash
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var featureToggle = services.ToggleCollectionInstance.ToggleCollection.GetToggleByName(toggleName);
+            var featureToggle = services.ToggleCollection.Instance.GetToggleByName(toggleName);
 
             bool enabled = false;
             if (featureToggle == null)

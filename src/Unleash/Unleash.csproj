@@ -42,7 +42,6 @@
     <None Include="Metrics\ClientRegistration.cs" />
     <None Include="Metrics\MetricsBucket.cs" />
     <None Include="Metrics\ToggleCount.cs" />
-    <None Include="Internal\ToggleCollectionInstance.cs" />
     <None Include="Internal\ToggleCollection.cs" />
     <None Include="Strategies\ApplicationHostnameStrategy.cs" />
     <None Include="Strategies\DefaultStrategy.cs" />

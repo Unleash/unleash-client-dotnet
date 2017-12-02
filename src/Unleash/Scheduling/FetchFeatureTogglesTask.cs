@@ -15,28 +15,26 @@ namespace Unleash.Scheduling
 
         private readonly IFileSystem fileSystem;
         private readonly IUnleashApiClient apiClient;
-        private readonly ToggleCollectionInstance toggleCollectionInstance;
         private readonly IJsonSerializer jsonSerializer;
+        private readonly ToggleCollectionSynchronization toggleCollection;
 
-        // In-memory representation of the etag of a given request.
-        internal string Etag { get; private set; }
+        // In-memory reference of toggles/etags
+        internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
             IUnleashApiClient apiClient,
-            ToggleCollectionInstance toggleCollectionInstance, 
+            ToggleCollectionSynchronization toggleCollection, 
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem, 
             string toggleFile, 
             string etagFile)
         {
             this.apiClient = apiClient;
-            this.toggleCollectionInstance = toggleCollectionInstance;
+            this.toggleCollection = toggleCollection;
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
-
-            Etag = fileSystem.ReadAllText(this.etagFile);
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -46,11 +44,11 @@ namespace Unleash.Scheduling
             if (result.Etag == Etag)
                 return;
 
-            toggleCollectionInstance.Update(result.ToggleCollection);
+            toggleCollection.Instance = result.ToggleCollection;
 
-            using (var fileStream = File.Open(toggleFile, FileMode.Create))
+            using (var fs = fileSystem.FileOpenCreate(toggleFile))
             {
-                jsonSerializer.Serialize(fileStream, result.ToggleCollection);
+                jsonSerializer.Serialize(fs, result.ToggleCollection);
             }
 
             Etag = result.Etag;

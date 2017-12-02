@@ -15,6 +15,11 @@ namespace Unleash.Tests.Mock
             return new MemoryStream();
         }
 
+        public Stream FileOpenCreate(string path)
+        {
+            return new MemoryStream();
+        }
+
         public void WriteAllText(string path, string content)
         {
         }

@@ -77,6 +77,7 @@
     <Compile Include="Mock\MockFileSystem.cs" />
     <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
     <Compile Include="Scheduling\TimerTaskRunnerTests.cs" />
+    <Compile Include="Synchronization\SynchronizationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
