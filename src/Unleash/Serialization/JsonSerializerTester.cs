@@ -1,63 +1,114 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Unleash.Internal;
 
 namespace Unleash.Serialization
 {
     /// <summary>
-    /// Helper class for verifying that custom implemented serializers work as expected.
+    /// Helper class for verifying that custom implemented json serializers work as expected.
     /// </summary>
     public static class JsonSerializerTester
     {
         private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
         {
-            new FeatureToggle("one", true, new List<ActivationStrategy>()
+            new FeatureToggle("Feature1", true, new List<ActivationStrategy>()
             {
-                new ActivationStrategy("userByName", new Dictionary<string, string>(){
-                    {"Demo", "Demo" }
+                new ActivationStrategy("remoteAddress", new Dictionary<string, string>()
+                {
+                    {"IPs", "127.0.0.1"}
                 })
             }),
-            new FeatureToggle("two", false, new List<ActivationStrategy>()
+            new FeatureToggle("feature2", false, new List<ActivationStrategy>()
             {
-                new ActivationStrategy("userByName2", new Dictionary<string, string>()
+                new ActivationStrategy("userWithId", new Dictionary<string, string>()
                 {
-                    {"demo", "demo" }
+                    {"userIds", "james"}
                 })
             })
         });
 
         public static void Assert(IJsonSerializer serializer)
         {
-            var memoryStream = new MemoryStream();
-            serializer.Serialize(memoryStream, Toggles);
-            var json = memoryStream.ConvertToString();
+            var sb = new StringBuilder();
 
-
-            ShouldContain(json, "\"name\":\"one\"");
-
-            ShouldContain(json, "\"Demo\":\"Demo\"");
-            ShouldContain(json, "\"demo\":\"demo\"");
-
-            ToggleCollection toggleCollection;
-            using (var jsonStream = json.ConvertToStream())
+            string json;
+            using (var memoryStream = new MemoryStream())
             {
-                toggleCollection = serializer.Deserialize<ToggleCollection>(jsonStream);
+                serializer.Serialize(memoryStream, Toggles);
+                json = memoryStream.ConvertToString();
             }
 
-            ShouldBeEqual(Toggles, toggleCollection);
-        }
+            var shouldContainTokens = new List<string>
+            {
+                "Feature1",
+                "true",
+                "remoteAddress",
+                "IPs",
+                "127.0.0.1",
 
-        private static void ShouldBeEqual(ToggleCollection collection1, ToggleCollection collection2)
-        {
-            if (collection1.Features.Count != collection2.Features.Count)
-                throw new UnleashException("Number of elements are different.");
-        }
+                "feature2",
+                "false",
+                "userWithId",
+                "userIds",
+                "james",
+            };
 
-        private static void ShouldContain(string json, string fragment)
-        {
-            var valid = json.Contains(fragment);
-            if(!valid)
-                throw new UnleashException("Json not properly formatted.");
+            foreach (var token in shouldContainTokens)
+            {
+                if (json.IndexOf(token, StringComparison.InvariantCulture) < 0)
+                {
+                    sb.AppendLine($"Error: Could not locate element: '{token}'");
+                }
+            }
+
+            if (sb.Length > 0)
+                throw new UnleashException($"Serialization errors occurred:{Environment.NewLine}{sb}");
+
+
+            // Deserialization
+            using (var jsonStream = json.ConvertToStream())
+            {
+                var toggleCollection = serializer.Deserialize<ToggleCollection>(jsonStream);
+
+                string errorMessage;
+                using (var ms = new MemoryStream())
+                {
+                    serializer.Serialize(ms, toggleCollection);
+                    var actual = ms.ConvertToString();
+                    errorMessage = $"Expected: {json}. Actual: {actual}";
+
+                    if (!json.Equals(actual))
+                        throw new UnleashException(errorMessage);
+                }
+
+                if (toggleCollection.Features.Count != 2)
+                    throw new UnleashException($"Different # of features: {errorMessage}");
+
+                var feature1 = toggleCollection.Features.First();
+
+                if (feature1.Name != "Feature1")
+                    throw new UnleashException($"Wrong Feature1 name: {errorMessage}");
+
+                if (feature1.Strategies.Count != 1)
+                    throw new UnleashException($"Wrong stragegies count: {errorMessage}");
+
+                if (feature1.Strategies[0].Name != "remoteAddress")
+                    throw new UnleashException($"Wrong expected strategy name (remoteAddress): {errorMessage}");
+
+
+                if (feature1.Strategies[0].Parameters.Count != 1)
+                    throw new UnleashException($"Wrong expected strategy parameters count (1): {errorMessage}");
+
+                var keyValuePair = feature1.Strategies[0].Parameters.First();
+                if (keyValuePair.Key != "IPs")
+                    throw new UnleashException($"Wrong expected strategy parameters key (IPs): {errorMessage}");
+
+                if (keyValuePair.Value != "127.0.0.1")
+                    throw new UnleashException($"Wrong expected strategy parameters value (127.0.0.1): {errorMessage}");
+            }
         }
-    }
+   }
 }
