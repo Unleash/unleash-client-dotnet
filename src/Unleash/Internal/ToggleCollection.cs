@@ -5,7 +5,7 @@ namespace Unleash.Internal
     /// <summary>
     /// Provides synchronization control that supports multiple readers and single writer over a ToggleCollection.
     /// </summary>
-    internal sealed class ToggleCollectionSynchronization : SynchronizationContainer<ToggleCollection>
+    internal sealed class ThreadSafeToggleCollection : ReaderWriterLockSlimOf<ToggleCollection>
     {
     }
 

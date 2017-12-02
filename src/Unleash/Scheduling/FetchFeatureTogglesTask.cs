@@ -16,14 +16,14 @@ namespace Unleash.Scheduling
         private readonly IFileSystem fileSystem;
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
-        private readonly ToggleCollectionSynchronization toggleCollection;
+        private readonly ThreadSafeToggleCollection toggleCollection;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
             IUnleashApiClient apiClient,
-            ToggleCollectionSynchronization toggleCollection, 
+            ThreadSafeToggleCollection toggleCollection, 
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem, 
             string toggleFile, 

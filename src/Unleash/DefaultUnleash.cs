@@ -1,10 +1,9 @@
-using Unleash.Internal;
-
 namespace Unleash
 {
     using Logging;
     using Strategies;
     using System.Collections.Generic;
+    using Internal;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash

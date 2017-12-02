@@ -3,11 +3,19 @@ using System.Threading;
 
 namespace Unleash.Internal
 {
-    internal class SynchronizationContainer<T> : IDisposable
+    interface IObjectLock<T> : IDisposable
+    {
+        /// <summary>
+        /// Gets or sets the instance of type T in a thread safe manner
+        /// </summary>
+        T Instance { get; set; }
+    }
+
+    internal class ReaderWriterLockSlimOf<T> : IObjectLock<T>
     {
         private readonly ReaderWriterLockSlim @lock;
 
-        public SynchronizationContainer(LockRecursionPolicy recursionPolicy = LockRecursionPolicy.NoRecursion)
+        public ReaderWriterLockSlimOf(LockRecursionPolicy recursionPolicy = LockRecursionPolicy.NoRecursion)
         {
             @lock = new ReaderWriterLockSlim(recursionPolicy);
         }
@@ -18,9 +26,9 @@ namespace Unleash.Internal
             get
             {
                 // Read
+                @lock.EnterReadLock();
                 try
                 {
-                    @lock.EnterReadLock();
                     return instance;
                 }
                 finally
@@ -31,9 +39,9 @@ namespace Unleash.Internal
             set
             {
                 // Write
+                @lock.EnterWriteLock();
                 try
                 {
-                    @lock.EnterWriteLock();
                     instance = value;
                 }
                 finally

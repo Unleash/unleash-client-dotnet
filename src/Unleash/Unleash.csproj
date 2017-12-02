@@ -56,7 +56,6 @@
     <None Include="UnleashContext.cs" />
     <None Include="DefaultUnleashContextProvider.cs" />
     <None Include="UnleashException.cs" />
-    <None Include="UnleashServices.cs" />
   </ItemGroup>
 
   <ItemGroup>

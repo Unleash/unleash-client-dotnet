@@ -12,7 +12,7 @@ namespace Unleash.Tests.Synchronization
         [Test]
         public void ShouldNotThrowLockingException()
         {
-            var instance = new SynchronizationContainer<object>();
+            var instance = new ReaderWriterLockSlimOf<object>();
 
             var options = new ParallelOptions
             {

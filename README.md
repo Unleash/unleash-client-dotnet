@@ -1,6 +1,7 @@
 # Unleash FeatureToggle Client for .Net
 
 [![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/stiano/unleash-client-dotnet)
+[![NuGet](https://img.shields.io/nuget/v/Unleash.FeatureToggle.Client.svg)](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/)
 
 ## Introduction
 
@@ -15,6 +16,20 @@ Take a look at the demonstration site at [unleash.herokuapp.com](http://unleash.
 Read more of the main project at [github.com/unleash/unleash](https://github.com/Unleash/unleash)
 
 ![dashboard](https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/resources/dashboard.png "Unleash Server Dashboard")
+
+## Features
+Supported Frameworks
+* NET Standard 2.0
+* .Net 4.7
+* .Net 4.6.1
+* .Net 4.6
+* .Net 4.5.1
+* .Net 4.5
+
+No direct dependencies
+
+Extendable architecture
+- Inject your own implementations of key components (Json serializer, background task scheduler, http client factory)
 
 ## Getting started
 Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/).
@@ -33,7 +48,7 @@ var settings = new UnleashSettings()
     UnleashApi = new Uri("http://unleash.herokuapp.com/"),
 };
 
-IUnleash unleash = new DefaultUnleash(settings);
+var unleash = new DefaultUnleash(settings);
 ```
 
 When your application shuts down, remember to dispose the unleash instance.
@@ -116,7 +131,7 @@ protected void Application_BeginRequest(object sender, EventArgs e)
         RemoteAddress = HttpContext.Current.Request.UserHostAddress,
         Properties = new Dictionary<string, string>()
         {
-            {"UserRoles", "A, B, C"}
+            {"UserRoles", "A,B,C"}
         }
     };
 }
