@@ -18,7 +18,10 @@ namespace Unleash.Communication
         private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
 
-        public UnleashApiClient(HttpClient httpClient, IJsonSerializer jsonSerializer, UnleashApiClientRequestHeaders clientRequestHeaders)
+        public UnleashApiClient(
+            HttpClient httpClient, 
+            IJsonSerializer jsonSerializer, 
+            UnleashApiClientRequestHeaders clientRequestHeaders)
         {
             this.httpClient = httpClient;
             this.jsonSerializer = jsonSerializer;
@@ -77,26 +80,38 @@ namespace Unleash.Communication
         {
             const string requestUri = "api/client/register";
 
-            return await Post(requestUri, registration, cancellationToken).ConfigureAwait(false);
+            var memoryStream = new MemoryStream();
+            jsonSerializer.Serialize(memoryStream, registration);
+
+            return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<bool> SendMetrics(ClientMetrics metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
         {
             const string requestUri = "api/client/metrics";
 
-            return await Post(requestUri, metrics, cancellationToken).ConfigureAwait(false);
+            var memoryStream = new MemoryStream();
+
+            using (metrics.StopCollectingMetrics(out var bucket))
+            {
+                jsonSerializer.Serialize(memoryStream, new ClientMetrics
+                {
+                    AppName = clientRequestHeaders.AppName,
+                    InstanceId = clientRequestHeaders.InstanceTag,
+                    Bucket = bucket
+                });
+            }
+
+            return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<bool> Post(string resourceUri, object requestContent, CancellationToken cancellationToken)
+        private async Task<bool> Post(string resourceUri, Stream stream, CancellationToken cancellationToken)
         {
             const int bufferSize = 1024 * 4;
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, resourceUri))
             {
-                var memoryStream = new MemoryStream();
-                jsonSerializer.Serialize(memoryStream, requestContent);
-
-                request.Content = new StreamContent(memoryStream, bufferSize);
+                request.Content = new StreamContent(stream, bufferSize);
                 request.Content.Headers.AddContentTypeJson();
 
                 SetRequestHeaders(request, clientRequestHeaders);
@@ -120,7 +135,7 @@ namespace Unleash.Communication
             const string instanceIdHeader = "UNLEASH-INSTANCEID";
 
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
-            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceId);
+            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
 
             if (headers.CustomHttpHeaders == null)
                 return;

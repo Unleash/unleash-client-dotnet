@@ -11,24 +11,17 @@ namespace Unleash.Tests.Communication
         [Test]
         public async Task SendMetrics_Success()
         {
-            var bucket = new MetricsBucket();
-            bucket.RegisterCount("Demo123", true);
-            bucket.RegisterCount("Demo123", false);
-            bucket.End();
-
-            var clientMetrics = new ClientMetrics
-            {
-                AppName = GetType().Name,
-                InstanceId = "instance1",
-                Bucket = bucket
-            };
-
-            var result = await api.SendMetrics(clientMetrics, CancellationToken.None);
+            var metricsBucket = new ThreadSafeMetricsBucket();
+            metricsBucket.RegisterCount("Demo123", true);
+            metricsBucket.RegisterCount("Demo123", false);
+            
+            var result = await api.SendMetrics(metricsBucket, CancellationToken.None);
             result.Should().Be(true);
 
             // Check result:
             // http://unleash.herokuapp.com/#/features/view/Demo123
-            // http://unleash.herokuapp.com/api/admin/metrics/feature-toggles
+            // http://unleash.herokuapp.com/api/admin/metrics/feature-toggles    
         }
+        
     }
 }

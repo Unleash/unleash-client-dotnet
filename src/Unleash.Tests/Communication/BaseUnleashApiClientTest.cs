@@ -8,13 +8,6 @@ namespace Unleash.Tests.Communication
 {
     public abstract class BaseUnleashApiClientTest
     {
-        private static readonly Lazy<IUnleashApiClient> ApiClient =
-            new Lazy<IUnleashApiClient>(
-                CreateApiClient,
-                LazyThreadSafetyMode.PublicationOnly);
-
-        private static IUnleashApiClient Client => ApiClient.Value;
-
         private static IUnleashApiClient CreateApiClient()
         {
             var apiUri = new Uri("http://unleash.herokuapp.com/");
@@ -27,7 +20,7 @@ namespace Unleash.Tests.Communication
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
-                InstanceId = "instance1",
+                InstanceTag = "instance1",
                 CustomHttpHeaders = null
             };
 
@@ -36,12 +29,16 @@ namespace Unleash.Tests.Communication
             return client;
         }
 
-        internal IUnleashApiClient api;
+        internal IUnleashApiClient api
+        {
+            get => TestContext.CurrentContext.Test.Properties.Get("api") as IUnleashApiClient;
+            set => TestContext.CurrentContext.Test.Properties.Set("api", value);
+        }
 
         [SetUp]
         public void SetupTest()
         {
-            api = Client;
+            api = CreateApiClient();
         }
     }
 }

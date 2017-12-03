@@ -105,7 +105,6 @@ namespace Unleash
         /// </summary>
         internal IFileSystem FileSystem { get; set; } 
 
-
         private static string GetSdkVersion()
         {
 
@@ -115,6 +114,9 @@ namespace Unleash
             return $"v{version}";
         }
 
+        /// <summary>
+        /// Returns info about the unleash setup.
+        /// </summary>
         public override string ToString()
         {
             var sb = new StringBuilder("## Unleash settings ##");

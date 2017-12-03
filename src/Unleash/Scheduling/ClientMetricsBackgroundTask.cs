@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
@@ -13,9 +14,12 @@ namespace Unleash.Scheduling
 
         private readonly IUnleashApiClient apiClient;
         private readonly UnleashSettings settings;
-        private readonly MetricsBucket metricsBucket;
+        private readonly ThreadSafeMetricsBucket metricsBucket;
 
-        public ClientMetricsBackgroundTask(IUnleashApiClient apiClient, UnleashSettings settings, MetricsBucket metricsBucket)
+        public ClientMetricsBackgroundTask(
+            IUnleashApiClient apiClient, 
+            UnleashSettings settings,
+            ThreadSafeMetricsBucket metricsBucket)
         {
             this.apiClient = apiClient;
             this.settings = settings;
@@ -27,34 +31,12 @@ namespace Unleash.Scheduling
             if (settings.SendMetricsInterval == null)
                 return;
 
-            if (metricsBucket.Toggles.Count == 0)
-            {
-                metricsBucket.Clear();
-                return;
-            }
+            var result = await apiClient.SendMetrics(metricsBucket, cancellationToken).ConfigureAwait(false);
 
-            var metrics = new ClientMetrics
+            // Ignore return value    
+            if (!result)
             {
-                AppName = settings.AppName,
-                InstanceId = settings.InstanceTag,
-                Bucket = metricsBucket
-            };
-
-            try
-            {
-                metricsBucket.End();
-
-                var result = await apiClient.SendMetrics(metrics, cancellationToken).ConfigureAwait(false);
-
-                // Ignore return value    
-                if (!result)
-                {
-                    // Logged elsewhere.
-                }
-            }
-            finally
-            {
-                metricsBucket.Clear();
+                // Logged elsewhere.
             }
         }
 

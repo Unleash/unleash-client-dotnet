@@ -20,7 +20,7 @@ namespace Unleash
         internal IUnleashContextProvider ContextProvider { get; }
         internal ThreadSafeToggleCollection ToggleCollection { get; }
         internal bool IsMetricsDisabled { get; }
-        internal MetricsBucket MetricsBucket { get; }
+        internal ThreadSafeMetricsBucket MetricsBucket { get; }
 
         public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
         {
@@ -43,7 +43,7 @@ namespace Unleash
                 Instance = cachedFilesResult.InitialToggleCollection ?? new ToggleCollection()
             };
 
-            MetricsBucket = new MetricsBucket();
+            MetricsBucket = new ThreadSafeMetricsBucket();
 
             IUnleashApiClient apiClient;
             if (settings.UnleashApiClient == null)
@@ -52,7 +52,7 @@ namespace Unleash
                 apiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
                 {
                     AppName = settings.AppName,
-                    InstanceId = settings.InstanceTag,
+                    InstanceTag = settings.InstanceTag,
                     CustomHttpHeaders = settings.CustomHttpHeaders
                 });
             }
@@ -90,8 +90,7 @@ namespace Unleash
             {
                 var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
                     apiClient, 
-                    settings, 
-                    MetricsBucket, 
+                    settings,
                     strategyMap.Select(pair => pair.Key).ToList())
                 {
                     Interval = TimeSpan.Zero,

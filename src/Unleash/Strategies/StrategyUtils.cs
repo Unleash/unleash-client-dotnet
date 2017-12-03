@@ -4,68 +4,45 @@ namespace Unleash.Strategies
 
     internal class StrategyUtils
     {
-        private const int OneHundred = 100;
-
-        public static bool IsNotEmpty(string cs)
-        {
-            return !IsEmpty(cs);
-        }
-
-        public static bool IsEmpty(string cs)
-        {
-            return string.IsNullOrEmpty(cs);
-        }
-
-        public static bool IsNumeric(string cs)
-        {
-            if (IsEmpty(cs))
-                return false;
-
-            var sz = cs.Length;
-
-            for (int i = 0; i < sz; i++)
-            {
-                if (char.IsDigit(cs[i]) == false)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /**
-         * Takes to string inputs concat them, produce a hashCode and return a normalized value between 0 and 100;
-         *
-         * @param identifier
-         * @param groupId
-         * @return
-         */
+        /// <summary>
+        /// Takes to string inputs concat them, produce a hashCode and return a normalized value between 0 and 100;
+        /// </summary>
         public static int GetNormalizedNumber(string identifier, string groupId)
         {
+            const int one = 1;
+            const int oneHundred = 100;
             const string separator = ":";
-            var hashCode = Math.Abs(string.Concat(groupId, separator, identifier).GetHashCode());
-            return hashCode % OneHundred + 1;
+
+            var hashCode = Math.Abs(string.Concat(groupId, separator, identifier)
+                .GetHashCode());
+
+            return hashCode % oneHundred + one;
         }
 
-        /**
-         * Takes a numeric string value and converts it to a int between 0 and 100.
-         *
-         * returns 0 if the string is not numeric.
-         *
-         * @param percentage - A numeric string value
-         * @return a int between 0 and 100
-         */
+        /// <summary>
+        /// Takes a numeric string value and converts it to a int between 0 and 100.
+        /// 
+        /// returns 0 if the string is not numeric
+        /// </summary>
+        /// <returns>Return an int between 0 and 100</returns>
+        /// <param name="percentage">A numeric string value</param>
         public static int GetPercentage(string percentage)
         {
-            if (IsNotEmpty(percentage) && IsNumeric(percentage))
+            var p = int.TryParse(percentage, out var result) 
+                ? result 
+                : 0;
+
+            // Ensure between 0 and 100.
+            if (p > 100)
             {
-                int p = int.Parse(percentage);
-                return p;
+                return 100;
             }
-            else
+            if (p < 0)
             {
                 return 0;
             }
+
+            return p;
         }
     }
 }

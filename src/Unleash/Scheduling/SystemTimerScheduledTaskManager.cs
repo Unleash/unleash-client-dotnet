@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Unleash.Logging;
 using Unleash.Internal;
 
@@ -38,13 +39,21 @@ namespace Unleash.Scheduling
 
                         await task.ExecuteAsync(cancellationToken);
                     }
+                    catch (TaskCanceledException taskCanceledException)
+                    {
+                        Logger.Error($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                    }
                     catch (Exception ex)
                     {
                         Logger.Error($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                     }
                     finally
                     {
-                        if (!cancellationToken.IsCancellationRequested)
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            // Do not schedule the next task
+                        }
+                        else
                         {
                             if (task.Interval == TimeSpanExecuteImmediately)
                             {

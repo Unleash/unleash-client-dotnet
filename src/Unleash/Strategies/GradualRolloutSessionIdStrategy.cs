@@ -27,6 +27,9 @@ namespace Unleash.Strategies
             if (sessionId == null || sessionId == string.Empty)
                 return false;
 
+            if (!(parameters.ContainsKey(Percentage) && parameters.ContainsKey(GroupId)))
+                return false;
+
             var percentageString = parameters[Percentage];
             var percentage = StrategyUtils.GetPercentage(percentageString);
             var groupId = parameters[GroupId] ?? string.Empty;

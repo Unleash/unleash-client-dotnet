@@ -1,31 +1,34 @@
+using System.Threading;
+
 namespace Unleash.Metrics
 {
     internal class ToggleCount
     {
-        public ToggleCount()
-        {
-            Clear();
-        }
+        private long yes;
+        private long no;
+
+        public long Yes => yes;
+        public long No => no;
 
         public void Register(bool active)
         {
             if (active)
             {
-                Yes++;
+                Interlocked.Increment(ref yes);
             }
             else
             {
-                No++;
+                Interlocked.Increment(ref no);
             }
         }
 
-        public void Clear()
+        /// <summary>
+        /// Resets the counters to 0
+        /// </summary>
+        public void Reset()
         {
-            Yes = 0;
-            No = 0;
+            yes = 0;
+            no = 0;
         }
-
-        public long Yes { get; private set; }
-        public long No { get; private set; }
     }
 }

@@ -41,7 +41,7 @@ namespace Unleash.Tests.Mock
             return Task.FromResult(true);
         }
 
-        public Task<bool> SendMetrics(ClientMetrics metrics, CancellationToken cancellationToken)
+        public Task<bool> SendMetrics(ThreadSafeMetricsBucket metricsBucket, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }

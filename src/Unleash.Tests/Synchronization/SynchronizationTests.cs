@@ -12,7 +12,7 @@ namespace Unleash.Tests.Synchronization
         [Test]
         public void ShouldNotThrowLockingException()
         {
-            var instance = new ReaderWriterLockSlimOf<object>();
+            var x = new ReaderWriterLockSlimOf<object>();
 
             var options = new ParallelOptions
             {
@@ -21,29 +21,29 @@ namespace Unleash.Tests.Synchronization
 
             var result = Parallel.For(0, 1000 * 1000, options, state =>
             {
-                instance.Instance = state;
-                var i1 = instance.Instance;
-                var i2 = instance.Instance;
-                var i3 = instance.Instance;
-                var i4 = instance.Instance;
-                var i5 = instance.Instance;
+                x.Instance = state;
+                var i1 = x.Instance;
+                var i2 = x.Instance;
+                var i3 = x.Instance;
+                var i4 = x.Instance;
+                var i5 = x.Instance;
 
-                var numReaders = instance.CurrentReadCount;
+                var numReaders = x.CurrentReadCount;
                 if (numReaders > 1)
                     Console.WriteLine($"Num Readers: {numReaders}");
 
-                instance.Instance = state;
+                x.Instance = state;
 
-                var i6 = instance.Instance;
-                var i7 = instance.Instance;
-                var i8 = instance.Instance;
-                var i9 = instance.Instance;
-                var i10 = instance.Instance;
-                instance.Instance = state;
+                var i6 = x.Instance;
+                var i7 = x.Instance;
+                var i8 = x.Instance;
+                var i9 = x.Instance;
+                var i10 = x.Instance;
+                x.Instance = state;
 
             });
 
-            Console.WriteLine(instance.Instance);
+            Console.WriteLine(x.Instance);
             result.IsCompleted.Should().BeTrue();
         }
     }

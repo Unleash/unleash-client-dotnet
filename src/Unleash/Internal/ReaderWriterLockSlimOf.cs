@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Unleash.Internal
 {
-    interface IObjectLock<T> : IDisposable
+    internal interface IObjectLock<T> : IDisposable
     {
         /// <summary>
         /// Gets or sets the instance of type T in a thread safe manner
@@ -11,6 +11,9 @@ namespace Unleash.Internal
         T Instance { get; set; }
     }
 
+    /// <summary>
+    /// Provides synchronization control that supports multiple readers and single writer over a given object T.
+    /// </summary>
     internal class ReaderWriterLockSlimOf<T> : IObjectLock<T>
     {
         private readonly ReaderWriterLockSlim @lock;

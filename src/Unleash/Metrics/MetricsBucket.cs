@@ -1,50 +1,97 @@
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Unleash.Metrics
 {
-    internal class MetricsBucket
+    /// <inheritdoc />
+    /// <summary>
+    /// Provides synchronization that supports multiple registration counters and single 'writer' (transfer to server)
+    /// 
+    /// While in write mode, no registrations will occur. i.e: no lock for rest of system.
+    /// </summary>
+    internal class ThreadSafeMetricsBucket : IDisposable
     {
-        public ConcurrentDictionary<string, ToggleCount> Toggles { get; }
+        private long missedRegistrations;
+        public long MissedRegistrations => missedRegistrations;
 
-        public DateTimeOffset Start { get; private set; }
-        public DateTimeOffset Stop { get; private set; }
+        private readonly MetricsBucket metricsBucket;
 
-        public MetricsBucket()
+        private readonly ReaderWriterLockSlim @lock = 
+            new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+
+        public ThreadSafeMetricsBucket(MetricsBucket metricsBucket = null)
         {
-            Start = DateTimeOffset.UtcNow;
-            Toggles = new ConcurrentDictionary<string, ToggleCount>();
+            this.metricsBucket = metricsBucket ?? new MetricsBucket();
+
+            this.metricsBucket.Toggles = new ConcurrentDictionary<string, ToggleCount>();
+            this.metricsBucket.Start = DateTimeOffset.UtcNow;
         }
 
+        /// <summary>
+        /// Registers a new toggle count given a read-lock can be aquired.
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle.</param>
+        /// <param name="active">True or False</param>
         public void RegisterCount(string toggleName, bool active)
         {
-            Toggles.AddOrUpdate(
-                key: toggleName, 
-                addValueFactory: name =>
+            if (@lock.TryEnterReadLock(2))
+            {
+                try
                 {
-                    var counter = new ToggleCount();
-                    counter.Register(active);
-                    return counter;
-                }, 
-                updateValueFactory: (name, toggleCount) =>
+                    var toggle = metricsBucket.Toggles.GetOrAdd(toggleName, x => new ToggleCount());
+                    toggle.Register(active);
+
+                }
+                finally
                 {
-                    toggleCount.Register(active);
-                    return toggleCount;
-                });
+                    @lock.ExitReadLock();
+                }
+            }
+            else
+            {
+                // Ignore
+                Interlocked.Increment(ref missedRegistrations);
+            }
         }
 
-        public void End()
+        /// <summary>
+        /// Use withing using-statement. New registrations will not be added.
+        /// </summary>
+        public IDisposable StopCollectingMetrics(out MetricsBucket bucket)
         {
-            Stop = DateTimeOffset.UtcNow;
+            @lock.EnterWriteLock();
+            
+            bucket = metricsBucket;
+            bucket.Stop = DateTimeOffset.UtcNow;
+
+            return this;
         }
 
-        public void Clear()
+        /// <inheritdoc />
+        /// <summary>
+        /// Resets the counters to 0.
+        /// </summary>
+        void IDisposable.Dispose()
         {
-            Start = DateTimeOffset.UtcNow;
-            Stop = DateTimeOffset.MinValue;
-
-            foreach (var item in Toggles)
-                item.Value.Clear();
+            ResetCounters();
+            @lock.ExitWriteLock();
         }
+
+        private void ResetCounters()
+        {
+            metricsBucket.Start = DateTimeOffset.UtcNow;
+
+            foreach (var item in metricsBucket.Toggles)
+                item.Value.Reset();
+        }
+    }
+
+    internal class MetricsBucket
+    {
+        public ConcurrentDictionary<string, ToggleCount> Toggles { get; set; }
+
+        public DateTimeOffset Start { get; set; }
+        public DateTimeOffset Stop { get; set; }
     }
 }

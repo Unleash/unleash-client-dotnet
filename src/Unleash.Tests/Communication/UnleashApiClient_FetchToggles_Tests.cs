@@ -3,12 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
-using Unleash.Communication;
-using Unleash.Serialization;
-using Unleash.Tests.Serialization;
 
 namespace Unleash.Tests.Communication
 {

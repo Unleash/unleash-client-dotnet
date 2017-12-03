@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Unleash.Internal
 {
+    /// <inheritdoc />
     /// <summary>
     /// Provides synchronization control that supports multiple readers and single writer over a ToggleCollection.
     /// </summary>

@@ -14,14 +14,15 @@ namespace Unleash.Scheduling
 
         private readonly IUnleashApiClient apiClient;
         private readonly UnleashSettings settings;
-        private readonly MetricsBucket metricsBucket;
         private readonly List<string> strategies;
 
-        public ClientRegistrationBackgroundTask(IUnleashApiClient apiClient, UnleashSettings settings, MetricsBucket metricsBucket, List<string> strategies)
+        public ClientRegistrationBackgroundTask(
+            IUnleashApiClient apiClient, 
+            UnleashSettings settings, 
+            List<string> strategies)
         {
             this.apiClient = apiClient;
             this.settings = settings;
-            this.metricsBucket = metricsBucket;
             this.strategies = strategies;
         }
 
@@ -36,7 +37,7 @@ namespace Unleash.Scheduling
                 InstanceId = settings.InstanceTag,
                 Interval = (long)settings.SendMetricsInterval.Value.TotalMilliseconds,
                 SdkVersion = settings.SdkVersion,
-                Started = metricsBucket.Start,
+                Started = DateTimeOffset.UtcNow,
                 Strategies = strategies
             };
 
