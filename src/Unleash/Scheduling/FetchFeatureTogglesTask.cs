@@ -41,6 +41,12 @@ namespace Unleash.Scheduling
         {
             var result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
 
+            if (!result.HasChanged)
+                return;
+
+            if (string.IsNullOrEmpty(result.Etag))
+                return;
+
             if (result.Etag == Etag)
                 return;
 

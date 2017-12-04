@@ -48,7 +48,8 @@ namespace Unleash.Communication
 
                         return new FetchTogglesResult
                         {
-                            HasChanged = false
+                            HasChanged = false,
+                            Etag = null,
                         };
                     }
 
@@ -66,6 +67,15 @@ namespace Unleash.Communication
                     var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                     var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
 
+                    if (toggleCollection == null)
+                    {
+                        return new FetchTogglesResult
+                        {
+                            HasChanged = false
+                        };
+                    }
+
+                    // Success
                     return new FetchTogglesResult
                     {
                         HasChanged = true,
