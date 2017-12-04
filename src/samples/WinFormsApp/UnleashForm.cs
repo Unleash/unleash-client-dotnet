@@ -52,5 +52,10 @@ namespace WinFormsApp
         {
             Process.Start(Settings.GetFeatureToggleETagFilePath());
         }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            var enabled = Unleash.IsEnabled(ToggleNameTextBox.Text);
+        }
     }
 }

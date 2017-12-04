@@ -27,7 +27,8 @@ namespace WinFormsApp
                 //UnleashApi = new Uri("http://localhost:4242/"),
                 AppName = "dotnet-forms-test",
                 InstanceTag = "instance 1",
-                SendMetricsInterval = TimeSpan.FromSeconds(10),
+                SendMetricsInterval = TimeSpan.FromSeconds(5),
+                FetchTogglesInterval = TimeSpan.FromSeconds(10),
                 UnleashContextProvider = new WinFormsContextProvider(form),
                 //JsonSerializer = new JsonNetSerializer()
             };
@@ -60,6 +61,9 @@ namespace WinFormsApp
             SessionId = "session1",
             RemoteAddress = "remoteAddress",
             Properties = new Dictionary<string, string>()
+            {
+                {"machineName", Environment.MachineName } // E.g.
+            }
         };
     }
 }
