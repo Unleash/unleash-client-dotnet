@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Unleash;
+using Unleash.Serialization;
 
 namespace WinFormsApp
 {
@@ -21,6 +26,8 @@ namespace WinFormsApp
 
             var form = new UnleashForm();
 
+            JsonSerializerTester.Assert(new NewtonsoftJson7Serializer());
+
             settings = new UnleashSettings
             {
                 UnleashApi = new Uri("http://unleash.herokuapp.com/"),
@@ -30,7 +37,7 @@ namespace WinFormsApp
                 SendMetricsInterval = TimeSpan.FromSeconds(5),
                 FetchTogglesInterval = TimeSpan.FromSeconds(10),
                 UnleashContextProvider = new WinFormsContextProvider(form),
-                //JsonSerializer = new JsonNetSerializer()
+                JsonSerializer = new NewtonsoftJson7Serializer()
             };
 
             unleash = new DefaultUnleash(settings);
@@ -65,5 +72,51 @@ namespace WinFormsApp
                 {"machineName", Environment.MachineName } // E.g.
             }
         };
+    }
+
+    public class NewtonsoftJson7Serializer : IJsonSerializer
+    {
+        private readonly Encoding utf8 = Encoding.UTF8;
+
+        private static readonly JsonSerializer Serializer = new JsonSerializer()
+        {
+            ContractResolver = new CamelCaseExceptDictionaryKeysResolver()
+        };
+
+        public T Deserialize<T>(Stream stream)
+        {
+            using (var streamReader = new StreamReader(stream, utf8))
+            using (var textReader = new JsonTextReader(streamReader))
+            {
+                return Serializer.Deserialize<T>(textReader);
+            }
+        }
+
+        public void Serialize<T>(Stream stream, T instance)
+        {
+            using (var writer = new StreamWriter(stream, utf8, 1024 * 4, leaveOpen: true))
+            using (var jsonWriter = new JsonTextWriter(writer))
+            {
+                Serializer.Serialize(jsonWriter, instance);
+
+                jsonWriter.Flush();
+                stream.Position = 0;
+            }
+        }
+
+        class CamelCaseExceptDictionaryKeysResolver : CamelCasePropertyNamesContractResolver
+        {
+            protected override JsonDictionaryContract CreateDictionaryContract(Type objectType)
+            {
+                var contract = base.CreateDictionaryContract(objectType);
+
+                contract.DictionaryKeyResolver = propertyName =>
+                {
+                    return propertyName;
+                };
+
+                return contract;
+            }
+        }
     }
 }
