@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using Unleash;
 
@@ -8,6 +9,7 @@ namespace WinFormsApp
     public partial class UnleashForm : Form
     {
         public IUnleash Unleash { get; set; }
+        public UnleashSettings Settings { get; set; }
 
         public UnleashForm()
         {
@@ -33,6 +35,22 @@ namespace WinFormsApp
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start($"http://unleash.herokuapp.com/#/features/view/{ToggleNameTextBox.Text}");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            File.Delete(Settings.GetFeatureToggleFilePath());
+            File.Delete(Settings.GetFeatureToggleETagFilePath());
+        }
+
+        private void ViewJson_Click(object sender, EventArgs e)
+        {
+            Process.Start(Settings.GetFeatureToggleFilePath());
+        }
+
+        private void ViewEtag_Click(object sender, EventArgs e)
+        {
+            Process.Start(Settings.GetFeatureToggleETagFilePath());
         }
     }
 }

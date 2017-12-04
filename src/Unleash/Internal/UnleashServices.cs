@@ -24,16 +24,15 @@ namespace Unleash
 
         public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
         {
-            // Files
-            var tempFolder = settings.LocalStorageFolder();
-            var backupFile = Path.Combine(tempFolder, PrependFileName(settings, settings.FeatureToggleFilename));
-            var etagBackupFile = Path.Combine(tempFolder, PrependFileName(settings, settings.EtagFilename));
+            var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
+
+            var backupFile = settings.GetFeatureToggleFilePath();
+            var etagBackupFile = settings.GetFeatureToggleETagFilePath();
 
             // Cancellation
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
 
             var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, backupFile, etagBackupFile);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
@@ -112,18 +111,6 @@ namespace Unleash
             }
 
             scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
-        }
-
-        private string PrependFileName(UnleashSettings settings, string filename)
-        {
-            var invalidFileNameChars = Path.GetInvalidFileNameChars();
-
-            var extension = Path.GetExtension(filename);
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-
-            return new string($"{fileNameWithoutExtension}-{settings.AppName}-{settings.InstanceTag}-{settings.SdkVersion}{extension}"
-                .Where(c => !invalidFileNameChars.Contains(c))
-                .ToArray());
         }
 
         public void Dispose()

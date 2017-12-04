@@ -8,6 +8,7 @@ namespace WinFormsApp
     static class Program
     {
         private static IUnleash unleash;
+        private static UnleashSettings settings;
 
         /// <summary>
         /// The main entry point for the application.
@@ -20,7 +21,7 @@ namespace WinFormsApp
 
             var form = new UnleashForm();
 
-            var unleashSettings = new UnleashSettings
+            settings = new UnleashSettings
             {
                 UnleashApi = new Uri("http://unleash.herokuapp.com/"),
                 //UnleashApi = new Uri("http://localhost:4242/"),
@@ -31,8 +32,9 @@ namespace WinFormsApp
                 //JsonSerializer = new JsonNetSerializer()
             };
 
-            unleash = new DefaultUnleash(unleashSettings);
+            unleash = new DefaultUnleash(settings);
             form.Unleash = unleash;
+            form.Settings = settings;
 
             Application.ApplicationExit += (sender, args) =>
             {

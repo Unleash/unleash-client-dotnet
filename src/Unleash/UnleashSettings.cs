@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Unleash.Communication;
@@ -141,6 +142,30 @@ namespace Unleash
             sb.AppendLine($"Context provider: {UnleashContextProvider.GetType().Name}");
 
             return sb.ToString();
+        }
+
+        public string GetFeatureToggleFilePath()
+        {
+            var tempFolder = LocalStorageFolder();
+            return Path.Combine(tempFolder, PrependFileName(FeatureToggleFilename));
+        }
+
+        public string GetFeatureToggleETagFilePath()
+        {
+            var tempFolder = LocalStorageFolder();
+            return Path.Combine(tempFolder, PrependFileName(EtagFilename));
+        }
+
+        private string PrependFileName(string filename)
+        {
+            var invalidFileNameChars = Path.GetInvalidFileNameChars();
+
+            var extension = Path.GetExtension(filename);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+
+            return new string($"{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}"
+                .Where(c => !invalidFileNameChars.Contains(c))
+                .ToArray());
         }
     }
 }
