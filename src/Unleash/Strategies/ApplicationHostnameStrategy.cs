@@ -5,6 +5,7 @@ namespace Unleash.Strategies
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
 
     /// <inheritdoc />
     public class ApplicationHostnameStrategy : IStrategy
@@ -17,7 +18,7 @@ namespace Unleash.Strategies
         /// <inheritdoc />
         public ApplicationHostnameStrategy()
         {
-            hostname = UnleashExtensions.GetLocalIpAddress();
+            hostname = Environment.GetEnvironmentVariable("hostname") ?? Dns.GetHostName();
         }
 
         /// <inheritdoc />
