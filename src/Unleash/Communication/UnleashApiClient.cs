@@ -30,7 +30,7 @@ namespace Unleash.Communication
 
         public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
         {
-            const string resourceUri = "/api/client/features";
+            const string resourceUri = "api/client/features";
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, resourceUri))
             {
