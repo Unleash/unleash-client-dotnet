@@ -130,7 +130,7 @@ namespace Unleash
             sb.AppendLine($"Fetch toggles interval: {FetchTogglesInterval.TotalSeconds} seconds");
             var metricsInterval = SendMetricsInterval.HasValue
                 ? $"{SendMetricsInterval.Value.TotalSeconds} seconds"
-                : "newer";
+                : "never";
             sb.AppendLine($"Send metrics interval: {metricsInterval}");
 
             sb.AppendLine($"Local storage folder: {LocalStorageFolder()}");
