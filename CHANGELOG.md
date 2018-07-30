@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 <!-- and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). -->
 
+## [1.3.3] - 2018-30-07
+### Changed
+- Typo fix (pull request #5)
+
+## [1.3.2] - 2018-21-06
+### Changed
+- Use relative url (pull request #3)
+
 ## [1.3.1] - 2018-04-13
 ### Changed
 - In ApplicationHostnameStrategy, hostname is set as the in other library implementations (hostname environment variable, and if not set; Dns.GetHostName()).
