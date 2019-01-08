@@ -41,11 +41,11 @@ namespace Unleash.Scheduling
                     }
                     catch (TaskCanceledException taskCanceledException)
                     {
-                        Logger.Error($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                        Logger.ErrorException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                        Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                     }
                     finally
                     {
