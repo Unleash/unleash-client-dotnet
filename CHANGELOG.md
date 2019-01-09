@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 <!-- and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). -->
 
+## [1.3.4] - 2019-09-01
+### Changed
+- Log exception on error (pull request #6)
+- Use Microsoft.CSharp from NuGet package when buliding .NET Standard. (pull request #7)
+
 ## [1.3.3] - 2018-30-07
 ### Changed
 - Typo fix (pull request #5)
