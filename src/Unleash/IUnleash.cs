@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Unleash.Internal;
 
 namespace Unleash
 {
@@ -21,5 +23,7 @@ namespace Unleash
         /// <param name="defaultSetting">If a toggle is not found, default fallback setting will be returned. (default: false)</param>
         /// <returns></returns>
         bool IsEnabled(string toggleName, bool defaultSetting);
+
+        ICollection<Variants> GetVariants(string toogleName, string name);
     }
 }

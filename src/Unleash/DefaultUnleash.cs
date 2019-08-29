@@ -4,6 +4,7 @@ namespace Unleash
     using Strategies;
     using System.Collections.Generic;
     using Internal;
+    using System.Linq;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash
@@ -57,7 +58,7 @@ namespace Unleash
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var featureToggle = services.ToggleCollection.Instance.GetToggleByName(toggleName);
+            var featureToggle = GetToggle(toggleName);
 
             bool enabled = false;
             if (featureToggle == null)
@@ -86,6 +87,29 @@ namespace Unleash
 
             RegisterCount(toggleName, enabled);
             return enabled;
+        }
+
+        public ICollection<Variants> GetVariants(string tooggleName, string name)
+        {
+            if (!IsEnabled(tooggleName)) return null;
+
+            var toggle = GetToggle(tooggleName);
+
+            var variants = toggle.Variants
+                .Where(v => v.Name == name)
+                .ToList();
+
+            if (variants.Count == 0) return null;
+
+            return variants;
+        }
+
+        private FeatureToggle GetToggle(string toggleName)
+        {
+            return services
+                .ToggleCollection
+                .Instance
+                .GetToggleByName(toggleName);
         }
 
         private void RegisterCount(string toggleName, bool enabled)
@@ -129,5 +153,6 @@ namespace Unleash
         {
             services?.Dispose(); 
         }
+
     }
 }
