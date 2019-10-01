@@ -88,16 +88,22 @@ namespace Unleash
             RegisterCount(toggleName, enabled);
             return enabled;
         }
-        
-        public IEnumerable<Variant> GetVariants(string toggleName, string variantName)
+
+        public IEnumerable<Variant> GetVariants(string toggleName)
         {
             if (!IsEnabled(toggleName)) return null;
-
+            
             var toggle = GetToggle(toggleName);
+            
+            return toggle?.Variants;
+        }
 
-            var variants = toggle.Variants
-                .Where(v => v.Name == variantName)
-                .ToList();
+        public IEnumerable<Variant> GetVariants(string toggleName, string variantName)
+        {
+            var variants = GetVariants(toggleName)?.ToList();
+            if (variants == null) return null;
+            
+            variants = variants.Where(v => v.Name == variantName).ToList();
 
             if (variants.Count == 0) return null;
 

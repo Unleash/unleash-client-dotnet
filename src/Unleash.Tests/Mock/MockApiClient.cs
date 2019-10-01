@@ -18,8 +18,9 @@ namespace Unleash.Tests.Mock
                 })
             }, new List<Variant>()
             {
-                new Variant("Aa", 50, null),
-                new Variant("Ab", 50, new List<Override>{ new Override("context", new string[] { "a", "b"}) }),
+                new Variant("Aa", 33, null),
+                new Variant("Aa", 33, null),
+                new Variant("Ab", 34, new List<Override>{ new Override("context", new[] { "a", "b"}) }),
             }),
             new FeatureToggle("one-disabled", false, new List<ActivationStrategy>()
             {

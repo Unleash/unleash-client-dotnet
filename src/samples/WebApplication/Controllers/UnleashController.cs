@@ -25,9 +25,16 @@ namespace WebApplication.Controllers
             _logger.LogInformation("Checking status");
             return "ok";
         }
+        
+        [HttpGet("variants/{toggleName}")]
+        public IEnumerable<Variant> GetVariants([FromRoute] string toggleName)
+        {
+            _logger.LogInformation("Getting variants from toggle {0}", toggleName);
+            return _unleash.GetVariants(toggleName);
+        }
 
         [HttpGet("variants/{toggleName}/{variantName}")]
-        public IEnumerable<Variant> GetVariants([FromRoute] string toggleName, [FromRoute] string variantName)
+        public IEnumerable<Variant> GetVariantsByName([FromRoute] string toggleName, [FromRoute] string variantName)
         {
             _logger.LogInformation("Getting variants from toggle {0} and variant {1}", toggleName, variantName);
             return _unleash.GetVariants(toggleName, variantName);

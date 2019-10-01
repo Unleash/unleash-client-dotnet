@@ -27,9 +27,16 @@ namespace Unleash
         /// <summary>
         /// Gets a list of a given variant from a feature that is available.
         /// </summary>
-        /// <param name="toggleName"></param>
-        /// <param name="variantName"></param>
-        /// <returns></returns>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <param name="variantName">The name of the variant</param>
+        /// <returns>A list of variants of a given name or null if feature is not available</returns>
         IEnumerable<Variant> GetVariants(string toggleName, string variantName);
+
+        /// <summary>
+        ///  Gets a list of variants from a feature tha is available. 
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <returns>A list of variants or null if feature is not available </returns>
+        IEnumerable<Variant> GetVariants(string toggleName);
     }
 }

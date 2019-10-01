@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unleash.Internal;
 
 namespace Unleash.Tests.Basic
@@ -21,19 +22,25 @@ namespace Unleash.Tests.Basic
         }
 
         [Test]
-        public void GetExistingVariantsOfActiveTooggle()
+        public void GetExistingVariantsOfActiveToggle()
         {
-            var list = new List<Variant>();
-            list.Add(new Variant("Aa", 50, null));
+            var expected = new List<Variant>()
+            {
+                new Variant("Aa", 33, null),
+                new Variant("Aa", 33, null),
+            };
 
             var variants = _unleash.GetVariants("one-enabled", "Aa");
 
-            variants.Should().HaveCount(1);
-            list.ShouldBeEquivalentTo(variants);
+            variants
+                .Should()
+                .HaveCount(2);
+            expected
+                .ShouldBeEquivalentTo(expected);
         }
 
         [Test]
-        public void GetUnexistingVariantsOfActiveTooggle()
+        public void GetUnExistingVariantsOfActiveToggle()
         {
             var variants = _unleash.GetVariants("one-enabled", "XX");
 
@@ -41,7 +48,7 @@ namespace Unleash.Tests.Basic
         }
 
         [Test]
-        public void GetVariantsOfUnexistingTooggle()
+        public void GetVariantsOfUnExistingToggle()
         {
             var variants = _unleash.GetVariants("XX", "XX");
 
@@ -49,11 +56,27 @@ namespace Unleash.Tests.Basic
         }
 
         [Test]
-        public void GetVariantsOfInactiveTooggle()
+        public void GetVariantsOfInactiveToggle()
         {
             var variants = _unleash.GetVariants("one-disabled", "XX");
 
             variants.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAllVariantsFromInactiveToggle()
+        {
+            var variants = _unleash.GetVariants("one-disabled");
+            
+            variants.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAllVariantsFromActiveToggle()
+        {
+            var variants = _unleash.GetVariants("one-enabled");
+
+            variants.Should().HaveCount(3);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WebApplication
             services.AddControllers();
             services.AddSingleton<IUnleash>(c => new DefaultUnleash(new UnleashSettings()
             {
-                UnleashApi = new Uri("http://localhost:4242"),
+                UnleashApi = new Uri("http://unleash.greuel.com.br:4242"),
                 AppName = "variant-sample",
                 InstanceTag = "instance 1",
                 SendMetricsInterval = TimeSpan.FromSeconds(10),
