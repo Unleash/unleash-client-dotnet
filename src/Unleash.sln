@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{F098FC57
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests.Benchmarks", "Unleash.Tests.Benchmarks\Unleash.Tests.Benchmarks.csproj", "{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "samples\WebApplication\WebApplication.csproj", "{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{E719FE03-4F57-45B5-916A-8E844E90B95C} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{7A73D92C-B746-48F6-BF60-C69382141C2D} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{8F8EFAF2-7747-4C1F-A473-4E3248B3B9F6} = {9326EDD7-F842-4D01-880D-250102C0D689}
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2} = {9326EDD7-F842-4D01-880D-250102C0D689}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8777E71-3209-4072-B7D9-466A4F5C7A75}
