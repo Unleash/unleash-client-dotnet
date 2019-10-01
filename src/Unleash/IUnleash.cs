@@ -24,6 +24,12 @@ namespace Unleash
         /// <returns></returns>
         bool IsEnabled(string toggleName, bool defaultSetting);
 
-        IEnumerable<Variant> GetVariants(string toggleName, string name);
+        /// <summary>
+        /// Gets a list of a given variant from a feature that is available.
+        /// </summary>
+        /// <param name="toggleName"></param>
+        /// <param name="variantName"></param>
+        /// <returns></returns>
+        IEnumerable<Variant> GetVariants(string toggleName, string variantName);
     }
 }
