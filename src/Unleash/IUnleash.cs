@@ -40,7 +40,8 @@ namespace Unleash
         IEnumerable<Variant> GetVariants(string toggleName);
 
         /// <summary>
-        /// Get a weighted variant form a feature that is available
+        /// Get a weighted variant from a feature that is available.
+        /// Should be used with care, is not a sticky variant, will weight by call. 
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <returns>A weighted variant or null if feature is not available</returns>
