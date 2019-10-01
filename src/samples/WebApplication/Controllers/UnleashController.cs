@@ -33,6 +33,13 @@ namespace WebApplication.Controllers
             return _unleash.GetVariants(toggleName);
         }
 
+        [HttpGet("variants/{toggleName}/weighted")]
+        public Variant GetVariant([FromRoute] string toggleName)
+        {
+            _logger.LogInformation("Getting weighted variant from toggle {0}", toggleName);
+            return _unleash.GetVariant(toggleName);
+        }
+
         [HttpGet("variants/{toggleName}/{variantName}")]
         public IEnumerable<Variant> GetVariantsByName([FromRoute] string toggleName, [FromRoute] string variantName)
         {

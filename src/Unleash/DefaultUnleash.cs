@@ -1,3 +1,5 @@
+using System;
+
 namespace Unleash
 {
     using Logging;
@@ -87,6 +89,42 @@ namespace Unleash
 
             RegisterCount(toggleName, enabled);
             return enabled;
+        }
+
+        public Variant GetVariant(string toggleName)
+        {
+            var variants = GetVariants(toggleName)?.ToList();
+            if (variants == null) return null;
+            
+            var weights = variants.Select(v => v.Weight).ToArray();
+            var position = GetWeightedPosition(weights);
+
+            if (position.HasValue)
+            {
+                return variants[position.Value];
+            }
+
+            return null;
+        }
+
+        private int? GetWeightedPosition(int[] weights)
+        {
+            //TODO: this weighted algorithm assumes that the variants list will ever return in same order 
+            var total = weights.Sum();
+            //TODO: better random generator
+            var random = new Random(Guid.NewGuid().GetHashCode()).Next(total);
+            var currentWeight = 0;
+
+            for (int i = 0; i < weights.Length; i++)
+            {
+                currentWeight += weights[i];
+                if (random <= currentWeight)
+                {
+                    return i;
+                }
+            }
+
+            return null;
         }
 
         public IEnumerable<Variant> GetVariants(string toggleName)

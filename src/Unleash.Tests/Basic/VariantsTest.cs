@@ -78,5 +78,23 @@ namespace Unleash.Tests.Basic
 
             variants.Should().HaveCount(3);
         }
+
+        [Test]
+        public void GetWeightedVariantFromInactiveToggle()
+        {
+            var variant = _unleash.GetVariant("one-disabled");
+
+            variant.Should().BeNull();
+        }
+        
+        [Test]
+        public void GetWeightedVariantFromActiveToggle()
+        {
+            var variants = _unleash.GetVariants("one-enabled");
+            var variant = _unleash.GetVariant("one-enabled");
+
+            variant.Should().NotBeNull();
+            variants.Should().Contain(variant);
+        }
     }
 }

@@ -33,10 +33,17 @@ namespace Unleash
         IEnumerable<Variant> GetVariants(string toggleName, string variantName);
 
         /// <summary>
-        ///  Gets a list of variants from a feature tha is available. 
+        ///  Gets a list of variants from a feature that is available. 
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <returns>A list of variants or null if feature is not available </returns>
         IEnumerable<Variant> GetVariants(string toggleName);
+
+        /// <summary>
+        /// Get a weighted variant form a feature that is available
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <returns>A weighted variant or null if feature is not available</returns>
+        Variant GetVariant(string toggleName);
     }
 }
