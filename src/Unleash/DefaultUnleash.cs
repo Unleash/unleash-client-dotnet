@@ -88,8 +88,8 @@ namespace Unleash
             RegisterCount(toggleName, enabled);
             return enabled;
         }
-
-        public IEnumerable<Variants> GetVariants(string toggleName, string name)
+        
+        public IEnumerable<Variant> GetVariants(string toggleName, string name)
         {
             if (!IsEnabled(toggleName)) return null;
 

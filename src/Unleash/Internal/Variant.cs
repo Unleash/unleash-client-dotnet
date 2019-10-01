@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Unleash.Internal
 {
-    public class Variants
+    public class Variant
     {
 
-        public Variants(string name, int weight, ICollection<Override> overrides)
+        public Variant(string name, int weight, ICollection<Override> overrides)
         {
             Name = name;
             Weight = weight;

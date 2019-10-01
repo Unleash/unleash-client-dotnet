@@ -23,8 +23,8 @@ namespace Unleash.Tests.Basic
         [Test]
         public void GetExistingVariantsOfActiveTooggle()
         {
-            var list = new List<Variants>();
-            list.Add(new Variants("Aa", 50, null));
+            var list = new List<Variant>();
+            list.Add(new Variant("Aa", 50, null));
 
             var variants = _unleash.GetVariants("one-enabled", "Aa");
 

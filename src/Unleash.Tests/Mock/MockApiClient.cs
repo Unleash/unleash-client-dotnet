@@ -16,10 +16,10 @@ namespace Unleash.Tests.Mock
                 new ActivationStrategy("userWithId", new Dictionary<string, string>(){
                     {"userIds", "userA" }
                 })
-            }, new List<Variants>()
+            }, new List<Variant>()
             {
-                new Variants("Aa", 50, null),
-                new Variants("Ab", 50, new List<Override>{ new Override("context", new string[] { "a", "b"}) }),
+                new Variant("Aa", 50, null),
+                new Variant("Ab", 50, new List<Override>{ new Override("context", new string[] { "a", "b"}) }),
             }),
             new FeatureToggle("one-disabled", false, new List<ActivationStrategy>()
             {
