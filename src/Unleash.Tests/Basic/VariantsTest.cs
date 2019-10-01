@@ -26,8 +26,8 @@ namespace Unleash.Tests.Basic
         {
             var expected = new List<Variant>()
             {
-                new Variant("Aa", 33, null),
-                new Variant("Aa", 33, null),
+                new Variant("Aa", 33, null, null),
+                new Variant("Aa", 33, null, null),
             };
 
             var variants = _unleash.GetVariants("one-enabled", "Aa");
