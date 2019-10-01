@@ -89,11 +89,11 @@ namespace Unleash
             return enabled;
         }
 
-        public ICollection<Variants> GetVariants(string tooggleName, string name)
+        public IEnumerable<Variants> GetVariants(string toggleName, string name)
         {
-            if (!IsEnabled(tooggleName)) return null;
+            if (!IsEnabled(toggleName)) return null;
 
-            var toggle = GetToggle(tooggleName);
+            var toggle = GetToggle(toggleName);
 
             var variants = toggle.Variants
                 .Where(v => v.Name == name)

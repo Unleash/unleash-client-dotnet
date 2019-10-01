@@ -24,6 +24,6 @@ namespace Unleash
         /// <returns></returns>
         bool IsEnabled(string toggleName, bool defaultSetting);
 
-        ICollection<Variants> GetVariants(string toogleName, string name);
+        IEnumerable<Variants> GetVariants(string toggleName, string name);
     }
 }
