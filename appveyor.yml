@@ -2,14 +2,14 @@ version: 1.0.0.{build}
 
 configuration: Release
 
-os: Visual Studio 2017
+os: Visual Studio 2019
 
 environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 install:
-  - choco install gitversion.portable -pre -y
+  - choco install gitversion.portable --version 4.0.0 -y
 
 skip_commits:
   files:
