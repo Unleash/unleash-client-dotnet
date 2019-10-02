@@ -81,9 +81,9 @@
     <Owner>Stian Olafsen</Owner>
     <Description>Flexible feature toggle client. It supports enabling features runtime, through multiple activation strategies, and allows you to decouple deployment of code from release of new features. Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. Read more at: https://github.com/unleash/unleash/</Description>
     <RepositoryUrl>https://github.com/Unleash/unleash-client-core</RepositoryUrl>
-    <Version>1.3.5.0</Version>
-    <AssemblyVersion>1.3.5.0</AssemblyVersion>
-    <FileVersion>1.3.5.0</FileVersion>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright 2017</Copyright>
     <PackageTags>feature-toggle runtime-toggling feature-flags continous delivery unleash</PackageTags>
