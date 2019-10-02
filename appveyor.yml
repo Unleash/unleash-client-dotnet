@@ -25,4 +25,4 @@ build_script:
 test: off
 
 artifacts:
-  - path: '**/unleash.featuretoggle.client.*.nupkg' # find all NuGet packages recursively
+  - path: '**/unleash.client.core.*.nupkg' # find all NuGet packages recursively
