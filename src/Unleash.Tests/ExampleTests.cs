@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using Unleash.Internal;
 
 namespace Unleash.Tests
 {
+
     public class ExampleTests : IDisposable
     {
         private readonly IUnleash unleash;

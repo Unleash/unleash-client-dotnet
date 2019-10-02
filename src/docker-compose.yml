@@ -1,0 +1,28 @@
+version: "3.3"
+services:
+  api: 
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+  web:
+    image: unleashorg/unleash-server
+    ports:
+      - "4242:4242"
+    environment:
+      DATABASE_URL: postgres://postgres:unleash@db/postgres
+    depends_on:
+      - db
+    command: > 
+      sh -c "
+        while ! nc -z db 5432; do
+          echo 'Postgres is unavailable.'
+          sleep 1
+        done
+        npm run start"
+  db:
+    expose:
+      - "5432"
+    image: postgres:10-alpine

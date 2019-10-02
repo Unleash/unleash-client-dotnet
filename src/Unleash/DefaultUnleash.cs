@@ -1,9 +1,12 @@
+using System;
+
 namespace Unleash
 {
     using Logging;
     using Strategies;
     using System.Collections.Generic;
     using Internal;
+    using System.Linq;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash
@@ -57,7 +60,7 @@ namespace Unleash
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var featureToggle = services.ToggleCollection.Instance.GetToggleByName(toggleName);
+            var featureToggle = GetToggle(toggleName);
 
             bool enabled = false;
             if (featureToggle == null)
@@ -86,6 +89,71 @@ namespace Unleash
 
             RegisterCount(toggleName, enabled);
             return enabled;
+        }
+
+        public Variant GetVariant(string toggleName)
+        {
+            var variants = GetVariants(toggleName)?.ToList();
+            if (variants == null) return null;
+            
+            var weights = variants.Select(v => v.Weight).ToArray();
+            var position = GetWeightedPosition(weights);
+
+            if (position.HasValue)
+            {
+                return variants[position.Value];
+            }
+
+            return null;
+        }
+
+        private int? GetWeightedPosition(int[] weights)
+        {
+            //TODO: this weighted algorithm assumes that the variants list will ever return in same order 
+            var total = weights.Sum();
+            //TODO: better random generator
+            var random = new Random(Guid.NewGuid().GetHashCode()).Next(total);
+            var currentWeight = 0;
+
+            for (int i = 0; i < weights.Length; i++)
+            {
+                currentWeight += weights[i];
+                if (random <= currentWeight)
+                {
+                    return i;
+                }
+            }
+
+            return null;
+        }
+
+        public IEnumerable<Variant> GetVariants(string toggleName)
+        {
+            if (!IsEnabled(toggleName)) return null;
+            
+            var toggle = GetToggle(toggleName);
+            
+            return toggle?.Variants;
+        }
+
+        public IEnumerable<Variant> GetVariants(string toggleName, string variantName)
+        {
+            var variants = GetVariants(toggleName)?.ToList();
+            if (variants == null) return null;
+            
+            variants = variants.Where(v => v.Name == variantName).ToList();
+
+            if (variants.Count == 0) return null;
+
+            return variants;
+        }
+
+        private FeatureToggle GetToggle(string toggleName)
+        {
+            return services
+                .ToggleCollection
+                .Instance
+                .GetToggleByName(toggleName);
         }
 
         private void RegisterCount(string toggleName, bool enabled)
@@ -129,5 +197,6 @@ namespace Unleash
         {
             services?.Dispose(); 
         }
+
     }
 }

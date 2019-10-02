@@ -80,7 +80,6 @@ namespace Unleash
                 Etag = cachedFilesResult.InitialETag
             };
 
-
             var scheduledTasks = new List<IUnleashScheduledTask>(){
                 fetchFeatureTogglesTask
             };
