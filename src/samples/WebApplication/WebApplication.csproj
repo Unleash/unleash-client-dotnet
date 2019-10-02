@@ -5,6 +5,8 @@
         <UserSecretsId>678b82b7-70cd-4cb1-aa57-ed9d14866742</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
+        <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+        <Deterministic>False</Deterministic>
     </PropertyGroup>
 
     <ItemGroup>
