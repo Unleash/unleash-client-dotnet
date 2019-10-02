@@ -1,5 +1,7 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.4.0
 #tool "nuget:?package=GitVersion.CommandLine"
+#addin "nuget:?package=Cake.Json"
+
 // #tool "nuget:?package=gitlink"
 
 // ARGUMENTS
@@ -33,9 +35,11 @@ Task("Version")
     { 
         OutputType = GitVersionOutput.Json 
     });
-    
+
+    Console.WriteLine(SerializeJsonPretty(versionInfo));
+
     var updatedProjectFile = System.IO.File.ReadAllText(unleashProjectFile)
-        .Replace("1.0.0", versionInfo.NuGetVersion);
+        .Replace("1.0.0", versionInfo.AssemblySemVer);
 
     System.IO.File.WriteAllText(unleashProjectFile, updatedProjectFile);
 });
