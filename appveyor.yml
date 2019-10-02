@@ -9,7 +9,7 @@ environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 install:
-  - choco install gitversion.portable -pre -y
+  - choco install gitversion.portable -y
 
 skip_commits:
   files:
