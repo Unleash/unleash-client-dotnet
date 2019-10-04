@@ -1,7 +1,7 @@
 # Unleash FeatureToggle Client for .Net
 
 [![Build status](https://ci.appveyor.com/api/projects/status/x8xuyffpjc60keqg?svg=true)](https://ci.appveyor.com/project/stiano/unleash-client-dotnet)
-[![NuGet](https://img.shields.io/nuget/v/Unleash.FeatureToggle.Client.svg)](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/)
+[![NuGet](https://img.shields.io/nuget/v/Unleash.Client.Core.svg)](https://www.nuget.org/packages/Unleash.Client.Core/)
 
 ## Introduction
 
