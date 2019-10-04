@@ -12,6 +12,8 @@ namespace Unleash
                 SessionId = string.Empty,
                 RemoteAddress = string.Empty,
                 Properties = new Dictionary<string, string>(0),
+                Environment = "default",
+                AppName = "my-app"
             };
         }
 

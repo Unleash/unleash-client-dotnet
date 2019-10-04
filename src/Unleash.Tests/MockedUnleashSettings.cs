@@ -20,7 +20,9 @@ namespace Unleash.Tests
                 UserId = "userA",
                 SessionId = "sessionId",
                 RemoteAddress = "remoteAddress",
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, string>(),
+                Environment = "default",
+                AppName = "my-app"
             });
         }
     }

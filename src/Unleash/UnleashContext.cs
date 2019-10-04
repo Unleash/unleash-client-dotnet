@@ -11,6 +11,8 @@ namespace Unleash
         public string SessionId { get; set; }
         public string RemoteAddress { get; set; }
         public Dictionary<string, string> Properties { get; set; }
+        public string AppName { get; set; }
+        public string Environment { get; set; } = "default";
 
         #region Builder pattern: used in tests
 
@@ -25,6 +27,8 @@ namespace Unleash
             private string sessionId;
             private string remoteAddress;
             private readonly Dictionary<string, string> properties = new Dictionary<string, string>();
+            private string appName;
+            private string environment = "default";
 
             public Builder UserId(string userId)
             {
@@ -44,6 +48,18 @@ namespace Unleash
                 return this;
             }
 
+            public Builder AppName(string appName)
+            {
+                this.appName = appName;
+                return this;
+            }
+
+            public Builder Environment(string environment)
+            {
+                this.environment = environment;
+                return this;
+            }
+
             public Builder AddProperty(string name, string value)
             {
                 properties.Add(name, value);
@@ -58,6 +74,8 @@ namespace Unleash
                     SessionId = sessionId,
                     RemoteAddress = remoteAddress,
                     Properties = properties,
+                    AppName = appName,
+                    Environment = environment,
                 };
             }
         }
