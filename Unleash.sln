@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unleash", "Unleash\Unleash.csproj", "{4CF2127B-8FC8-46FC-8614-3918148463A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unleash", "src\Unleash\Unleash.csproj", "{4CF2127B-8FC8-46FC-8614-3918148463A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests", "Unleash.Tests\Unleash.Tests.csproj", "{FF268018-34C4-45EB-937E-2E0AB25EEEDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests", "tests\Unleash.Tests\Unleash.Tests.csproj", "{FF268018-34C4-45EB-937E-2E0AB25EEEDA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9326EDD7-F842-4D01-880D-250102C0D689}"
 EndProject
@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{F098FC57
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests.Benchmarks", "Unleash.Tests.Benchmarks\Unleash.Tests.Benchmarks.csproj", "{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests.Benchmarks", "tests\Unleash.Tests.Benchmarks\Unleash.Tests.Benchmarks.csproj", "{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "samples\WebApplication\WebApplication.csproj", "{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}"
 EndProject

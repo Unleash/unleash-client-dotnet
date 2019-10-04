@@ -8,7 +8,7 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-var solutionPath = "./src/Unleash.sln";
+var solutionPath = "./Unleash.sln";
 var unleashProjectFile = "./src/Unleash/Unleash.csproj";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
