@@ -32,7 +32,7 @@ Extendable architecture
 - Inject your own implementations of key components (Json serializer, background task scheduler, http client factory)
 
 ## Getting started
-Install the latest version of `Unleash.FeatureToggle.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.FeatureToggle.Client/).
+Install the latest version of `Unleash.Client.Core` from [nuget.org](https://www.nuget.org/packages/Unleash.Client.Core/).
 
 ### Create a new a Unleash instance
 
