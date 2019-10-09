@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Attributes;
 using Unleash.Strategies;
 
 namespace Unleash.Benchmarks

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Unleash.Communication;
 using Unleash.Serialization;
 
@@ -31,8 +32,8 @@ namespace Unleash.Tests.Communication
 
         internal IUnleashApiClient api
         {
-            get => TestContext.CurrentContext.Test.Properties.Get("api") as IUnleashApiClient;
-            set => TestContext.CurrentContext.Test.Properties.Set("api", value);
+            get => TestExecutionContext.CurrentContext.CurrentTest.Properties.Get("api") as IUnleashApiClient;
+            set => TestExecutionContext.CurrentContext.CurrentTest.Properties.Set("api", value);
         }
 
         [SetUp]
