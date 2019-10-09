@@ -36,7 +36,8 @@ namespace Unleash.Tests.Basic
                 .Should()
                 .HaveCount(2);
             expected
-                .ShouldBeEquivalentTo(expected);
+                .Should()
+                .BeEquivalentTo(expected);
         }
 
         [Test]

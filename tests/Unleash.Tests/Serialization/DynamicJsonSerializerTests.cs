@@ -40,7 +40,7 @@ namespace Unleash.Tests.Serialization
             {
                 var toggleCollection = serializer.Deserialize<ToggleCollection>(fileStream);
 
-                toggleCollection.ShouldBeEquivalentTo(expected);
+                toggleCollection.Should().BeEquivalentTo(expected);
             }
         }
 
