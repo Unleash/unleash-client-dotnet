@@ -8,7 +8,7 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-var solutionPath = "./src/Unleash.sln";
+var solutionPath = "./Unleash.sln";
 var unleashProjectFile = "./src/Unleash/Unleash.csproj";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
@@ -66,7 +66,7 @@ Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    NUnit3("./src/*.Tests/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
+    NUnit3("./tests/*.Tests/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
         NoResults = true
     });
 });

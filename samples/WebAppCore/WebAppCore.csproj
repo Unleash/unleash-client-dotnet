@@ -9,9 +9,9 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Unleash\Unleash.csproj" />
+    <Folder Include="Unleash\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Unleash\" />
+    <ProjectReference Include="..\..\src\Unleash\Unleash.csproj" />
   </ItemGroup>
 </Project>

@@ -10,12 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Unleash\Unleash.csproj" />
+      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.2" />
-      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+      <ProjectReference Include="..\..\src\Unleash\Unleash.csproj" />
     </ItemGroup>
 
 </Project>
