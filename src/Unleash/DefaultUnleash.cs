@@ -180,7 +180,7 @@ namespace Unleash
         {
             if (overrideDefaultStrategies)
             {
-                return strategies ?? Array.Empty<IStrategy>();
+                return strategies ?? new IStrategy[0];
             }
             else
             {
