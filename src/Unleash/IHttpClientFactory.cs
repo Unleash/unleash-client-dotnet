@@ -9,7 +9,7 @@ namespace Unleash
     public interface IHttpClientFactory
     {
         /// <summary>
-        /// Called a single time during application initialization.
+        /// Called during background task initialization.
         /// </summary>
         HttpClient Create(Uri unleashApiUri);
     }

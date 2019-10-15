@@ -15,33 +15,20 @@ namespace Unleash
 
         private static readonly UnknownStrategy UnknownStrategy = new UnknownStrategy();
 
-        private static readonly IStrategy[] DefaultStragegies = {
-            new DefaultStrategy(),
-            new UserWithIdStrategy(),
-            new GradualRolloutUserIdStrategy(),
-            new GradualRolloutRandomStrategy(),
-            new ApplicationHostnameStrategy(),
-            new GradualRolloutSessionIdStrategy(),
-            new RemoteAddressStrategy(),
-        };
-
-        private readonly Dictionary<string, IStrategy> strategyMap;
-
-        private readonly UnleashServices services;
+        private readonly UnleashSettings settings;
+        private readonly IUnleashServices services;
+        private readonly IUnleashContextProvider contextProvider;
 
         ///// <summary>
-        ///// Initializes a new instance of Unleash client. 
+        ///// Initializes a new instance of Unleash client.
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
         ///// <param name="strategies">Available strategies. When none defined, all default strategies will be added.</param>
-        public DefaultUnleash(UnleashSettings settings, params IStrategy[] strategies)
+        public DefaultUnleash(UnleashSettings settings, IUnleashServices services, IUnleashContextProvider contextProvider)
         {
-            var settingsValidator = new UnleashSettingsValidator();
-            settingsValidator.Validate(settings);
-            
-            strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
-
-            services = new UnleashServices(settings, strategyMap);
+            this.settings = settings;
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+            this.contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
 
             Logger.Info($"UNLEASH: Unleash is initialized and configured with: {settings}");
         }
@@ -55,7 +42,7 @@ namespace Unleash
         /// <inheritdoc />
         public bool IsEnabled(string toggleName, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, services.ContextProvider.Context, defaultSetting);
+            return CheckIsEnabled(toggleName, contextProvider.Context, defaultSetting);
         }
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
@@ -95,7 +82,7 @@ namespace Unleash
         {
             var variants = GetVariants(toggleName)?.ToList();
             if (variants == null) return null;
-            
+
             var weights = variants.Select(v => v.Weight).ToArray();
             var position = GetWeightedPosition(weights);
 
@@ -109,7 +96,7 @@ namespace Unleash
 
         private int? GetWeightedPosition(int[] weights)
         {
-            //TODO: this weighted algorithm assumes that the variants list will ever return in same order 
+            //TODO: this weighted algorithm assumes that the variants list will ever return in same order
             var total = weights.Sum();
             //TODO: better random generator
             var random = new Random(Guid.NewGuid().GetHashCode()).Next(total);
@@ -130,9 +117,9 @@ namespace Unleash
         public IEnumerable<Variant> GetVariants(string toggleName)
         {
             if (!IsEnabled(toggleName)) return null;
-            
+
             var toggle = GetToggle(toggleName);
-            
+
             return toggle?.Variants;
         }
 
@@ -140,7 +127,7 @@ namespace Unleash
         {
             var variants = GetVariants(toggleName)?.ToList();
             if (variants == null) return null;
-            
+
             variants = variants.Where(v => v.Name == variantName).ToList();
 
             if (variants.Count == 0) return null;
@@ -151,52 +138,24 @@ namespace Unleash
         private FeatureToggle GetToggle(string toggleName)
         {
             return services
-                .ToggleCollection
-                .Instance
+                .GetToggleCollection()
                 .GetToggleByName(toggleName);
         }
 
         private void RegisterCount(string toggleName, bool enabled)
         {
-            if (services.IsMetricsDisabled)
+            var isMetricsDisabled = settings.SendMetricsInterval == null;
+            if (isMetricsDisabled)
                 return;
 
-            services.MetricsBucket.RegisterCount(toggleName, enabled);
-        }
-
-        private static Dictionary<string, IStrategy> BuildStrategyMap(IStrategy[] defaultStragegies, IStrategy[] strategies)
-        {
-            if (strategies != null && strategies.Length > 0)
-            {
-                var map = new Dictionary<string, IStrategy>(strategies.Length);
-
-                foreach (var strategy in strategies)
-                    map.Add(strategy.Name, strategy);
-
-                return map;
-            }
-            else
-            {
-                var map = new Dictionary<string, IStrategy>(defaultStragegies.Length);
-
-                foreach (var strategy in defaultStragegies)
-                    map.Add(strategy.Name, strategy);
-
-                return map;
-            }
+            services.RegisterCount(toggleName, enabled);
         }
 
         private IStrategy GetStrategyOrUnknown(string strategy)
         {
-            return strategyMap.ContainsKey(strategy) 
-                ? strategyMap[strategy] 
+            return services.StrategyMap.TryGetValue(strategy, out var result)
+                ? result
                 : UnknownStrategy;
         }
-
-        public void Dispose()
-        {
-            services?.Dispose(); 
-        }
-
     }
 }

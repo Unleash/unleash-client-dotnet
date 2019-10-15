@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Unleash.Internal
 {
-    internal class FeatureToggle
+    public class FeatureToggle
     {
         public FeatureToggle(string name, bool enabled, List<ActivationStrategy> strategies, List<Variant> variants = null)
         {

@@ -12,16 +12,16 @@ namespace Unleash.Scheduling
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(ClientRegistrationBackgroundTask));
 
-        private readonly IUnleashApiClient apiClient;
+        private readonly IUnleashApiClientFactory apiClientFactory;
         private readonly UnleashSettings settings;
         private readonly List<string> strategies;
 
         public ClientRegistrationBackgroundTask(
-            IUnleashApiClient apiClient, 
-            UnleashSettings settings, 
+            IUnleashApiClientFactory apiClientFactory,
+            UnleashSettings settings,
             List<string> strategies)
         {
-            this.apiClient = apiClient;
+            this.apiClientFactory = apiClientFactory;
             this.settings = settings;
             this.strategies = strategies;
         }
@@ -41,6 +41,7 @@ namespace Unleash.Scheduling
                 Strategies = strategies
             };
 
+            var apiClient = apiClientFactory.CreateClient();
             var result = await apiClient.RegisterClient(clientRegistration, cancellationToken).ConfigureAwait(false);
             if (!result)
             {

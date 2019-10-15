@@ -1,44 +1,34 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Caching;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 
 namespace Unleash.Scheduling
 {
     internal class FetchFeatureTogglesTask : IUnleashScheduledTask
     {
-        private readonly string toggleFile;
-        private readonly string etagFile;
-
-        private readonly IFileSystem fileSystem;
-        private readonly IUnleashApiClient apiClient;
-        private readonly IJsonSerializer jsonSerializer;
+        private readonly IUnleashApiClientFactory apiClientFactory;
         private readonly ThreadSafeToggleCollection toggleCollection;
+        private readonly IToggleCollectionCache toggleCollectionCache;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
-            IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection, 
-            IJsonSerializer jsonSerializer,
-            IFileSystem fileSystem, 
-            string toggleFile, 
-            string etagFile)
+            IUnleashApiClientFactory apiClientFactory,
+            ThreadSafeToggleCollection toggleCollection,
+            IToggleCollectionCache toggleCollectionCache)
         {
-            this.apiClient = apiClient;
+            this.apiClientFactory = apiClientFactory;
             this.toggleCollection = toggleCollection;
-            this.jsonSerializer = jsonSerializer;
-            this.fileSystem = fileSystem;
-            this.toggleFile = toggleFile;
-            this.etagFile = etagFile;
+            this.toggleCollectionCache = toggleCollectionCache;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            var apiClient = apiClientFactory.CreateClient();
             var result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
 
             if (!result.HasChanged)
@@ -52,13 +42,9 @@ namespace Unleash.Scheduling
 
             toggleCollection.Instance = result.ToggleCollection;
 
-            using (var fs = fileSystem.FileOpenCreate(toggleFile))
-            {
-                jsonSerializer.Serialize(fs, result.ToggleCollection);
-            }
+            await toggleCollectionCache.Save(result.ToggleCollection, result.Etag, cancellationToken).ConfigureAwait(false);
 
             Etag = result.Etag;
-            fileSystem.WriteAllText(etagFile, Etag);
         }
 
         public string Name => "fetch-feature-toggles-task";

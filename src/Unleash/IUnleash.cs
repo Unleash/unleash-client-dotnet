@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Unleash.Internal;
 
@@ -8,7 +7,7 @@ namespace Unleash
     /// <summary>
     /// Unleash Feature Toggle Service
     /// </summary>
-    public interface IUnleash : IDisposable
+    public interface IUnleash
     {
         /// <summary>
         /// Gets a value indicating a feature is available or not.
@@ -33,7 +32,7 @@ namespace Unleash
         IEnumerable<Variant> GetVariants(string toggleName, string variantName);
 
         /// <summary>
-        ///  Gets a list of variants from a feature that is available. 
+        ///  Gets a list of variants from a feature that is available.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <returns>A list of variants or null if feature is not available </returns>
@@ -41,7 +40,7 @@ namespace Unleash
 
         /// <summary>
         /// Get a weighted variant from a feature that is available.
-        /// Should be used with care, is not a sticky variant, will weight by call. 
+        /// Should be used with care, is not a sticky variant, will weight by call.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <returns>A weighted variant or null if feature is not available</returns>

@@ -10,7 +10,7 @@ namespace Unleash.Internal
     {
     }
 
-    internal class ToggleCollection
+    public class ToggleCollection
     {
         public int Version = 1;
 
@@ -30,8 +30,8 @@ namespace Unleash.Internal
 
         public FeatureToggle GetToggleByName(string name)
         {
-            return cache.TryGetValue(name, out var value) 
-                ? value 
+            return cache.TryGetValue(name, out var value)
+                ? value
                 : null;
         }
     }

@@ -37,7 +37,7 @@ namespace Unleash.Scheduling
                         if (cancellationToken.IsCancellationRequested)
                             return;
 
-                        await task.ExecuteAsync(cancellationToken);
+                        await task.ExecuteAsync(cancellationToken).ConfigureAwait(false);
                     }
                     catch (TaskCanceledException taskCanceledException)
                     {
@@ -94,7 +94,7 @@ namespace Unleash.Scheduling
         {
             if (disposeEnded)
                 return;
-            
+
             var timeout = TimeSpan.FromSeconds(1);
 
             using (var waitHandle = new ManualResetEvent(false))

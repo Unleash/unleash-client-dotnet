@@ -1,41 +1,41 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using Unleash.Caching;
 using Unleash.Communication;
-using Unleash.Internal;
 using Unleash.Metrics;
 using Unleash.Scheduling;
 using Unleash.Strategies;
 
-namespace Unleash
+namespace Unleash.Internal
 {
-    internal class UnleashServices : IDisposable
+    internal class UnleashServices : IUnleashServices
     {
+        public IReadOnlyDictionary<string, IStrategy> StrategyMap { get; }
+
+        internal CancellationToken CancellationToken { get; }
+        internal ThreadSafeToggleCollection ToggleCollection { get; }
+        internal ThreadSafeMetricsBucket MetricsBucket { get; }
+
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
-        internal CancellationToken CancellationToken { get; }
-        internal IUnleashContextProvider ContextProvider { get; }
-        internal ThreadSafeToggleCollection ToggleCollection { get; }
-        internal bool IsMetricsDisabled { get; }
-        internal ThreadSafeMetricsBucket MetricsBucket { get; }
-
-        public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
+        public UnleashServices(UnleashSettings settings, IUnleashApiClientFactory unleashApiClientFactory,
+            IUnleashScheduledTaskManager scheduledTaskManager, IToggleCollectionCache toggleCollectionCache,
+            IEnumerable<IStrategy> strategies)
         {
-            var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
+            this.scheduledTaskManager = scheduledTaskManager ?? throw new ArgumentNullException(nameof(scheduledTaskManager));
 
-            var backupFile = settings.GetFeatureToggleFilePath();
-            var etagBackupFile = settings.GetFeatureToggleETagFilePath();
+            var settingsValidator = new UnleashSettingsValidator();
+            settingsValidator.Validate(settings);
 
-            // Cancellation
+            StrategyMap = BuildStrategyMap(strategies?.ToArray() ?? new IStrategy[0]);
+
             CancellationToken = cancellationTokenSource.Token;
-            ContextProvider = settings.UnleashContextProvider;
 
-
-            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, backupFile, etagBackupFile);
-            var cachedFilesResult = loader.EnsureExistsAndLoad();
+            var cachedFilesResult = toggleCollectionCache.Load(cancellationTokenSource.Token).GetAwaiter().GetResult();
 
             ToggleCollection = new ThreadSafeToggleCollection
             {
@@ -44,72 +44,66 @@ namespace Unleash
 
             MetricsBucket = new ThreadSafeMetricsBucket();
 
-            IUnleashApiClient apiClient;
-            if (settings.UnleashApiClient == null)
-            {
-                var httpClient = settings.HttpClientFactory.Create(settings.UnleashApi);
-                apiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
-                {
-                    AppName = settings.AppName,
-                    InstanceTag = settings.InstanceTag,
-                    CustomHttpHeaders = settings.CustomHttpHeaders
-                });
-            }
-            else
-            {
-                // Mocked backend: fill instance collection 
-                apiClient = settings.UnleashApiClient;
-                var toggles = apiClient.FetchToggles("", CancellationToken.None);
-                ToggleCollection.Instance = toggles.Result.ToggleCollection;
-            }
+            var scheduledTasks = CreateScheduledTasks(settings, unleashApiClientFactory, toggleCollectionCache, cachedFilesResult);
 
-            scheduledTaskManager = settings.ScheduledTaskManager;
+            scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
+        }
 
-            IsMetricsDisabled = settings.SendMetricsInterval == null;
-
-            var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
-                apiClient, 
-                ToggleCollection, 
-                settings.JsonSerializer, 
-                fileSystem, 
-                backupFile, 
-                etagBackupFile)
+        private IEnumerable<IUnleashScheduledTask> CreateScheduledTasks(UnleashSettings settings,
+            IUnleashApiClientFactory unleashApiClientFactory, IToggleCollectionCache toggleCollectionCache,
+            ToggleCollectionCacheResult toggleCollectionCacheResult)
+        {
+            yield return new FetchFeatureTogglesTask(
+                unleashApiClientFactory,
+                ToggleCollection,
+                toggleCollectionCache)
             {
                 ExecuteDuringStartup = true,
                 Interval = settings.FetchTogglesInterval,
-                Etag = cachedFilesResult.InitialETag
+                Etag = toggleCollectionCacheResult.InitialETag
             };
 
-            var scheduledTasks = new List<IUnleashScheduledTask>(){
-                fetchFeatureTogglesTask
-            };
+            if (settings.SendMetricsInterval == null) yield break;
 
-            if (settings.SendMetricsInterval != null)
+            yield return new ClientRegistrationBackgroundTask(
+                unleashApiClientFactory,
+                settings,
+                StrategyMap.Keys.ToList())
             {
-                var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
-                    apiClient, 
-                    settings,
-                    strategyMap.Select(pair => pair.Key).ToList())
-                {
-                    Interval = TimeSpan.Zero,
-                    ExecuteDuringStartup = true
-                };
+                Interval = TimeSpan.Zero,
+                ExecuteDuringStartup = true
+            };
 
-                scheduledTasks.Add(clientRegistrationBackgroundTask);
+            yield return new ClientMetricsBackgroundTask(
+                unleashApiClientFactory,
+                settings,
+                MetricsBucket)
+            {
+                ExecuteDuringStartup = false,
+                Interval = settings.SendMetricsInterval.Value
+            };
+        }
 
-                var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
-                    apiClient, 
-                    settings, 
-                    MetricsBucket)
-                {
-                    ExecuteDuringStartup = false,
-                    Interval = settings.SendMetricsInterval.Value
-                };
+        private static IReadOnlyDictionary<string, IStrategy> BuildStrategyMap(IStrategy[] strategies)
+        {
+            var map = new Dictionary<string, IStrategy>(strategies.Length);
 
-                scheduledTasks.Add(clientMetricsBackgroundTask);
-            }
+            foreach (var strategy in strategies)
+                map.Add(strategy.Name, strategy);
 
-            scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
+            return new ReadOnlyDictionary<string, IStrategy>(map);
+        }
+
+        /// <inheritdoc />
+        public ToggleCollection GetToggleCollection()
+        {
+            return ToggleCollection.Instance;
+        }
+
+        /// <inheritdoc />
+        public void RegisterCount(string toggleName, bool enabled)
+        {
+            MetricsBucket.RegisterCount(toggleName, enabled);
         }
 
         public void Dispose()

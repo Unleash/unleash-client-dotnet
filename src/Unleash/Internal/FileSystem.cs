@@ -3,15 +3,8 @@ using System.Text;
 
 namespace Unleash.Internal
 {
-    internal class FileSystem : IFileSystem
+    public class FileSystem : IFileSystem
     {
-        private readonly Encoding encoding;
-
-        public FileSystem(Encoding encoding)
-        {
-            this.encoding = encoding;
-        }
-
         public bool FileExists(string path)
         {
             return File.Exists(path);
@@ -29,12 +22,12 @@ namespace Unleash.Internal
 
         public void WriteAllText(string path, string content)
         {
-            File.WriteAllText(path, content, encoding);
+            File.WriteAllText(path, content, Encoding.UTF8);
         }
 
         public string ReadAllText(string path)
         {
-            return File.ReadAllText(path, encoding);
+            return File.ReadAllText(path, Encoding.UTF8);
         }
     }
 }

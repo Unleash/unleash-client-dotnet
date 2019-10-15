@@ -2,7 +2,7 @@
 
 namespace Unleash.Communication
 {
-    internal class FetchTogglesResult
+    public class FetchTogglesResult
     {
         public ToggleCollection ToggleCollection { get; set; }
         public bool HasChanged { get; set; }

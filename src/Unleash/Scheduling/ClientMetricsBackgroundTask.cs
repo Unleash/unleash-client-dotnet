@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
@@ -12,16 +11,16 @@ namespace Unleash.Scheduling
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(ClientMetricsBackgroundTask));
 
-        private readonly IUnleashApiClient apiClient;
+        private readonly IUnleashApiClientFactory apiClientFactory;
         private readonly UnleashSettings settings;
         private readonly ThreadSafeMetricsBucket metricsBucket;
 
         public ClientMetricsBackgroundTask(
-            IUnleashApiClient apiClient, 
+            IUnleashApiClientFactory apiClientFactory,
             UnleashSettings settings,
             ThreadSafeMetricsBucket metricsBucket)
         {
-            this.apiClient = apiClient;
+            this.apiClientFactory = apiClientFactory;
             this.settings = settings;
             this.metricsBucket = metricsBucket;
         }
@@ -31,9 +30,10 @@ namespace Unleash.Scheduling
             if (settings.SendMetricsInterval == null)
                 return;
 
+            var apiClient = apiClientFactory.CreateClient();
             var result = await apiClient.SendMetrics(metricsBucket, cancellationToken).ConfigureAwait(false);
 
-            // Ignore return value    
+            // Ignore return value
             if (!result)
             {
                 // Logged elsewhere.

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -12,6 +14,9 @@ namespace Unleash.Communication
 {
     internal class UnleashApiClient : IUnleashApiClient
     {
+        public const string AppNameHeader = "UNLEASH-APPNAME";
+        public const string InstanceIdHeader = "UNLEASH-INSTANCEID";
+
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashApiClient));
 
         private readonly HttpClient httpClient;
@@ -19,8 +24,8 @@ namespace Unleash.Communication
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
 
         public UnleashApiClient(
-            HttpClient httpClient, 
-            IJsonSerializer jsonSerializer, 
+            HttpClient httpClient,
+            IJsonSerializer jsonSerializer,
             UnleashApiClientRequestHeaders clientRequestHeaders)
         {
             this.httpClient = httpClient;
@@ -41,26 +46,24 @@ namespace Unleash.Communication
 
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
+                    if (response.StatusCode == HttpStatusCode.NotModified && (response.Headers.ETag?.Tag?.Equals($"\"{etag}\"") ?? false))
+                    {
+                        return new FetchTogglesResult
+                        {
+                            HasChanged = false,
+                            Etag = response.Headers.ETag.Tag,
+                            ToggleCollection = null,
+                        };
+                    }
+
                     if (!response.IsSuccessStatusCode)
                     {
-                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
+                        await HandleError(response, resourceUri);
 
                         return new FetchTogglesResult
                         {
                             HasChanged = false,
                             Etag = null,
-                        };
-                    }
-
-                    var newEtag = response.Headers.ETag?.Tag;
-                    if (newEtag == etag)
-                    { 
-                        return new FetchTogglesResult
-                        {
-                            HasChanged = false,
-                            Etag = newEtag,
-                            ToggleCollection = null,
                         };
                     }
 
@@ -79,7 +82,7 @@ namespace Unleash.Communication
                     return new FetchTogglesResult
                     {
                         HasChanged = true,
-                        Etag = newEtag,
+                        Etag = response.Headers.ETag?.Tag,
                         ToggleCollection = toggleCollection
                     };
                 }
@@ -90,29 +93,33 @@ namespace Unleash.Communication
         {
             const string requestUri = "api/client/register";
 
-            var memoryStream = new MemoryStream();
-            jsonSerializer.Serialize(memoryStream, registration);
+            using (var memoryStream = new MemoryStream())
+            {
+                jsonSerializer.Serialize(memoryStream, registration);
+                memoryStream.Seek(0, SeekOrigin.Begin);
 
-            return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
+                return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
         {
             const string requestUri = "api/client/metrics";
 
-            var memoryStream = new MemoryStream();
-
-            using (metrics.StopCollectingMetrics(out var bucket))
+            using (var memoryStream = new MemoryStream())
             {
-                jsonSerializer.Serialize(memoryStream, new ClientMetrics
+                using (metrics.StopCollectingMetrics(out var bucket))
                 {
-                    AppName = clientRequestHeaders.AppName,
-                    InstanceId = clientRequestHeaders.InstanceTag,
-                    Bucket = bucket
-                });
-            }
+                    jsonSerializer.Serialize(memoryStream, new ClientMetrics
+                    {
+                        AppName = clientRequestHeaders.AppName,
+                        InstanceId = clientRequestHeaders.InstanceTag,
+                        Bucket = bucket
+                    });
+                }
 
-            return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
+                return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         private async Task<bool> Post(string resourceUri, Stream stream, CancellationToken cancellationToken)
@@ -131,21 +138,33 @@ namespace Unleash.Communication
                     if (response.IsSuccessStatusCode)
                         return true;
 
-                    var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{resourceUri}' in '{nameof(UnleashApiClient)}': " + error);
+                    await HandleError(response, resourceUri);
 
                     return false;
                 }
             }
         }
 
-        private static void SetRequestHeaders(HttpRequestMessage requestMessage, UnleashApiClientRequestHeaders headers)
+        private static async Task HandleError(HttpResponseMessage response, string resourceUri)
         {
-            const string appNameHeader = "UNLEASH-APPNAME";
-            const string instanceIdHeader = "UNLEASH-INSTANCEID";
+            try
+            {
+                var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                Logger.Trace(
+                    $"UNLEASH: Error {response.StatusCode} from request '{resourceUri}' in '{nameof(UnleashApiClient)}': " +
+                    error);
+            }
+            catch (Exception)
+            {
+                Logger.Trace(
+                    $"UNLEASH: Error {response.StatusCode} from request '{resourceUri}' in '{nameof(UnleashApiClient)}'");
+            }
+        }
 
-            requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
-            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
+        internal static void SetRequestHeaders(HttpRequestMessage requestMessage, UnleashApiClientRequestHeaders headers)
+        {
+            requestMessage.Headers.TryAddWithoutValidation(AppNameHeader, headers.AppName);
+            requestMessage.Headers.TryAddWithoutValidation(InstanceIdHeader, headers.InstanceTag);
 
             if (headers.CustomHttpHeaders == null)
                 return;

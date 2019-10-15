@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Unleash.Internal
 {
-    internal interface IFileSystem
+    public interface IFileSystem
     {
         bool FileExists(string path);
         Stream FileOpenRead(string path);
