@@ -15,7 +15,7 @@ namespace Unleash
 
         private static readonly UnknownStrategy UnknownStrategy = new UnknownStrategy();
 
-        private static readonly IStrategy[] DefaultStragegies = {
+        private static readonly IStrategy[] DefaultStrategies = {
             new DefaultStrategy(),
             new UserWithIdStrategy(),
             new GradualRolloutUserIdStrategy(),
@@ -30,21 +30,33 @@ namespace Unleash
         private readonly UnleashServices services;
 
         ///// <summary>
-        ///// Initializes a new instance of Unleash client. 
+        ///// Initializes a new instance of Unleash client with a set of default strategies. 
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
-        ///// <param name="strategies">Available strategies. When none defined, all default strategies will be added.</param>
+        ///// <param name="strategies">Additional custom strategies.</param>
         public DefaultUnleash(UnleashSettings settings, params IStrategy[] strategies)
+            : this(settings, overrideDefaultStrategies: false, strategies)
+        { }
+
+        ///// <summary>
+        ///// Initializes a new instance of Unleash client.
+        ///// </summary>
+        ///// <param name="config">Unleash settings</param>
+        ///// <param name="overrideDefaultStrategies">When true, it overrides the default strategies.</param>
+        ///// <param name="strategies">Custom strategies.</param>
+        public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, params IStrategy[] strategies)
         {
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
-            
-            strategyMap = BuildStrategyMap(DefaultStragegies, strategies);
+
+            strategies = SelectStrategies(strategies, overrideDefaultStrategies);
+            strategyMap = BuildStrategyMap(strategies);
 
             services = new UnleashServices(settings, strategyMap);
 
             Logger.Info($"UNLEASH: Unleash is initialized and configured with: {settings}");
         }
+
 
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
@@ -164,26 +176,26 @@ namespace Unleash
             services.MetricsBucket.RegisterCount(toggleName, enabled);
         }
 
-        private static Dictionary<string, IStrategy> BuildStrategyMap(IStrategy[] defaultStragegies, IStrategy[] strategies)
+        private static IStrategy[] SelectStrategies(IStrategy[] strategies, bool overrideDefaultStrategies)
         {
-            if (strategies != null && strategies.Length > 0)
+            if (overrideDefaultStrategies)
             {
-                var map = new Dictionary<string, IStrategy>(strategies.Length);
-
-                foreach (var strategy in strategies)
-                    map.Add(strategy.Name, strategy);
-
-                return map;
+                return strategies ?? new IStrategy[0];
             }
             else
             {
-                var map = new Dictionary<string, IStrategy>(defaultStragegies.Length);
-
-                foreach (var strategy in defaultStragegies)
-                    map.Add(strategy.Name, strategy);
-
-                return map;
+                return DefaultStrategies.Concat(strategies).ToArray();
             }
+        }
+
+        private static Dictionary<string, IStrategy> BuildStrategyMap(IStrategy[] strategies)
+        {
+            var map = new Dictionary<string, IStrategy>(strategies.Length);
+
+            foreach (var strategy in strategies)
+                map.Add(strategy.Name, strategy);
+
+            return map;
         }
 
         private IStrategy GetStrategyOrUnknown(string strategy)
