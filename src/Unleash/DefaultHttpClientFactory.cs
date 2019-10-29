@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -22,27 +23,32 @@ namespace Unleash
         /// <summary>
         /// Default: null
         /// </summary>
-        public Dictionary<string,string> CustomDefaultHttpHeaders { get; set; }
+        public Dictionary<string, string> CustomDefaultHttpHeaders { get; set; }
 
-        public virtual HttpClient NewHttpClient()
-        {
-            return new HttpClient();
-        }
+        /// <summary>
+        /// Default: empty dictionary
+        /// </summary>
+        private static readonly ConcurrentDictionary<string, HttpClient> _httpClientCache = new ConcurrentDictionary<string, HttpClient>();
 
         public HttpClient Create(Uri unleashApiUri)
         {
-            // Refresh DNS cache each 60 seconds
-            var servicePoint = ServicePointManager.FindServicePoint(unleashApiUri);
-            ConfigureServicePoint(servicePoint);
+            var key = $"{unleashApiUri.Scheme}://{unleashApiUri.DnsSafeHost}:{unleashApiUri.Port}";
 
-            var httpClient = NewHttpClient();
-            httpClient.BaseAddress = unleashApiUri;
-            httpClient.Timeout = Timeout;
+            return _httpClientCache.GetOrAdd(key, k =>
+            {
+                var client = new HttpClient()
+                {
+                    BaseAddress = unleashApiUri,
+                    Timeout = Timeout
+                };
+                // Refresh DNS cache each 60 seconds
+                var servicePoint = ServicePointManager.FindServicePoint(unleashApiUri);
+                ConfigureServicePoint(servicePoint);
+                ConfigureHttpClient(client);
+                ConfigureDefaultRequestHeaders(client.DefaultRequestHeaders);
 
-            ConfigureHttpClient(httpClient);
-            ConfigureDefaultRequestHeaders(httpClient.DefaultRequestHeaders);
-
-            return httpClient;
+                return client;
+            });
         }
 
         protected virtual void ConfigureHttpClient(HttpClient httpClient)
