@@ -36,7 +36,7 @@ namespace Unleash
 
             return _httpClientCache.GetOrAdd(key, k =>
             {
-                var client = new HttpClient()
+                var client = new HttpClient
                 {
                     BaseAddress = unleashApiUri,
                     Timeout = Timeout
