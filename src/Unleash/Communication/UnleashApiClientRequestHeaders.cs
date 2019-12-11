@@ -2,7 +2,7 @@
 
 namespace Unleash.Communication
 {
-    internal class UnleashApiClientRequestHeaders
+    public class UnleashApiClientRequestHeaders
     {
         public string AppName { get; set; }   
         public string InstanceTag { get; set; }   

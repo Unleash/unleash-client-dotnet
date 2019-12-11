@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Unleash.Metrics
 {
-    internal class ClientRegistration
+    public class ClientRegistration
     {
         public string AppName { get; set; }
         public string InstanceId { get; set; }

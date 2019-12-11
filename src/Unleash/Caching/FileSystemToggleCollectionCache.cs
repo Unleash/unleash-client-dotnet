@@ -45,7 +45,7 @@ namespace Unleash.Caching
 
             if (!fileSystem.FileExists(etagFile) || !fileSystem.FileExists(toggleFile))
             {
-                return Task.FromResult(ToggleCollectionCacheResult.Empty);
+                return Task.FromResult(ToggleCollectionCacheResult.CacheMiss);
             }
 
             using (var fileStream = fileSystem.FileOpenRead(toggleFile))
@@ -58,7 +58,7 @@ namespace Unleash.Caching
                 }
                 catch
                 {
-                    return Task.FromResult(ToggleCollectionCacheResult.Empty);
+                    return Task.FromResult(ToggleCollectionCacheResult.CacheMiss);
                 }
             }
         }

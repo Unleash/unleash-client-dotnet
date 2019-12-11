@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Unleash
 {
-    internal class DefaultUnleashContextProvider : IUnleashContextProvider
+    public class DefaultUnleashContextProvider : IUnleashContextProvider
     {
         public DefaultUnleashContextProvider(UnleashContext context = null)
         {

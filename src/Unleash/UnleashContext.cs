@@ -10,7 +10,7 @@ namespace Unleash
         public string UserId { get; set; }
         public string SessionId { get; set; }
         public string RemoteAddress { get; set; }
-        public Dictionary<string, string> Properties { get; set; }
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
 
         #region Builder pattern: used in tests
 
@@ -19,7 +19,7 @@ namespace Unleash
             return new Builder();
         }
 
-        internal class Builder
+        public class Builder
         {
             private string userId;
             private string sessionId;

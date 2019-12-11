@@ -1,16 +1,16 @@
 using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Unleash.Caching;
 using Unleash.Scheduling;
 using Unleash.Serialization;
 using Unleash.Strategies;
+using Unleash.Utility;
 
 namespace Unleash
 {
     public static class UnleashServiceCollectionExtensions
     {
-        // Note: All strategies must be singletons b/c of the dependency on Random.  Random is seeded by DateTime which
-        //       has a low resolution.  Rapidly creating new Randoms would have the effect of reducing randomness.
         public static IUnleashServiceCollection WithStrategy<TStrategy>(this IUnleashServiceCollection serviceCollection)
             where TStrategy : class, IStrategy
         {
@@ -169,6 +169,33 @@ namespace Unleash
             }
 
             serviceCollection.AddSingleton<IJsonSerializer>(jsonSerializerFactory);
+            return serviceCollection;
+        }
+
+        public static IUnleashServiceCollection WithNewtonsoftJsonSerializer(this IUnleashServiceCollection serviceCollection,
+            Action<NewtonsoftJsonSerializerSettings> settingsConfigurator = null)
+        {
+            if (serviceCollection == null)
+            {
+                throw new ArgumentNullException(nameof(serviceCollection));
+            }
+
+            var settings = new NewtonsoftJsonSerializerSettings();
+
+            if (serviceCollection.UnleashConfiguration != null)
+            {
+                var section = serviceCollection.UnleashConfiguration.GetSection("Serialization:NewtonsoftJson");
+                section.Bind(settings);
+            }
+
+            settingsConfigurator?.Invoke(settings);
+
+            SettingsValidator.Validate(settings);
+
+            serviceCollection.AddSingleton(settings);
+
+            serviceCollection.WithJsonSerializer<NewtonsoftJsonSerializer>();
+
             return serviceCollection;
         }
     }

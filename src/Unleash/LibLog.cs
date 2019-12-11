@@ -59,7 +59,7 @@ namespace Unleash.Logging
 #if LIBLOG_PROVIDERS_ONLY
     using Unleash.LibLog.LogProviders;
 #else
-    using Unleash.Logging.LogProviders;
+    using global::Unleash.Logging.LogProviders;
 #endif
     using System;
 #if !LIBLOG_PROVIDERS_ONLY

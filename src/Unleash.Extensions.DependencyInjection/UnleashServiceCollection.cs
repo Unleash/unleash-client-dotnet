@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Unleash
@@ -9,9 +10,12 @@ namespace Unleash
     {
         private readonly IServiceCollection _serviceCollection;
 
-        public UnleashServiceCollection(IServiceCollection serviceCollection)
+        public IConfiguration UnleashConfiguration { get; }
+
+        public UnleashServiceCollection(IServiceCollection serviceCollection, IConfiguration unleashConfiguration)
         {
             _serviceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+            UnleashConfiguration = unleashConfiguration;
         }
 
         /// <inheritdoc />

@@ -3,7 +3,6 @@ using Unleash.Internal;
 
 namespace Unleash
 {
-    /// <inheritdoc />
     /// <summary>
     /// Unleash Feature Toggle Service
     /// </summary>

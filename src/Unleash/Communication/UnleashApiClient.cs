@@ -14,14 +14,15 @@ namespace Unleash.Communication
 {
     internal class UnleashApiClient : IUnleashApiClient
     {
+        internal UnleashApiClientRequestHeaders ClientRequestHeaders { get; }
+        internal IJsonSerializer JsonSerializer { get; }
+
         public const string AppNameHeader = "UNLEASH-APPNAME";
         public const string InstanceIdHeader = "UNLEASH-INSTANCEID";
 
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashApiClient));
 
         private readonly HttpClient httpClient;
-        private readonly IJsonSerializer jsonSerializer;
-        private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
 
         public UnleashApiClient(
             HttpClient httpClient,
@@ -29,8 +30,8 @@ namespace Unleash.Communication
             UnleashApiClientRequestHeaders clientRequestHeaders)
         {
             this.httpClient = httpClient;
-            this.jsonSerializer = jsonSerializer;
-            this.clientRequestHeaders = clientRequestHeaders;
+            this.JsonSerializer = jsonSerializer;
+            this.ClientRequestHeaders = clientRequestHeaders;
         }
 
         public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
@@ -39,20 +40,23 @@ namespace Unleash.Communication
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, resourceUri))
             {
-                SetRequestHeaders(request, clientRequestHeaders);
+                SetRequestHeaders(request, ClientRequestHeaders);
 
-                if (EntityTagHeaderValue.TryParse(etag, out var etagHeaderValue))
+                if (!string.IsNullOrEmpty(etag) && EntityTagHeaderValue.TryParse(etag, out var etagHeaderValue))
+                {
                     request.Headers.IfNoneMatch.Add(etagHeaderValue);
+                }
 
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
-                    if (response.StatusCode == HttpStatusCode.NotModified && (response.Headers.ETag?.Tag?.Equals($"\"{etag}\"") ?? false))
+                    if (response.StatusCode == HttpStatusCode.NotModified
+                        || (!string.IsNullOrEmpty(etag) && (response.Headers.ETag?.Tag?.Equals(etag) ?? false)))
                     {
                         return new FetchTogglesResult
                         {
                             HasChanged = false,
                             Etag = response.Headers.ETag.Tag,
-                            ToggleCollection = null,
+                            ToggleCollection = null
                         };
                     }
 
@@ -63,12 +67,12 @@ namespace Unleash.Communication
                         return new FetchTogglesResult
                         {
                             HasChanged = false,
-                            Etag = null,
+                            Etag = null
                         };
                     }
 
                     var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
+                    var toggleCollection = JsonSerializer.Deserialize<ToggleCollection>(stream);
 
                     if (toggleCollection == null)
                     {
@@ -95,7 +99,7 @@ namespace Unleash.Communication
 
             using (var memoryStream = new MemoryStream())
             {
-                jsonSerializer.Serialize(memoryStream, registration);
+                JsonSerializer.Serialize(memoryStream, registration);
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
                 return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
@@ -110,12 +114,13 @@ namespace Unleash.Communication
             {
                 using (metrics.StopCollectingMetrics(out var bucket))
                 {
-                    jsonSerializer.Serialize(memoryStream, new ClientMetrics
+                    JsonSerializer.Serialize(memoryStream, new ClientMetrics
                     {
-                        AppName = clientRequestHeaders.AppName,
-                        InstanceId = clientRequestHeaders.InstanceTag,
+                        AppName = ClientRequestHeaders.AppName,
+                        InstanceId = ClientRequestHeaders.InstanceTag,
                         Bucket = bucket
                     });
+                    memoryStream.Seek(0, SeekOrigin.Begin);
                 }
 
                 return await Post(requestUri, memoryStream, cancellationToken).ConfigureAwait(false);
@@ -131,7 +136,7 @@ namespace Unleash.Communication
                 request.Content = new StreamContent(stream, bufferSize);
                 request.Content.Headers.AddContentTypeJson();
 
-                SetRequestHeaders(request, clientRequestHeaders);
+                SetRequestHeaders(request, ClientRequestHeaders);
 
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {

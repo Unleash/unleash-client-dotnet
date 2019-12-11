@@ -8,7 +8,7 @@ namespace Unleash.Strategies
     public interface IStrategy
     {
         /// <summary>
-        /// Gets the stragegy name 
+        /// Gets the stragegy name
         /// </summary>
         string Name { get; }
 

@@ -9,4 +9,10 @@ namespace Unleash.Caching
         Task<ToggleCollectionCacheResult> Load(CancellationToken cancellationToken);
         Task Save(ToggleCollection toggleCollection, string etag, CancellationToken cancellationToken);
     }
+
+    public interface IToggleCollectionCache<out TSettings> : IToggleCollectionCache
+        where TSettings : class
+    {
+        TSettings Settings { get; }
+    }
 }

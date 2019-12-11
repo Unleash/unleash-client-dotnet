@@ -1,3 +1,5 @@
+using Unleash.Internal;
+
 namespace Unleash.Strategies
 {
     using System;
@@ -8,21 +10,16 @@ namespace Unleash.Strategies
         private static readonly string Percentage = "percentage";
         private static readonly string StrategyName = "gradualRolloutRandom";
 
-        private readonly Random random;
+        private readonly IRandom random;
 
-        public GradualRolloutRandomStrategy()
+        public GradualRolloutRandomStrategy(IRandom random)
         {
-            random = new Random(Guid.NewGuid().GetHashCode());
-        }
-
-        public GradualRolloutRandomStrategy(int seed)
-        {
-            random = new Random(seed);
+            this.random = random;
         }
 
         public string Name => StrategyName;
 
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context)
         {
             if (!parameters.TryGetValue(Percentage, out var value))
                 return false;

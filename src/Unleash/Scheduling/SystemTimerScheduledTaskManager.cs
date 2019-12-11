@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Logging;
-using Unleash.Internal;
 
 namespace Unleash.Scheduling
 {
@@ -17,54 +15,44 @@ namespace Unleash.Scheduling
         private static readonly TimeSpan TimeSpanExecuteImmediately = TimeSpan.Zero;
 
         private readonly Dictionary<string, Timer> timers = new Dictionary<string, Timer>();
+        private long runningTasks = 0;
+
+        private readonly object syncObject = new object();
+        private bool disposed = false;
 
         public void Configure(IEnumerable<IUnleashScheduledTask> tasks, CancellationToken cancellationToken)
         {
             foreach (var task in tasks)
             {
-                var name = task.Name;
-
                 async void Callback(object state)
                 {
-                    if (!(state is CallbackState localState))
+                    if (!(state is string taskName) || !timers.TryGetValue(taskName, out Timer localTimer))
+                    {
                         return;
-
-                    if (!timers.TryGetValue(localState.Name, out Timer localTimer))
-                        return;
+                    }
 
                     try
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
+                        Interlocked.Increment(ref runningTasks);
 
+                        cancellationToken.ThrowIfCancellationRequested();
                         await task.ExecuteAsync(cancellationToken).ConfigureAwait(false);
                     }
-                    catch (TaskCanceledException taskCanceledException)
+                    catch (OperationCanceledException operationCanceledException)
                     {
-                        Logger.ErrorException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                        Logger.ErrorException($"UNLEASH: Task '{task.Name}' cancelled ...", operationCanceledException);
                     }
                     catch (Exception ex)
                     {
-                        Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                        Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{task.Name}'.", ex);
                     }
                     finally
                     {
-                        if (cancellationToken.IsCancellationRequested)
+                        Interlocked.Decrement(ref runningTasks);
+
+                        if (!cancellationToken.IsCancellationRequested)
                         {
-                            // Do not schedule the next task
-                        }
-                        else
-                        {
-                            if (task.Interval == TimeSpanExecuteImmediately)
-                            {
-                                localTimer.SafeTimerChange(-1, Timeout.Infinite, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Stopped background task '{name}'...");
-                            }
-                            else
-                            {
-                                localTimer.SafeTimerChange(task.Interval, Timeout.InfiniteTimeSpan, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Scheduled background task '{name}' to run after '{task.Interval.TotalSeconds}' seconds...");
-                            }
+                            this.ResetTimer(localTimer, task.Name, task.Interval);
                         }
                     }
                 }
@@ -73,53 +61,76 @@ namespace Unleash.Scheduling
                     ? TimeSpanExecuteImmediately
                     : task.Interval;
 
-                var callbackState = new CallbackState
-                {
-                    Name = name,
-                    DueTime = dueTime
-                };
-
                 var timer = new Timer(
                     callback: Callback,
-                    state: callbackState,
+                    state: task.Name,
                     dueTime: dueTime,
                     period: Timeout.InfiniteTimeSpan);
 
-                timers.Add(name, timer);
+                timers.Add(task.Name, timer);
             }
         }
 
-        private bool disposeEnded;
-        public void Dispose()
+        private void ResetTimer(Timer localTimer, string taskName, TimeSpan taskInterval)
         {
-            if (disposeEnded)
-                return;
-
-            var timeout = TimeSpan.FromSeconds(1);
-
-            using (var waitHandle = new ManualResetEvent(false))
+            if (!this.disposed)
             {
-                foreach (var task in timers)
+                lock (this.syncObject)
                 {
-                    // Returns false on second dispose
-                    if (task.Value.Dispose(waitHandle))
+                    if (!this.disposed)
                     {
-                        if (!waitHandle.WaitOne(timeout))
+                        if (taskInterval == TimeSpanExecuteImmediately)
                         {
-                            throw new TimeoutException($"UNLEASH: Timeout waiting for task '{task.Key}' to stop..");
+                            localTimer.Change(-1, Timeout.Infinite);
+                            Logger.Trace($"UNLEASH: Stopped background task '{taskName}'...");
+                        }
+                        else
+                        {
+                            localTimer.Change(taskInterval, Timeout.InfiniteTimeSpan);
+                            Logger.Trace(
+                                $"UNLEASH: Scheduled background task '{taskName}' to run after '{taskInterval.TotalSeconds}' seconds...");
                         }
                     }
                 }
             }
-
-            disposeEnded = true;
-            timers.Clear();
         }
 
-        internal class CallbackState
+        public void Dispose()
         {
-            public string Name { get; set; }
-            public TimeSpan DueTime { get; set; }
+            if (!disposed)
+            {
+                lock (syncObject)
+                {
+                    if (!disposed)
+                    {
+                        foreach (var task in timers)
+                        {
+                            task.Value.Dispose();
+                        }
+
+                        timers.Clear();
+
+                        var now = DateTime.Now;
+                        while (true)
+                        {
+                            var currentlyRunningTasks = Interlocked.Read(ref runningTasks);
+                            if (currentlyRunningTasks == 0)
+                            {
+                                break;
+                            }
+
+                            if (DateTime.Now - now > TimeSpan.FromSeconds(1))
+                            {
+                                throw new TimeoutException($"UNLEASH: Timeout waiting for tasks to stop..");
+                            }
+
+                            Thread.Sleep(200);
+                        }
+
+                        disposed = true;
+                    }
+                }
+            }
         }
     }
 }

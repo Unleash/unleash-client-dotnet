@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp2.1;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+        <RootNamespace>Unleash</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Unleash\Unleash.csproj" />
+        <ProjectReference Include="..\Unleash.Extensions.DependencyInjection\Unleash.Extensions.DependencyInjection.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+        <PackageReference Include="Microsoft.Extensions.Options" Version="[2.1.0,2.2.0)" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="[2.1.0,2.2.0)" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+        <PackageReference Include="Microsoft.Extensions.Options" Version="[2.2.0,3.0.0)" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="[2.2.0,3.0.0)" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+        <PackageReference Include="Microsoft.Extensions.Options" Version="[3.0.0,3.1.0)" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="[3.0.0,3.1.0)" />
+    </ItemGroup>
+
+</Project>

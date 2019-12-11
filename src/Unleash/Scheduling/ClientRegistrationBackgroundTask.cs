@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
+using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Metrics;
 
@@ -36,7 +37,7 @@ namespace Unleash.Scheduling
                 AppName = settings.AppName,
                 InstanceId = settings.InstanceTag,
                 Interval = (long)settings.SendMetricsInterval.Value.TotalMilliseconds,
-                SdkVersion = settings.SdkVersion,
+                SdkVersion = SdkVersionHelper.SdkVersion,
                 Started = DateTimeOffset.UtcNow,
                 Strategies = strategies
             };
@@ -45,7 +46,7 @@ namespace Unleash.Scheduling
             var result = await apiClient.RegisterClient(clientRegistration, cancellationToken).ConfigureAwait(false);
             if (!result)
             {
-                // Already logged..    
+                // Already logged..
             }
         }
 

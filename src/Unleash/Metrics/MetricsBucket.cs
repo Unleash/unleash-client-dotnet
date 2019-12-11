@@ -7,17 +7,17 @@ namespace Unleash.Metrics
     /// <inheritdoc />
     /// <summary>
     /// Provides synchronization that supports multiple registration counters and single 'writer' (transfer to server)
-    /// 
+    ///
     /// While in write mode, no registrations will occur. i.e: no lock for rest of system.
     /// </summary>
-    internal class ThreadSafeMetricsBucket : IDisposable
+    public class ThreadSafeMetricsBucket : IDisposable
     {
         private long missedRegistrations;
         public long MissedRegistrations => missedRegistrations;
 
         private readonly MetricsBucket metricsBucket;
 
-        private readonly ReaderWriterLockSlim @lock = 
+        private readonly ReaderWriterLockSlim @lock =
             new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         public ThreadSafeMetricsBucket(MetricsBucket metricsBucket = null)
@@ -61,7 +61,7 @@ namespace Unleash.Metrics
         public IDisposable StopCollectingMetrics(out MetricsBucket bucket)
         {
             @lock.EnterWriteLock();
-            
+
             bucket = metricsBucket;
             bucket.Stop = DateTimeOffset.UtcNow;
 
@@ -87,7 +87,7 @@ namespace Unleash.Metrics
         }
     }
 
-    internal class MetricsBucket
+    public class MetricsBucket
     {
         public ConcurrentDictionary<string, ToggleCount> Toggles { get; set; }
 

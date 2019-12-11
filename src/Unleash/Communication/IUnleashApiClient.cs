@@ -4,7 +4,7 @@ using Unleash.Metrics;
 
 namespace Unleash.Communication
 {
-    internal interface IUnleashApiClient
+    public interface IUnleashApiClient
     {
         Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken);
         Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken);

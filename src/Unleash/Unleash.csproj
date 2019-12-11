@@ -1,49 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net47;net461;net46;net451;net45</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Unleash</RootNamespace>
   </PropertyGroup>
 
-  <!-- Need to conditionally bring in references for the .NET Framework 4.* targets -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-    <Reference Include="System.Net.Http" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
-    <Reference Include="System.Net.Http" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <Reference Include="System.Net.Http" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <Reference Include="System.Net.Http" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-    <Reference Include="System.Net.Http" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="LibLog" Version="4.2.6">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="LibLog" Version="4.2.6" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1,)" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="[4.4.0,5.0.0)" />
   </ItemGroup>
 
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <PackageId>Unleash.Client.Core</PackageId>
     <Authors>Stian Olafsen</Authors>
     <Owner>Stian Olafsen</Owner>
@@ -58,8 +26,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <Product>Unleash Feature Toggle Client</Product>
-    <PackageIconUrl>https://github.com/Unleash/unleash-client-core/raw/master/resources/logo.png</PackageIconUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Unleash/unleash-client-core/master/LICENSE</PackageLicenseUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <AssemblyName>Unleash.Client.Core</AssemblyName>
     <PackageProjectUrl>https://github.com/Unleash/unleash-client-core</PackageProjectUrl>
     <IncludeSymbols>True</IncludeSymbols>
@@ -75,5 +43,9 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>bin\Release\Unleash.Client.Core.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="logo.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System.Threading;
 
 namespace Unleash.Metrics
 {
-    internal class ToggleCount
+    public class ToggleCount
     {
         private long yes;
         private long no;

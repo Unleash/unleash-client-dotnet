@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Unleash.Caching;
 using Unleash.Communication;
 using Unleash.Metrics;
@@ -13,6 +14,8 @@ namespace Unleash.Internal
 {
     internal class UnleashServices : IUnleashServices
     {
+        /// <inheritdoc />
+        public IRandom Random { get; }
         public IReadOnlyDictionary<string, IStrategy> StrategyMap { get; }
 
         internal CancellationToken CancellationToken { get; }
@@ -22,10 +25,25 @@ namespace Unleash.Internal
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
-        public UnleashServices(UnleashSettings settings, IUnleashApiClientFactory unleashApiClientFactory,
+        private readonly TaskCompletionSource<object> flagsFetchedFromUnleashTaskCompletionSource = new TaskCompletionSource<object>();
+        private readonly bool cacheMiss;
+
+        public Task FeatureToggleLoadComplete(bool onlyOnEmptyCache = true, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (onlyOnEmptyCache && cacheMiss || !onlyOnEmptyCache)
+            {
+                flagsFetchedFromUnleashTaskCompletionSource.Task.Wait(cancellationToken);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public UnleashServices(UnleashSettings settings, IRandom random, IUnleashApiClientFactory unleashApiClientFactory,
             IUnleashScheduledTaskManager scheduledTaskManager, IToggleCollectionCache toggleCollectionCache,
             IEnumerable<IStrategy> strategies)
         {
+            this.Random = random ?? throw new ArgumentNullException(nameof(random));
+
             this.scheduledTaskManager = scheduledTaskManager ?? throw new ArgumentNullException(nameof(scheduledTaskManager));
 
             var settingsValidator = new UnleashSettingsValidator();
@@ -36,6 +54,8 @@ namespace Unleash.Internal
             CancellationToken = cancellationTokenSource.Token;
 
             var cachedFilesResult = toggleCollectionCache.Load(cancellationTokenSource.Token).GetAwaiter().GetResult();
+            cacheMiss = cachedFilesResult.IsCacheMiss;
+
 
             ToggleCollection = new ThreadSafeToggleCollection
             {
@@ -56,32 +76,37 @@ namespace Unleash.Internal
             yield return new FetchFeatureTogglesTask(
                 unleashApiClientFactory,
                 ToggleCollection,
-                toggleCollectionCache)
+                toggleCollectionCache,
+                flagsFetchedFromUnleashTaskCompletionSource)
             {
                 ExecuteDuringStartup = true,
                 Interval = settings.FetchTogglesInterval,
                 Etag = toggleCollectionCacheResult.InitialETag
             };
 
-            if (settings.SendMetricsInterval == null) yield break;
-
-            yield return new ClientRegistrationBackgroundTask(
-                unleashApiClientFactory,
-                settings,
-                StrategyMap.Keys.ToList())
+            if (settings.RegisterClient)
             {
-                Interval = TimeSpan.Zero,
-                ExecuteDuringStartup = true
-            };
+                yield return new ClientRegistrationBackgroundTask(
+                    unleashApiClientFactory,
+                    settings,
+                    StrategyMap.Keys.ToList())
+                {
+                    Interval = TimeSpan.Zero,
+                    ExecuteDuringStartup = true
+                };
+            }
 
-            yield return new ClientMetricsBackgroundTask(
-                unleashApiClientFactory,
-                settings,
-                MetricsBucket)
+            if (settings.SendMetricsInterval != null)
             {
-                ExecuteDuringStartup = false,
-                Interval = settings.SendMetricsInterval.Value
-            };
+                yield return new ClientMetricsBackgroundTask(
+                    unleashApiClientFactory,
+                    settings,
+                    MetricsBucket)
+                {
+                    ExecuteDuringStartup = false,
+                    Interval = settings.SendMetricsInterval.Value
+                };
+            }
         }
 
         private static IReadOnlyDictionary<string, IStrategy> BuildStrategyMap(IStrategy[] strategies)

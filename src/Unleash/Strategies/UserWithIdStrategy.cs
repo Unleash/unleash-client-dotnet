@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Unleash.Strategies
 {
     using System;
@@ -12,22 +14,16 @@ namespace Unleash.Strategies
         public string Name => "userWithId";
 
         /// <inheritdoc />
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context )
         {
             var userId = context?.UserId;
-            if (userId == null || userId == string.Empty)
+            if (string.IsNullOrEmpty(userId))
                 return false;
 
             if (!parameters.TryGetValue(UserIdsConst, out var userIds))
                 return false;
 
-            const string commaDelimeter = ",";
-            const string space = " ";
-
-            var idsLocal = string.Concat(commaDelimeter, userIds.Replace(space, string.Empty), commaDelimeter);
-            var userLocal = string.Concat(commaDelimeter, userId.Replace(space, string.Empty), commaDelimeter);
-
-            return idsLocal.IndexOf(userLocal, StringComparison.Ordinal) > -1;
+            return userIds.Split(',').Select(x => x.Trim()).Contains(userId.Trim(), StringComparer.Ordinal);
         }
     }
 }

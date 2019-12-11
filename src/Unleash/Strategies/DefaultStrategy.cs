@@ -8,7 +8,7 @@ namespace Unleash.Strategies
 
         public string Name => StrategyName;
 
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context)
         {
             return true;
         }

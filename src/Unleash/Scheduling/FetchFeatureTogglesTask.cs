@@ -9,9 +9,11 @@ namespace Unleash.Scheduling
 {
     internal class FetchFeatureTogglesTask : IUnleashScheduledTask
     {
+        private bool firstSuccessfulRun = true;
         private readonly IUnleashApiClientFactory apiClientFactory;
         private readonly ThreadSafeToggleCollection toggleCollection;
         private readonly IToggleCollectionCache toggleCollectionCache;
+        private readonly TaskCompletionSource<object> initializationTaskCompletionSource;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
@@ -19,32 +21,49 @@ namespace Unleash.Scheduling
         public FetchFeatureTogglesTask(
             IUnleashApiClientFactory apiClientFactory,
             ThreadSafeToggleCollection toggleCollection,
-            IToggleCollectionCache toggleCollectionCache)
+            IToggleCollectionCache toggleCollectionCache,
+            TaskCompletionSource<object> initializationTaskCompletionSource)
         {
             this.apiClientFactory = apiClientFactory;
             this.toggleCollection = toggleCollection;
             this.toggleCollectionCache = toggleCollectionCache;
+            this.initializationTaskCompletionSource = initializationTaskCompletionSource;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             var apiClient = apiClientFactory.CreateClient();
-            var result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
+            FetchTogglesResult result = null;
 
-            if (!result.HasChanged)
-                return;
+            try
+            {
+                result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
 
-            if (string.IsNullOrEmpty(result.Etag))
-                return;
+                if (firstSuccessfulRun)
+                {
+                    firstSuccessfulRun = false;
+                    initializationTaskCompletionSource.SetResult(null);
+                }
 
-            if (result.Etag == Etag)
-                return;
+                if (!result.HasChanged)
+                    return;
 
-            toggleCollection.Instance = result.ToggleCollection;
+                if (string.IsNullOrEmpty(result.Etag))
+                    return;
 
-            await toggleCollectionCache.Save(result.ToggleCollection, result.Etag, cancellationToken).ConfigureAwait(false);
+                if (result.Etag == Etag)
+                    return;
 
-            Etag = result.Etag;
+                toggleCollection.Instance = result.ToggleCollection;
+
+                await toggleCollectionCache.Save(result.ToggleCollection, result.Etag, cancellationToken).ConfigureAwait(false);
+
+                Etag = result.Etag;
+            }
+            catch (OperationCanceledException)
+            {
+                initializationTaskCompletionSource.SetCanceled();
+            }
         }
 
         public string Name => "fetch-feature-toggles-task";

@@ -21,7 +21,7 @@ namespace Unleash.Strategies
 
         public string Name => "gradualRolloutUserId";
 
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context)
         {
             var userId = context?.UserId;
             if (userId == null || userId == string.Empty)

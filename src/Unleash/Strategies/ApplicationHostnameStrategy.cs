@@ -13,20 +13,15 @@ namespace Unleash.Strategies
         public static string HostNamesParam = "hostNames";
 
         protected readonly string NameConst = "applicationHostname";
-        private readonly string hostname;
-
-        /// <inheritdoc />
-        public ApplicationHostnameStrategy()
-        {
-            hostname = Environment.GetEnvironmentVariable("hostname") ?? Dns.GetHostName();
-        }
 
         /// <inheritdoc />
         public string Name => NameConst;
 
         /// <inheritdoc />
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context)
         {
+            var hostname = Environment.GetEnvironmentVariable("hostname") ?? Dns.GetHostName();
+
             if (parameters.TryGetValue(HostNamesParam, out var hostnames))
             {
                 if (hostnames == null || hostnames == string.Empty)

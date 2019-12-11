@@ -12,23 +12,32 @@ namespace Unleash.Serialization
     /// </summary>
     public static class JsonSerializerTester
     {
-        private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
-        {
-            new FeatureToggle("Feature1", true, new List<ActivationStrategy>()
+        private static readonly ToggleCollection Toggles = new ToggleCollection(
+            new List<FeatureToggle>
             {
-                new ActivationStrategy("remoteAddress", new Dictionary<string, string>()
-                {
-                    {"IPs", "127.0.0.1"}
-                })
-            }),
-            new FeatureToggle("feature2", false, new List<ActivationStrategy>()
-            {
-                new ActivationStrategy("userWithId", new Dictionary<string, string>()
-                {
-                    {"userIds", "james"}
-                })
-            })
-        });
+                new FeatureToggle(
+                    "Feature1",
+                    true,
+                    new List<ActivationStrategy>
+                    {
+                        new ActivationStrategy(
+                            "remoteAddress",
+                            new Dictionary<string, string>
+                            {
+                                {"IPs", "127.0.0.1"}
+                            })
+                    }),
+                new FeatureToggle(
+                    "feature2",
+                    false,
+                    new List<ActivationStrategy>
+                    {
+                        new ActivationStrategy("userWithId", new Dictionary<string, string>()
+                        {
+                            {"userIds", "james"}
+                        })
+                    })
+            });
 
         public static void Assert(IJsonSerializer serializer)
         {
@@ -65,8 +74,9 @@ namespace Unleash.Serialization
             }
 
             if (sb.Length > 0)
+            {
                 throw new UnleashException($"Serialization errors occurred:{Environment.NewLine}{sb}");
-
+            }
 
             // Deserialization
             using (var jsonStream = json.ConvertToStream())
