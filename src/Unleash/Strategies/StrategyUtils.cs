@@ -1,7 +1,10 @@
+using Murmur;
+using System;
+using System.Security.Cryptography;
+using System.Text;
+
 namespace Unleash.Strategies
 {
-    using System;
-
     internal class StrategyUtils
     {
         /// <summary>
@@ -13,10 +16,14 @@ namespace Unleash.Strategies
             const int oneHundred = 100;
             const string separator = ":";
 
-            var hashCode = Math.Abs(string.Concat(groupId, separator, identifier)
-                .GetHashCode());
+            byte[] bytes = Encoding.UTF8.GetBytes(string.Concat(groupId, separator, identifier));
 
-            return hashCode % oneHundred + one;
+            using (var algorithm = MurmurHash.Create32())
+            {
+                var hash = algorithm.ComputeHash(bytes);
+                var value = BitConverter.ToUInt32(hash, 0);
+                return (int)(value % oneHundred + one);
+            }
         }
 
         /// <summary>
