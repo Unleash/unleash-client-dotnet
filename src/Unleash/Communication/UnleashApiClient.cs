@@ -30,7 +30,7 @@ namespace Unleash.Communication
 
         public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
         {
-            const string resourceUri = "api/client/features";
+            const string resourceUri = "client/features";
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, resourceUri))
             {
@@ -88,7 +88,7 @@ namespace Unleash.Communication
 
         public async Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken)
         {
-            const string requestUri = "api/client/register";
+            const string requestUri = "client/register";
 
             var memoryStream = new MemoryStream();
             jsonSerializer.Serialize(memoryStream, registration);
@@ -98,7 +98,7 @@ namespace Unleash.Communication
 
         public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
         {
-            const string requestUri = "api/client/metrics";
+            const string requestUri = "client/metrics";
 
             var memoryStream = new MemoryStream();
 

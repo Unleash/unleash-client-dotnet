@@ -11,7 +11,7 @@ namespace Unleash.Tests.Communication
     {
         private static IUnleashApiClient CreateApiClient()
         {
-            var apiUri = new Uri("http://unleash.herokuapp.com/");
+            var apiUri = new Uri("http://unleash.herokuapp.com/api/");
 
             var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
             jsonSerializer.TryLoad();
