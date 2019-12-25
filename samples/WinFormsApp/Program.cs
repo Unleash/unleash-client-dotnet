@@ -30,8 +30,8 @@ namespace WinFormsApp
 
             settings = new UnleashSettings
             {
-                UnleashApi = new Uri("http://unleash.herokuapp.com/"),
-                //UnleashApi = new Uri("http://localhost:4242/"),
+                UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+                //UnleashApi = new Uri("http://localhost:4242/api/"),
                 AppName = "dotnet-forms-test",
                 InstanceTag = "instance 1",
                 SendMetricsInterval = TimeSpan.FromSeconds(5),

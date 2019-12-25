@@ -5,9 +5,9 @@ namespace Unleash.Tests.Communication
 {
     public class UnleashHttpClientFactory_RegisterHttpClient_Tests
     {
-        private readonly Uri apiUri = new Uri("http://unleash.herokuapp.com/");
+        private readonly Uri apiUri = new Uri("http://unleash.herokuapp.com/api/");
 
-        private readonly Uri newApiUri = new Uri("http://unleash2.herokuapp2.com/");
+        private readonly Uri newApiUri = new Uri("http://unleash2.herokuapp2.com/api/");
 
         private readonly DefaultHttpClientFactory httpClientFactory = new DefaultHttpClientFactory();
 
