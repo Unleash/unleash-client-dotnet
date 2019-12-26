@@ -47,7 +47,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
 };
 
 var unleash = new DefaultUnleash(settings);
@@ -142,7 +142,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
 };
 ``` 
@@ -155,7 +155,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
     CustomHttpHeaders = new Dictionary<string, string>()
     {
@@ -181,7 +181,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/"),
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     JsonSerializer = new NewtonsoftJson7Serializer()
 };
 

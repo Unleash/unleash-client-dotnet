@@ -29,9 +29,9 @@ namespace Unleash
         /// <summary>
         /// Gets or set the uri for the backend unleash server.
         /// 
-        /// Default: http://unleash.herokuapp.com/
+        /// Default: http://unleash.herokuapp.com/api/
         /// </summary>
-        public Uri UnleashApi { get; set; } = new Uri("http://unleash.herokuapp.com/");
+        public Uri UnleashApi { get; set; } = new Uri("http://unleash.herokuapp.com/api/");
 
         /// <summary>
         /// Gets or sets an application name. Used for communication with backend api.
