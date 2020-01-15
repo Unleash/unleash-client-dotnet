@@ -10,10 +10,9 @@ namespace Unleash.Strategies
         /// <summary>
         /// Takes to string inputs concat them, produce a hashCode and return a normalized value between 0 and 100;
         /// </summary>
-        public static int GetNormalizedNumber(string identifier, string groupId)
+        public static int GetNormalizedNumber(string identifier, string groupId, int normalizer = 100)
         {
             const int one = 1;
-            const int oneHundred = 100;
             const string separator = ":";
 
             byte[] bytes = Encoding.UTF8.GetBytes(string.Concat(groupId, separator, identifier));
@@ -22,7 +21,7 @@ namespace Unleash.Strategies
             {
                 var hash = algorithm.ComputeHash(bytes);
                 var value = BitConverter.ToUInt32(hash, 0);
-                return (int)(value % oneHundred + one);
+                return (int)(value % normalizer + one);
             }
         }
 

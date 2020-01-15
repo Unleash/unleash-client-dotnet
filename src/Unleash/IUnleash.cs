@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unleash.Internal;
+using Unleash.Variants;
 
 namespace Unleash
 {
@@ -25,26 +26,22 @@ namespace Unleash
         bool IsEnabled(string toggleName, bool defaultSetting);
 
         /// <summary>
-        /// Gets a list of a given variant from a feature that is available.
-        /// </summary>
-        /// <param name="toggleName">The name of the toggle</param>
-        /// <param name="variantName">The name of the variant</param>
-        /// <returns>A list of variants of a given name or null if feature is not available</returns>
-        IEnumerable<Variant> GetVariants(string toggleName, string variantName);
-
-        /// <summary>
-        ///  Gets a list of variants from a feature that is available. 
-        /// </summary>
-        /// <param name="toggleName">The name of the toggle</param>
-        /// <returns>A list of variants or null if feature is not available </returns>
-        IEnumerable<Variant> GetVariants(string toggleName);
-
-        /// <summary>
         /// Get a weighted variant from a feature that is available.
         /// Should be used with care, is not a sticky variant, will weight by call. 
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <returns>A weighted variant or null if feature is not available</returns>
         Variant GetVariant(string toggleName);
+
+        /// <summary>
+        /// Get a weighted variant from a feature that is available.
+        /// Should be used with care, is not a sticky variant, will weight by call. 
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <param name="defaultValue">If a toglge is not found, the default value will be returned. (Default: Variant.DISABLED_VARIANT)</param>
+        /// <returns>A weighted variant or null if feature is not available</returns>
+        Variant GetVariant(string toggleName, Variant defaultValue);
+
+        IEnumerable<VariantDefinition> GetVariants(string toggleName);
     }
 }

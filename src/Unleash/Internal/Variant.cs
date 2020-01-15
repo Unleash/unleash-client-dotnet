@@ -1,20 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using Unleash.Variants;
 
 namespace Unleash.Internal
 {
     public class Variant
     {
-        public Variant(string name, int weight, Payload payload, ICollection<Override> overrides)
+        public static readonly Variant DISABLED_VARIANT = new Variant("disabled", null, false);
+
+        public Variant(string name, Payload payload, bool enabled)
         {
             Name = name;
-            Weight = weight;
             Payload = payload;
-            Overrides = overrides;
+            IsEnabled = enabled;
         }
 
-        public string Name { get; set; }
-        public int Weight { get; set; }
-        public Payload Payload { get; set; }
-        public ICollection<Override> Overrides { get; set; }
+        public string Name { get; }
+        public Payload Payload { get; }
+        public bool IsEnabled { get; }
     }
 }

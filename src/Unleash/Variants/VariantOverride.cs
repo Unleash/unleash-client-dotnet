@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Unleash.Internal
+namespace Unleash.Variants
 {
-    public class Override
+    public class VariantOverride
     {
-        public Override(string contextName, string[] values)
+        public VariantOverride(string contextName, params string[] values)
         {
             ContextName = contextName;
             Values = values;
