@@ -7,6 +7,7 @@ namespace Unleash
     using System.Collections.Generic;
     using Internal;
     using System.Linq;
+    using Unleash.Variants;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash
@@ -105,59 +106,32 @@ namespace Unleash
 
         public Variant GetVariant(string toggleName)
         {
-            var variants = GetVariants(toggleName)?.ToList();
-            if (variants == null) return null;
-            
-            var weights = variants.Select(v => v.Weight).ToArray();
-            var position = GetWeightedPosition(weights);
-
-            if (position.HasValue)
-            {
-                return variants[position.Value];
-            }
-
-            return null;
+            return GetVariant(toggleName, services.ContextProvider.Context, Variant.DISABLED_VARIANT);
         }
 
-        private int? GetWeightedPosition(int[] weights)
+        public Variant GetVariant(string toggleName, Variant defaultVariant)
         {
-            //TODO: this weighted algorithm assumes that the variants list will ever return in same order 
-            var total = weights.Sum();
-            //TODO: better random generator
-            var random = new Random(Guid.NewGuid().GetHashCode()).Next(total);
-            var currentWeight = 0;
-
-            for (int i = 0; i < weights.Length; i++)
-            {
-                currentWeight += weights[i];
-                if (random <= currentWeight)
-                {
-                    return i;
-                }
-            }
-
-            return null;
+            return GetVariant(toggleName, services.ContextProvider.Context, defaultVariant);
         }
 
-        public IEnumerable<Variant> GetVariants(string toggleName)
+        private Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
+        {
+            var toggle = GetToggle(toggleName);
+
+            var enabled = CheckIsEnabled(toggleName, context, false);
+            var variant = enabled ? VariantUtils.SelectVariant(toggle, context, defaultValue) : defaultValue;
+
+            RegisterVariant(toggleName, variant);
+            return variant;
+        }
+
+        public IEnumerable<VariantDefinition> GetVariants(string toggleName)
         {
             if (!IsEnabled(toggleName)) return null;
-            
+
             var toggle = GetToggle(toggleName);
-            
+
             return toggle?.Variants;
-        }
-
-        public IEnumerable<Variant> GetVariants(string toggleName, string variantName)
-        {
-            var variants = GetVariants(toggleName)?.ToList();
-            if (variants == null) return null;
-            
-            variants = variants.Where(v => v.Name == variantName).ToList();
-
-            if (variants.Count == 0) return null;
-
-            return variants;
         }
 
         private FeatureToggle GetToggle(string toggleName)
@@ -174,6 +148,14 @@ namespace Unleash
                 return;
 
             services.MetricsBucket.RegisterCount(toggleName, enabled);
+        }
+
+        private void RegisterVariant(string toggleName, Variant variant)
+        {
+            if (services.IsMetricsDisabled)
+                return;
+
+            services.MetricsBucket.RegisterCount(toggleName, variant.Name);
         }
 
         private static IStrategy[] SelectStrategies(IStrategy[] strategies, bool overrideDefaultStrategies)

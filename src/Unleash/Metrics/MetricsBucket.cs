@@ -35,12 +35,22 @@ namespace Unleash.Metrics
         /// <param name="active">True or False</param>
         public void RegisterCount(string toggleName, bool active)
         {
+            WithToggleCount(toggleName, toggle => toggle.Register(active));
+        }
+
+        public void RegisterCount(string toggleName, string variantName)
+        {
+            WithToggleCount(toggleName, toggle => toggle.Register(variantName));
+        }
+
+        private void WithToggleCount(string toggleName, Action<ToggleCount> action)
+        {
             if (@lock.TryEnterReadLock(2))
             {
                 try
                 {
                     var toggle = metricsBucket.Toggles.GetOrAdd(toggleName, x => new ToggleCount());
-                    toggle.Register(active);
+                    action(toggle);
 
                 }
                 finally

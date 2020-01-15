@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Metrics;
+using Unleash.Variants;
 
 namespace Unleash.Tests.Mock
 {
@@ -16,12 +17,13 @@ namespace Unleash.Tests.Mock
                 new ActivationStrategy("userWithId", new Dictionary<string, string>(){
                     {"userIds", "userA" }
                 })
-            }, new List<Variant>()
+            }, new List<VariantDefinition>()
             {
-                new Variant("Aa", 33, null, null),
-                new Variant("Aa", 33, null, null),
-                new Variant("Ab", 34, null, new List<Override>{ new Override("context", new[] { "a", "b"}) }),
-            }),
+                new VariantDefinition("Aa", 33, null, null),
+                new VariantDefinition("Aa", 33, null, null),
+                new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
+            }
+            ),
             new FeatureToggle("one-disabled", false, new List<ActivationStrategy>()
             {
                 new ActivationStrategy("userWithId", new Dictionary<string, string>()
