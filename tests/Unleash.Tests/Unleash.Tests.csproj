@@ -81,6 +81,7 @@
     <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
+    <Compile Include="UnleashContextTests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />
   </ItemGroup>
   <ItemGroup>

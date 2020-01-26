@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using Unleash.Communication;
@@ -39,9 +40,14 @@ namespace Unleash
         public string AppName { get; set; } = "my-awesome-app";
 
         /// <summary>
+        /// Gets or sets an environment. Used for communication with backend api.
+        /// </summary>
+        public string Environment { get; set; } = "default";
+
+        /// <summary>
         /// Gets or sets an instance tag. Used for communication with backend api.
         /// </summary>
-        public string InstanceTag { get; set; } = "Dev";
+        public string InstanceTag { get; set; } = GetDefaultInstanceTag();
 
         /// <summary>
         /// Gets or sets the interval in which feature toggle changes are re-fetched.
@@ -115,6 +121,13 @@ namespace Unleash
             return $"v{version}";
         }
 
+        private static string GetDefaultInstanceTag()
+        {
+            var hostName = Dns.GetHostName();
+
+            return $"{hostName}-generated-{Math.Round(new Random().NextDouble() * 1000000.0D)}";
+        }
+
         /// <summary>
         /// Returns info about the unleash setup.
         /// </summary>
@@ -123,6 +136,7 @@ namespace Unleash
             var sb = new StringBuilder("## Unleash settings ##");
 
             sb.AppendLine($"Application name: {AppName}");
+            sb.AppendLine($"Environment: {Environment}");
             sb.AppendLine($"Instance tag: {InstanceTag}");
             sb.AppendLine($"Server Uri: {UnleashApi}");
             sb.AppendLine($"Sdk version: {SdkVersion}");

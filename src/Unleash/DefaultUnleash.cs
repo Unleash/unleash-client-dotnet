@@ -26,6 +26,7 @@ namespace Unleash
             new RemoteAddressStrategy(),
         };
 
+        private readonly UnleashSettings settings;
         private readonly Dictionary<string, IStrategy> strategyMap;
 
         private readonly UnleashServices services;
@@ -47,6 +48,8 @@ namespace Unleash
         ///// <param name="strategies">Custom strategies.</param>
         public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, params IStrategy[] strategies)
         {
+            this.settings = settings;
+
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
 
@@ -87,17 +90,8 @@ namespace Unleash
             }
             else
             {
-                for (var i = 0; i < featureToggle.Strategies.Count; i++)
-                {
-                    var toggleStrategy = featureToggle.Strategies[i];
-                    var strategy = GetStrategyOrUnknown(toggleStrategy.Name);
-
-                    if (!strategy.IsEnabled(toggleStrategy.Parameters, context))
-                        continue;
-
-                    enabled = true;
-                    break;
-                }
+                var enhancedContext = context.ApplyStaticFields(settings);
+                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext));
             }
 
             RegisterCount(toggleName, enabled);
