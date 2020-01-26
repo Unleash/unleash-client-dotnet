@@ -1,6 +1,7 @@
 namespace Unleash.Strategies
 {
     using System.Collections.Generic;
+    using Unleash.Internal;
 
     public class UnknownStrategy : IStrategy
     {
@@ -9,6 +10,11 @@ namespace Unleash.Strategies
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context = null)
         {
             return false;
+        }
+
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        {
+            return StrategyUtils.IsEnabled(this, parameters, context, constraints);
         }
     }
 }

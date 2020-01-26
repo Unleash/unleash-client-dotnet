@@ -79,9 +79,12 @@
     <Compile Include="Mock\MockFileSystem.cs" />
     <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
     <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
+    <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
+    <Compile Include="Strategy\StrategyTest.cs" />
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
+    <Compile Include="UnleashSettingsTests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />
   </ItemGroup>
   <ItemGroup>
