@@ -162,9 +162,6 @@ namespace Unleash.Communication
 
             foreach (var header in headers)
                 requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
-
-            foreach (var header in headers.CustomHttpHeaderProvider.customHeaders)
-                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
     }
 }
