@@ -1,6 +1,7 @@
 namespace Unleash.Strategies
 {
     using System.Collections.Generic;
+    using Unleash.Internal;
 
     /**
      * : a gradual roll-out strategy based on userId.
@@ -37,6 +38,11 @@ namespace Unleash.Strategies
             var normalizedUserId = StrategyUtils.GetNormalizedNumber(userId, groupId);
 
             return percentage > 0 && normalizedUserId <= percentage;
+        }
+
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        {
+            return StrategyUtils.IsEnabled(this, parameters, context, constraints);
         }
     }
 }

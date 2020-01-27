@@ -41,5 +41,10 @@ namespace Unleash.Strategies
 
             return false;
         }
+
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        {
+            return StrategyUtils.IsEnabled(this, parameters, context, constraints);
+        }
     }
 }

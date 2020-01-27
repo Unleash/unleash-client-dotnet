@@ -2,6 +2,7 @@ namespace Unleash.Strategies
 {
     using System;
     using System.Collections.Generic;
+    using Unleash.Internal;
 
     /// <inheritdoc />
     public class UserWithIdStrategy : IStrategy
@@ -28,6 +29,11 @@ namespace Unleash.Strategies
             var userLocal = string.Concat(commaDelimeter, userId.Replace(space, string.Empty), commaDelimeter);
 
             return idsLocal.IndexOf(userLocal, StringComparison.Ordinal) > -1;
+        }
+
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        {
+            return StrategyUtils.IsEnabled(this, parameters, context, constraints);
         }
     }
 }

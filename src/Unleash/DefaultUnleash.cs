@@ -24,9 +24,11 @@ namespace Unleash
             new ApplicationHostnameStrategy(),
             new GradualRolloutSessionIdStrategy(),
             new RemoteAddressStrategy(),
+            new FlexibleRolloutStrategy()
         };
 
         private readonly UnleashSettings settings;
+
         private readonly Dictionary<string, IStrategy> strategyMap;
 
         private readonly UnleashServices services;
@@ -91,7 +93,7 @@ namespace Unleash
             else
             {
                 var enhancedContext = context.ApplyStaticFields(settings);
-                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext));
+                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, s.Constraints));
             }
 
             RegisterCount(toggleName, enabled);
