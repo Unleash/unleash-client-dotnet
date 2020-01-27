@@ -147,16 +147,19 @@ namespace Unleash.Communication
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
 
-            if (headers.CustomHttpHeaders == null)
+            SetCustomHeaders(requestMessage, headers.CustomHttpHeaders)
+            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider.customHeaders)
+        }
+
+        private static void SetCustomHeaders(HttpRequestMessage requestMessage, Dictionary<string, string> headers)
+        {
+            if (headers == null)
                 return;
 
-            if (headers.CustomHttpHeaders.Count == 0)
+            if (headers.Count == 0)
                 return;
 
-            foreach (var header in headers.CustomHttpHeaders)
-                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
-
-            foreach (var header in headers.CustomHttpHeaderProvider.customHeaders)
+            foreach (var header in headers)
                 requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
     }
