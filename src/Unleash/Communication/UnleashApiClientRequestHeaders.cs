@@ -6,6 +6,7 @@ namespace Unleash.Communication
     {
         public string AppName { get; set; }   
         public string InstanceTag { get; set; }   
-        public Dictionary<string,string> CustomHttpHeaders { get; set; }   
+        public Dictionary<string,string> CustomHttpHeaders { get; set; }
+        public IUnleashCustomHttpHeaderProvider CustomHttpHeaderProvider { get; set; }
     }
 }
