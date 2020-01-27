@@ -15,6 +15,27 @@ namespace Unleash
         public string RemoteAddress { get; set; }
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
 
+        public string GetByName(string contextName)
+        {
+            switch (contextName)
+            {
+                case "environment": 
+                    return Environment;
+                case "appName": 
+                    return AppName;
+                case "userId": 
+                    return UserId;
+                case "sessionId": 
+                    return SessionId;
+                case "remoteAddress":
+                    return RemoteAddress;
+                default:
+                    string result;
+                    Properties.TryGetValue(contextName, out result);
+                    return result;
+            }
+        }
+
         public UnleashContext ApplyStaticFields(UnleashSettings settings)
         {
             var builder = new Builder(this);

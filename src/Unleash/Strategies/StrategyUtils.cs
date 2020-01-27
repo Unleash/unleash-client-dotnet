@@ -1,7 +1,9 @@
 using Murmur;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Unleash.Internal;
 
 namespace Unleash.Strategies
 {
@@ -49,6 +51,11 @@ namespace Unleash.Strategies
             }
 
             return p;
+        }
+
+        public static bool IsEnabled(IStrategy strategy, Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        {
+            return ConstraintUtils.Validate(constraints, context) && strategy.IsEnabled(parameters, context);
         }
     }
 }
