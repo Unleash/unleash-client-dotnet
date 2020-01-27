@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -147,8 +148,8 @@ namespace Unleash.Communication
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
 
-            SetCustomHeaders(requestMessage, headers.CustomHttpHeaders)
-            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider.customHeaders)
+            SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
+            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider.customHeaders);
         }
 
         private static void SetCustomHeaders(HttpRequestMessage requestMessage, Dictionary<string, string> headers)
