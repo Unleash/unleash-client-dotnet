@@ -148,8 +148,14 @@ namespace Unleash.Communication
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
 
+            Dictionary<string, string> headersFromProvider;
+            try {
+                headersFromProvider = headers.CustomHttpHeaderProvider.GetCustomHeaders();
+            } catch {
+                headersFromProvider= new Dictionary<string, string>();
+            }
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
-            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider.customHeaders);
+            SetCustomHeaders(requestMessage, headersFromProvider);
         }
 
         private static void SetCustomHeaders(HttpRequestMessage requestMessage, Dictionary<string, string> headers)
