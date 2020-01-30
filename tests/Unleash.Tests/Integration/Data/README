@@ -1,0 +1,9 @@
+Run the following PowerShell command in the repository root directory to
+download client specifications needed for running the tests in Visual Studio:
+
+.\build.ps1 -Target Download-Client-Specifications
+
+The specifications are automatically downloaded when building with Cake. 
+
+See https://github.com/Unleash/client-specification for more information
+regarding client specifications.
