@@ -90,6 +90,10 @@ namespace Unleash
                 // Overall false
                 enabled = false;
             }
+            else if (featureToggle.Strategies.Count == 0)
+            {
+                enabled = true;
+            }
             else
             {
                 var enhancedContext = context.ApplyStaticFields(settings);

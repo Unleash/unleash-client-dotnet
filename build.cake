@@ -62,8 +62,23 @@ Task("Build")
     }
 });
 
+Task("Download-Client-Specifications")
+    .Does(() =>
+{
+    var indexPath = File("./tests/Unleash.Tests/Integration/Data/index.json");
+    DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/master/specifications/index.json", indexPath);
+	
+	foreach (var fileName in DeserializeJsonFromFile<string[]>(indexPath)) 
+	{
+		var filePath = File("./tests/Unleash.Tests/Integration/Data/" + fileName);
+		DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/master/specifications/" + fileName, filePath);
+	}
+	
+});
+
 Task("Run-Unit-Tests")
     .IsDependentOn("Build")
+	.IsDependentOn("Download-Client-Specifications")
     .Does(() =>
 {
     NUnit3("./tests/*.Tests/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
