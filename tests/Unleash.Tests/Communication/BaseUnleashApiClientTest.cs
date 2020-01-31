@@ -22,7 +22,8 @@ namespace Unleash.Tests.Communication
             {
                 AppName = "api-test-client",
                 InstanceTag = "instance1",
-                CustomHttpHeaders = null
+                CustomHttpHeaders = null,
+                CustomHttpHeaderProvider = null
             };
 
             var httpClient = httpClientFactory.Create(apiUri);
