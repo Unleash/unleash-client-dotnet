@@ -149,7 +149,7 @@ namespace Unleash.Communication
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
 
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
-            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider?.customHeaders);
+            SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider?.CustomHeaders);
         }
 
         private static void SetCustomHeaders(HttpRequestMessage requestMessage, Dictionary<string, string> headers)

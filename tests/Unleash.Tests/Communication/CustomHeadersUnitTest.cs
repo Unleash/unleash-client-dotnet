@@ -112,7 +112,7 @@ namespace Unleash.Tests.Communication
 
         class UnleashCustomHttpHeaderProvider : IUnleashCustomHttpHeaderProvider
         {
-            public Dictionary<string, string> customHeaders => new Dictionary<string, string>
+            public Dictionary<string, string> CustomHeaders => new Dictionary<string, string>
             {
                 {"expectedDynamicHeader1", "expectedDynamicValue1"},
                 {"expectedDynamicHeader2", "expectedDynamicValue2"}

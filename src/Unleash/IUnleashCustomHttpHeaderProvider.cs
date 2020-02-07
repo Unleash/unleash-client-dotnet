@@ -4,6 +4,6 @@ namespace Unleash
 {
     public interface IUnleashCustomHttpHeaderProvider
     {
-       Dictionary<string, string> customHeaders { get; }
+       Dictionary<string, string> CustomHeaders { get; }
     }
 }
