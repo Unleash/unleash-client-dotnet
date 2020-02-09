@@ -162,6 +162,32 @@ var settings = new UnleashSettings()
         {"Authorization","some-secret" }
     }
 };
+```
+
+### Dynamic custom HTTP headers
+If you need custom http headers that change during the lifetime of the client, a provider can be defined via the `UnleashSettings`. 
+
+```vb
+Public Class CustomHttpHeaderProvider
+    Implements IUnleashCustomHttpHeaderProvider
+
+    Public Function GetCustomHeaders() As Dictionary(Of String, String) Implements IUnleashCustomHttpHeaderProvider.GetCustomHeaders
+        Dim token = ' Acquire or refresh a token
+        Return New Dictionary(Of String, String) From
+                {{"Authorization", "Bearer " & token}}
+    End Function
+End Class
+
+' ...
+
+Dim unleashSettings As New UnleashSettings()
+unleashSettings.AppName = "dotnet-test"
+unleashSettings.InstanceTag = "instance z"
+' add the custom http header provider to the settings
+unleashSettings.UnleashCustomHttpHeaderProvider = New CustomHttpHeaderProvider()
+unleashSettings.UnleashApi = new Uri("http://unleash.herokuapp.com/api/")
+unleashSettings.UnleashContextProvider = New AspNetContextProvider()
+Dim unleash = New DefaultUnleash(unleashSettings)
                 
 ```
 

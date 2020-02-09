@@ -52,7 +52,8 @@ namespace Unleash
                 {
                     AppName = settings.AppName,
                     InstanceTag = settings.InstanceTag,
-                    CustomHttpHeaders = settings.CustomHttpHeaders
+                    CustomHttpHeaders = settings.CustomHttpHeaders,
+                    CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider
                 });
             }
             else

@@ -76,6 +76,13 @@ namespace Unleash
         public Dictionary<string, string> CustomHttpHeaders { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
+        /// Gets or sets a provider that returns a dictionary of custom http headers
+        /// which will be included when communicating with the backend server.
+        /// This provider will be called before each outgoing request to the unleash server.
+        /// </summary>
+        public IUnleashCustomHttpHeaderProvider UnleashCustomHttpHeaderProvider { get; set; } = new DefaultCustomHttpHeaderProvider();
+
+        /// <summary>
         /// Gets or sets the unleash context provider. This is needed when using any of the activation strategies 
         /// that needs application specific context like userid etc.
         /// 
