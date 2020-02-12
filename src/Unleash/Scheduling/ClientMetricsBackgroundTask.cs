@@ -42,6 +42,5 @@ namespace Unleash.Scheduling
 
         public string Name => "report-metrics-task";
         public TimeSpan Interval { get; set; }
-        public bool ExecuteDuringStartup { get; set; }
     }
 }

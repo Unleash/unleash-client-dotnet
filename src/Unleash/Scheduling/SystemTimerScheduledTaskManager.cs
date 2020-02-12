@@ -69,9 +69,7 @@ namespace Unleash.Scheduling
                     }
                 }
 
-                var dueTime = task.ExecuteDuringStartup
-                    ? TimeSpanExecuteImmediately
-                    : task.Interval;
+                var dueTime = task.Interval;
 
                 var callbackState = new CallbackState
                 {

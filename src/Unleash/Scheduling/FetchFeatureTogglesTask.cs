@@ -63,6 +63,5 @@ namespace Unleash.Scheduling
 
         public string Name => "fetch-feature-toggles-task";
         public TimeSpan Interval { get; set; }
-        public bool ExecuteDuringStartup { get; set; }
     }
 }

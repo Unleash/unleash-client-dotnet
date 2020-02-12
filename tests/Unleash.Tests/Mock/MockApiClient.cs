@@ -38,7 +38,7 @@ namespace Unleash.Tests.Mock
             return Task.FromResult(new FetchTogglesResult
             {
                 HasChanged = true,
-                Etag = "",
+                Etag = "etag",
                 ToggleCollection = Toggles
             });
         }

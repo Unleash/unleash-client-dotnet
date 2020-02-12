@@ -25,10 +25,5 @@ namespace Unleash.Scheduling
         /// Gets the interval of which the task should be executed.
         /// </summary>
         TimeSpan Interval { get; }
-
-        /// <summary>
-        /// Gets a flag indicating that the task should run during startup.
-        /// </summary>
-        bool ExecuteDuringStartup { get; }
     }
 }

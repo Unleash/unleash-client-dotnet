@@ -31,7 +31,7 @@ namespace Unleash
 
         private readonly Dictionary<string, IStrategy> strategyMap;
 
-        private readonly UnleashServices services;
+        internal readonly UnleashServices services;
 
         ///// <summary>
         ///// Initializes a new instance of Unleash client with a set of default strategies. 

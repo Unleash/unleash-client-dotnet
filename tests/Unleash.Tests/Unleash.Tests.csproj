@@ -94,6 +94,7 @@
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />
+    <Compile Include="ClientFactory\SyncStartupUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -142,6 +143,9 @@
       <Project>{4cf2127b-8fc8-46fc-8614-3918148463a5}</Project>
       <Name>Unleash</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ClientFactory\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
