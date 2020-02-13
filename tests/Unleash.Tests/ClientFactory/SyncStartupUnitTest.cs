@@ -19,9 +19,9 @@ namespace Unleash.Tests.StartupBehavior
             var mockApiClient = A.Fake<IUnleashApiClient>();
             var settings = new MockedUnleashSettings();
             settings.UnleashApiClient = mockApiClient;
-            var unleashFactory = new UnleashClientFactory(settings);
+            var unleashFactory = new UnleashClientFactory();
 
-            IUnleash unleash = await unleashFactory.Generate(SynchronousInitialization: true);
+            IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored)).MustHaveHappenedOnceExactly();
         }
