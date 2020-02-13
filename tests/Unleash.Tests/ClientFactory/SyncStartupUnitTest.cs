@@ -8,7 +8,7 @@ using Unleash.ClientFactory;
 using Unleash.Serialization;
 using System.Threading.Tasks;
 
-namespace Unleash.Tests.StartupBehavior
+namespace Unleash.Tests.ClientFactory
 {
     public class SyncStartupUnitTest
     {
