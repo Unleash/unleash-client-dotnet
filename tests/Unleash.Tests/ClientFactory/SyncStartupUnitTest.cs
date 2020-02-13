@@ -2,11 +2,9 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Unleash.Communication;
-using Unleash.Metrics;
 using FakeItEasy;
-using Unleash.ClientFactory;
-using Unleash.Serialization;
 using System.Threading.Tasks;
+using Unleash.ClientFactory;
 
 namespace Unleash.Tests.ClientFactory
 {

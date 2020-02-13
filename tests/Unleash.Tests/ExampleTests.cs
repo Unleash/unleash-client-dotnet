@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using Unleash.Internal;
+using Unleash.ClientFactory;
 
 namespace Unleash.Tests
 {
@@ -15,7 +13,7 @@ namespace Unleash.Tests
         [SetUp]
         public async Task Setup()
         {
-            var factory = new ClientFactory.UnleashClientFactory();
+            var factory = new UnleashClientFactory();
             unleash = await factory.Generate(new MockedUnleashSettings(), true);
         }
 
