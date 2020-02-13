@@ -51,5 +51,6 @@ namespace Unleash.Scheduling
         public string Name => "register-client-task";
 
         public TimeSpan Interval { get; set; }
+        public bool ExecuteDuringStartup { get; set; }
     }
 }

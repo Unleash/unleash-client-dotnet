@@ -38,7 +38,7 @@ Install the latest version of `Unleash.Client.Core` from [nuget.org](https://www
 
 ### Create a new a Unleash instance
 
-It is easy to get a new instance of Unleash. In your app you typically *just want one instance of Unelash*, and inject that where you need it. You will typically use a dependency injection frameworks to manage this. 
+It is easy to get a new instance of Unleash. In your app you typically *just want one instance of Unleash*, and inject that where you need it. You will typically use a dependency injection frameworks to manage this. 
 
 To create a new instance of Unleash you need to pass in a settings object:
 ```csharp
@@ -52,6 +52,7 @@ var settings = new UnleashSettings()
 
 var unleash = new DefaultUnleash(settings);
 ```
+Note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediantly, see the [synchronous startup](#synchronous-startup) section
 
 When your application shuts down, remember to dispose the unleash instance.
 
@@ -260,6 +261,27 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
 
 The server api needs camel cased json, but not for certain dictionary keys. The implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
 
+## Synchronous Startup
+This unleash client does not throw any exceptions if the unleash server is unreachable. Also, fetching features will return the default value if the feature toggle cache has not yet been populated. In many situations it is perferable to throw an error than allow an application to startup with incorrect feature toggle values. In this case, we provice a client factory with the option for synchronous initialization. 
+
+```csharp
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    UnleashContextProvider = new AspNetContextProvider(),
+};
+var unleashFactory = new UnleashClientFactory(settings);
+
+IUnleash unleash = await unleashFactory.Generate(SynchronousInitialization: true);
+
+// this `unleash` has successfully fetched feature toggles and written them to its cache.
+// if network errors or disk permissions prevented this from happening, the above await would have thrown an exception
+
+var awesome = unleash.IsEnabled("SuperAwesomeFeature");
+
+```
 ## Run unleash server with Docker locally
 The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.
 

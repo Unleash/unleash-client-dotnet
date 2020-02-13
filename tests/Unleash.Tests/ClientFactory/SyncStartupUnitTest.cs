@@ -21,7 +21,7 @@ namespace Unleash.Tests.StartupBehavior
             settings.UnleashApiClient = mockApiClient;
             var unleashFactory = new UnleashClientFactory(settings);
 
-            IUnleash unleashTask = await unleashFactory.Generate(SynchronousInitialization: true);
+            IUnleash unleash = await unleashFactory.Generate(SynchronousInitialization: true);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored)).MustHaveHappenedOnceExactly();
         }

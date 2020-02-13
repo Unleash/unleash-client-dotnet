@@ -117,7 +117,12 @@ namespace Unleash
         /// <summary>
         /// INTERNAL: Gets or sets the file system abstraction. Can be used for testing/mocking etc.
         /// </summary>
-        internal IFileSystem FileSystem { get; set; } 
+        internal IFileSystem FileSystem { get; set; }
+
+        /// <summary>
+        /// INTERNAL: Gets or sets if the feature toggle fetch should be immeditely scheduled. Used by the client factory to prevent redundant initial fetches.
+        /// </summary>
+        internal bool ScheduleFeatureToggleFetchImmediatly { get; set; } = true;
 
         private static string GetSdkVersion()
         {

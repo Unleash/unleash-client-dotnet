@@ -75,6 +75,7 @@ namespace Unleash
                 backupFile, 
                 etagBackupFile)
             {
+                ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
                 Interval = settings.FetchTogglesInterval,
                 Etag = cachedFilesResult.InitialETag
             };
@@ -92,6 +93,7 @@ namespace Unleash
                     strategyMap.Select(pair => pair.Key).ToList())
                 {
                     Interval = TimeSpan.Zero,
+                    ExecuteDuringStartup = true
                 };
 
                 scheduledTasks.Add(clientRegistrationBackgroundTask);
