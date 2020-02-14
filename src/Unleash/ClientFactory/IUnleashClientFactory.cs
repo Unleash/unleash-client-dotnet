@@ -5,6 +5,6 @@ namespace Unleash.ClientFactory
 {
     public interface IUnleashClientFactory
     {
-        Task<IUnleash> Generate(UnleashSettings settings, bool SynchronousInitialization);
+        Task<IUnleash> Generate(UnleashSettings settings, bool SynchronousInitialization = false);
     }
 }
