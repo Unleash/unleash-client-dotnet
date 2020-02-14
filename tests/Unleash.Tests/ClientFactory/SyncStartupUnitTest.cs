@@ -29,7 +29,7 @@ namespace Unleash.Tests.ClientFactory
         {
             settings.UnleashApiClient = mockApiClient;
 
-            IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
+            var unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -38,7 +38,7 @@ namespace Unleash.Tests.ClientFactory
         [Test(Description = "Immediate initialization: Should be ready after creation")]
         public async Task ImmediateInitializationReadyAfterConstruction()
         {
-            IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
+            var unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
 
             unleash.IsEnabled("one-enabled", false)
                 .Should().BeTrue();
@@ -69,10 +69,19 @@ namespace Unleash.Tests.ClientFactory
         {
             settings.UnleashApiClient = mockApiClient;
 
-            IUnleash unleash = await unleashFactory.Generate(settings);
+            var unleash = await unleashFactory.Generate(settings);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test(Description = "Delayed initialization: Should be ready after creation")]
+        public void DelayedInitializationNotReadyAfterConstruction()
+        {
+            var unleash = unleashFactory.Generate(settings).Result;
+
+            unleash.IsEnabled("one-enabled", false)
+                .Should().BeFalse();
         }
     }
 }
