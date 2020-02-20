@@ -35,11 +35,15 @@ namespace Unleash.Tests.Mock
 
         public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new FetchTogglesResult
+            return Task.Run(async delegate
             {
-                HasChanged = true,
-                Etag = "",
-                ToggleCollection = Toggles
+                await Task.Delay(200);
+                return new FetchTogglesResult
+                {
+                    HasChanged = true,
+                    Etag = "etag",
+                    ToggleCollection = Toggles
+                };
             });
         }
 

@@ -74,6 +74,9 @@
     <PackageReference Include="murmurhash" Version="1.0.3" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="ClientFactory\" />
+  </ItemGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>

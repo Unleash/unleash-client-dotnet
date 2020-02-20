@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using Unleash.Internal;
+using Unleash.ClientFactory;
 
 namespace Unleash.Tests
 {
 
-    public class ExampleTests : IDisposable
+    public class ExampleTests
     {
-        private readonly IUnleash unleash;
+        private IUnleash unleash;
 
-        public ExampleTests()
+        [SetUp]
+        public async Task Setup()
         {
-            unleash = new DefaultUnleash(new MockedUnleashSettings());
+            var factory = new UnleashClientFactory();
+            unleash = await factory.Generate(new MockedUnleashSettings(), true);
         }
 
         [Test]
@@ -30,6 +31,7 @@ namespace Unleash.Tests
                 .Should().BeFalse();
         }
 
+        [TearDown]
         public void Dispose()
         {
             unleash?.Dispose();

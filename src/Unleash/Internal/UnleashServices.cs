@@ -21,6 +21,7 @@ namespace Unleash
         internal ThreadSafeToggleCollection ToggleCollection { get; }
         internal bool IsMetricsDisabled { get; }
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
+        internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
 
         public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
         {
@@ -60,8 +61,6 @@ namespace Unleash
             {
                 // Mocked backend: fill instance collection 
                 apiClient = settings.UnleashApiClient;
-                var toggles = apiClient.FetchToggles("", CancellationToken.None);
-                ToggleCollection.Instance = toggles.Result.ToggleCollection;
             }
 
             scheduledTaskManager = settings.ScheduledTaskManager;
@@ -76,10 +75,11 @@ namespace Unleash
                 backupFile, 
                 etagBackupFile)
             {
-                ExecuteDuringStartup = true,
+                ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
                 Interval = settings.FetchTogglesInterval,
                 Etag = cachedFilesResult.InitialETag
             };
+            FetchFeatureTogglesTask = fetchFeatureTogglesTask;
 
             var scheduledTasks = new List<IUnleashScheduledTask>(){
                 fetchFeatureTogglesTask
@@ -103,7 +103,6 @@ namespace Unleash
                     settings, 
                     MetricsBucket)
                 {
-                    ExecuteDuringStartup = false,
                     Interval = settings.SendMetricsInterval.Value
                 };
 
