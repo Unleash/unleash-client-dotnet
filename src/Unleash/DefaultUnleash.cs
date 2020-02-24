@@ -73,7 +73,12 @@ namespace Unleash
         /// <inheritdoc />
         public bool IsEnabled(string toggleName, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, services.ContextProvider.Context, defaultSetting);
+            return IsEnabled(toggleName, services.ContextProvider.Context, defaultSetting);
+        }
+
+        public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
+        {
+            return CheckIsEnabled(toggleName, context, defaultSetting);
         }
 
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
@@ -191,6 +196,5 @@ namespace Unleash
         {
             services?.Dispose(); 
         }
-
     }
 }
