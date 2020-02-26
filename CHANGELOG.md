@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 <!-- and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). -->
 
+## [1.4.0] - 2020-02-26
+### Added
+- Support synchronous load of toggles during startup (pull request #53)
+- Overloads for `IUnleash.IsEnabled`
+-- `bool IsEnabled(string toggleName, UnleashContext context)` (pull request #56)
+-- `bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)` (pull request #55)
+### Changed
+- Assembly and package name changed from `Unleash.Client.Core` to `Unleash.Client`
+
+## [1.3.6] - 2020-02-09
+### Added
+- Static context fields support (pull request #47)
+- Contraints support (#48)
+- CustomHttpHeaderProvider (pull request #52)
+### Changed
+- Don't prefix API endpoint with `api/` (pull request #43)
+- Use murmur hashing (pull request #44)
+- Align Variants implementation with Unleash server (#45)
+### Fixed
+- `HttpClient` allocation issue (pull request #41)
+
+## [1.3.5] - 2019-10-02
+### Added
+- Initial Variants support
+
 ## [1.3.4] - 2019-09-01
 ### Changed
 - Log exception on error (pull request #6)
