@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Added
 - Support synchronous load of toggles during startup (pull request #53)
 - Overloads for `IUnleash.IsEnabled`
--- `bool IsEnabled(string toggleName, UnleashContext context)` (pull request #56)
--- `bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)` (pull request #55)
+  - `bool IsEnabled(string toggleName, UnleashContext context)` (pull request #56)
+  - `bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)` (pull request #55)
 ### Changed
 - Assembly and package name changed from `Unleash.Client.Core` to `Unleash.Client`
 
