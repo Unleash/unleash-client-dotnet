@@ -76,6 +76,11 @@ namespace Unleash
             return IsEnabled(toggleName, services.ContextProvider.Context, defaultSetting);
         }
 
+        public bool IsEnabled(string toggleName, UnleashContext context)
+        {
+            return IsEnabled(toggleName, context, false);
+        }
+
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
             return CheckIsEnabled(toggleName, context, defaultSetting);

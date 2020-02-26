@@ -12,20 +12,27 @@ namespace Unleash
     public interface IUnleash : IDisposable
     {
         /// <summary>
-        /// Determines if the given feature toggle is enabled or not.
+        /// Determines if the given feature toggle is enabled or not, defaulting to <c>false</c> if the toggle cannot be found.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         bool IsEnabled(string toggleName);
 
         /// <summary>
-        /// Determines if the given feature toggle is enabled or not.
+        /// Determines if the given feature toggle is enabled or not, defaulting to the value of <paramref name="defaultSetting"/> if the toggle cannot be found.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <param name="defaultSetting">Default value to return if toggle is not defined</param>
         bool IsEnabled(string toggleName, bool defaultSetting);
 
         /// <summary>
-        /// Determines if the given feature toggle is enabled or not.
+        /// Determines if the given feature toggle is enabled or not, defaulting to <c>false</c> if the toggle cannot be found.
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <param name="context">The Unleash context to evaluate the toggle state against</param>
+        bool IsEnabled(string toggleName, UnleashContext context);
+
+        /// <summary>
+        /// Determines if the given feature toggle is enabled or not, defaulting to the value of <paramref name="defaultSetting"/> if the toggle cannot be found.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <param name="context">The Unleash context to evaluate the toggle state against</param>
