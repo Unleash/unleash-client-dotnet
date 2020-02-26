@@ -1,8 +1,8 @@
 # Unleash FeatureToggle Client for .Net
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](code-of-conduct.md)
-[![Build status](https://ci.appveyor.com/api/projects/status/3gnangl3ca3tb0f4?svg=true)](https://ci.appveyor.com/project/silviogreuel/unleash-client-core)
-[![NuGet](https://img.shields.io/nuget/v/Unleash.Client.Core.svg)](https://www.nuget.org/packages/Unleash.Client.Core/)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/unleash/unleash-client-dotnet?branch=master&svg=true)](https://ci.appveyor.com/project/gnab/unleash-client-dotnet)
+[![NuGet](https://img.shields.io/nuget/v/Unleash.Client.svg)](https://www.nuget.org/packages/Unleash.Client/)
 
 
 ## Introduction
@@ -34,7 +34,7 @@ Extendable architecture
 - Inject your own implementations of key components (Json serializer, background task scheduler, http client factory)
 
 ## Getting started
-Install the latest version of `Unleash.Client.Core` from [nuget.org](https://www.nuget.org/packages/Unleash.Client.Core/).
+Install the latest version of `Unleash.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.Client/).
 
 ### Create a new a Unleash instance
 
