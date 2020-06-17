@@ -274,7 +274,7 @@ var settings = new UnleashSettings()
 };
 var unleashFactory = new UnleashClientFactory(settings);
 
-IUnleash unleash = await unleashFactory.Generate(SynchronousInitialization: true);
+IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
 
 // this `unleash` has successfully fetched feature toggles and written them to its cache.
 // if network errors or disk permissions prevented this from happening, the above await would have thrown an exception
