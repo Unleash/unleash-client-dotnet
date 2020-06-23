@@ -48,7 +48,13 @@ namespace Unleash
             IUnleashApiClient apiClient;
             if (settings.UnleashApiClient == null)
             {
-                var httpClient = settings.HttpClientFactory.Create(settings.UnleashApi);
+                var uri = settings.UnleashApi;
+                if (!uri.AbsolutePath.EndsWith("/"))
+                {
+                    uri = new Uri($"{uri.AbsoluteUri}/");
+                }
+
+                var httpClient = settings.HttpClientFactory.Create(uri);
                 apiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
                 {
                     AppName = settings.AppName,
