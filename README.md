@@ -269,10 +269,13 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    UnleashContextProvider = new AspNetContextProvider(),
+    UnleashApi = new Uri("https://app.unleash-hosted.com/demo/api/"),
+    CustomHttpHeaders = new Dictionary<string, string>(),
+    {
+       {"Authorization","56907a2fa53c1d16101d509a10b78e36190b0f918d9f122d" }
+    }
 };
-var unleashFactory = new UnleashClientFactory(settings);
+var unleashFactory = new UnleashClientFactory();
 
 IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
 
