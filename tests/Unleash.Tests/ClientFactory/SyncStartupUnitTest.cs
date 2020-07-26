@@ -29,7 +29,7 @@ namespace Unleash.Tests.ClientFactory
         {
             settings.UnleashApiClient = mockApiClient;
 
-            var unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
+            var unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -38,7 +38,7 @@ namespace Unleash.Tests.ClientFactory
         [Test(Description = "Immediate initialization: Should be ready after creation")]
         public async Task ImmediateInitializationReadyAfterConstruction()
         {
-            var unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
+            var unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
 
             unleash.IsEnabled("one-enabled", false)
                 .Should().BeTrue();
@@ -51,7 +51,7 @@ namespace Unleash.Tests.ClientFactory
             A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
                 .Throws<Exception>();
 
-            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.Generate(settings, SynchronousInitialization: true));
+            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
         }
 
         [Test(Description = "Immediate initialization: Should bubble up async fetch errors")]
@@ -61,7 +61,7 @@ namespace Unleash.Tests.ClientFactory
             A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
                 .ThrowsAsync(new Exception());
 
-            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.Generate(settings, SynchronousInitialization: true));
+            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
         }
 
         [Test(Description = "Delayed initialization: Should only fetch toggles once")]
@@ -69,7 +69,7 @@ namespace Unleash.Tests.ClientFactory
         {
             settings.UnleashApiClient = mockApiClient;
 
-            var unleash = await unleashFactory.Generate(settings);
+            var unleash = await unleashFactory.CreateClientAsync(settings);
 
             A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -78,7 +78,7 @@ namespace Unleash.Tests.ClientFactory
         [Test(Description = "Delayed initialization: Should be ready after creation")]
         public void DelayedInitializationNotReadyAfterConstruction()
         {
-            var unleash = unleashFactory.Generate(settings).Result;
+            var unleash = unleashFactory.CreateClientAsync(settings).Result;
 
             unleash.IsEnabled("one-enabled", false)
                 .Should().BeFalse();
