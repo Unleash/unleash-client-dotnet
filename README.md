@@ -7,7 +7,7 @@
 
 ## Introduction
 
-Unleash is a feature toggle system, that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go. This is for now, `an unofficial client`.
+Unleash is a feature toggle system, that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go.
 
 The main motivation for doing feature toggling is to decouple the process for deploying code to production and releasing new features. This helps reducing risk, and allow us to easily manage which features to enable.
 
@@ -277,14 +277,16 @@ var settings = new UnleashSettings()
 };
 var unleashFactory = new UnleashClientFactory();
 
-IUnleash unleash = await unleashFactory.Generate(settings, SynchronousInitialization: true);
+IUnleash unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
 
 // this `unleash` has successfully fetched feature toggles and written them to its cache.
 // if network errors or disk permissions prevented this from happening, the above await would have thrown an exception
 
 var awesome = unleash.IsEnabled("SuperAwesomeFeature");
-
 ```
+
+The `CreateClientAsync` method was introduced in version 1.5.0, making the previous `Generate` method obsolete. There's also a `CreateClient` method available if you don't prefer the async version.
+
 ## Run unleash server with Docker locally
 The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.
 
