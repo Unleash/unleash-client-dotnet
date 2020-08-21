@@ -41,7 +41,10 @@ namespace Unleash.Scheduling
                     }
                     catch (TaskCanceledException taskCanceledException)
                     {
-                        Logger.ErrorException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                        }
                     }
                     catch (Exception ex)
                     {
