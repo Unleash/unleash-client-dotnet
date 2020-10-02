@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Strategies;
 
 namespace Unleash.ClientFactory
 {
@@ -16,12 +17,13 @@ namespace Unleash.ClientFactory
         /// Initializes a new instance of Unleash client. 
         /// </summary>
         /// <param name="synchronousInitialization">If true, fetch and cache toggles before returning. If false, allow the unleash client schedule an initial poll of features in the background</param>
-        public IUnleash CreateClient(UnleashSettings settings, bool synchronousInitialization = false)
+        /// <param name="strategies">Custom strategies, added in addtion to builtIn strategies.</param>
+        public IUnleash CreateClient(UnleashSettings settings, bool synchronousInitialization = false, params IStrategy[] strategies)
         {
             if (synchronousInitialization)
             {
                 settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings);
+                var unleash = new DefaultUnleash(settings, false, strategies);
                 TaskFactory
                     .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
                     .Unwrap()
@@ -30,7 +32,7 @@ namespace Unleash.ClientFactory
                 
                 return unleash;
             }
-            return new DefaultUnleash(settings);
+            return new DefaultUnleash(settings, false, strategies);
         }
 
 
@@ -38,16 +40,16 @@ namespace Unleash.ClientFactory
         /// Initializes a new instance of Unleash client. 
         /// </summary>
         /// <param name="synchronousInitialization">If true, fetch and cache toggles before returning. If false, allow the unleash client schedule an initial poll of features in the background</param>
-        public async Task<IUnleash> CreateClientAsync(UnleashSettings settings, bool synchronousInitialization = false)
+        public async Task<IUnleash> CreateClientAsync(UnleashSettings settings, bool synchronousInitialization = false, params IStrategy[] strategies)
         {
             if (synchronousInitialization)
             {
                 settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings);
+                var unleash = new DefaultUnleash(settings, false, strategies);
                 await unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
                 return unleash;
             }
-            return new DefaultUnleash(settings);
+            return new DefaultUnleash(settings, false, strategies);
         }
     }
 }
