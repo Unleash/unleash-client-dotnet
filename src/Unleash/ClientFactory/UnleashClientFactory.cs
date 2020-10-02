@@ -23,7 +23,7 @@ namespace Unleash.ClientFactory
             if (synchronousInitialization)
             {
                 settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings, false, strategies);
+                var unleash = new DefaultUnleash(settings, strategies);
                 TaskFactory
                     .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
                     .Unwrap()
@@ -32,7 +32,7 @@ namespace Unleash.ClientFactory
                 
                 return unleash;
             }
-            return new DefaultUnleash(settings, false, strategies);
+            return new DefaultUnleash(settings, strategies);
         }
 
 
@@ -46,11 +46,11 @@ namespace Unleash.ClientFactory
             if (synchronousInitialization)
             {
                 settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings, false, strategies);
+                var unleash = new DefaultUnleash(settings, strategies);
                 await unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
                 return unleash;
             }
-            return new DefaultUnleash(settings, false, strategies);
+            return new DefaultUnleash(settings, strategies);
         }
     }
 }
