@@ -8,11 +8,6 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
-
-
   <!-- Need to conditionally bring in references for the .NET Framework 4.* targets -->
  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="System.Net.Http" />
@@ -90,7 +85,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <PackageId>Unleash.Client</PackageId>
     <Authors>Unleash</Authors>
-    <Owner>Stian Olafsen</Owner>
+    <Owner>Bricks Software</Owner>
     <Description>Flexible feature toggle client. It supports enabling features runtime, through multiple activation strategies, and allows you to decouple deployment of code from release of new features. Unleash is a feature toggle system that gives you a great overview over all feature toggles across all your applications and services. Read more at: https://github.com/unleash/unleash/</Description>
     <RepositoryUrl>https://github.com/Unleash/unleash-client-dotnet</RepositoryUrl>
     <Version>1.0.0</Version>
