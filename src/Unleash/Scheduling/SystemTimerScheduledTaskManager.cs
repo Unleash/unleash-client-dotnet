@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Logging;
-using Unleash.Internal;
 
 namespace Unleash.Scheduling
 {
@@ -14,7 +13,6 @@ namespace Unleash.Scheduling
     internal class SystemTimerScheduledTaskManager : IUnleashScheduledTaskManager
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(SystemTimerScheduledTaskManager));
-        private static readonly TimeSpan TimeSpanExecuteImmediately = TimeSpan.Zero;
 
         private readonly Dictionary<string, Timer> timers = new Dictionary<string, Timer>();
 
@@ -26,12 +24,6 @@ namespace Unleash.Scheduling
 
                 async void Callback(object state)
                 {
-                    if (!(state is CallbackState localState))
-                        return;
-
-                    if (!timers.TryGetValue(localState.Name, out Timer localTimer))
-                        return;
-
                     try
                     {
                         if (cancellationToken.IsCancellationRequested)
@@ -50,43 +42,21 @@ namespace Unleash.Scheduling
                     {
                         Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                     }
-                    finally
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            // Do not schedule the next task
-                        }
-                        else
-                        {
-                            if (task.Interval == TimeSpanExecuteImmediately)
-                            {
-                                localTimer.SafeTimerChange(-1, Timeout.Infinite, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Stopped background task '{name}'...");
-                            }
-                            else
-                            {
-                                localTimer.SafeTimerChange(task.Interval, Timeout.InfiniteTimeSpan, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Scheduled background task '{name}' to run after '{task.Interval.TotalSeconds}' seconds...");
-                            }
-                        }
-                    }
                 }
 
                 var dueTime = task.ExecuteDuringStartup
-                    ? TimeSpanExecuteImmediately
+                    ? TimeSpan.Zero
                     : task.Interval;
 
-                var callbackState = new CallbackState
-                {
-                    Name = name,
-                    DueTime = dueTime
-                };
+                var period = task.Interval == TimeSpan.Zero
+                    ? Timeout.InfiniteTimeSpan
+                    : task.Interval;
 
                 var timer = new Timer(
                     callback: Callback,
-                    state: callbackState,
+                    state: null,
                     dueTime: dueTime,
-                    period: Timeout.InfiniteTimeSpan);
+                    period: period);
 
                 timers.Add(name, timer);
             }
@@ -97,7 +67,7 @@ namespace Unleash.Scheduling
         {
             if (disposeEnded)
                 return;
-            
+
             var timeout = TimeSpan.FromSeconds(1);
 
             using (var waitHandle = new ManualResetEvent(false))
@@ -117,12 +87,6 @@ namespace Unleash.Scheduling
 
             disposeEnded = true;
             timers.Clear();
-        }
-
-        internal class CallbackState
-        {
-            public string Name { get; set; }
-            public TimeSpan DueTime { get; set; }
         }
     }
 }
