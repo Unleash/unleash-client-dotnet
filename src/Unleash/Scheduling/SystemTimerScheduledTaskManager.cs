@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Internal;
 using Unleash.Logging;
 
 namespace Unleash.Scheduling
@@ -26,10 +27,10 @@ namespace Unleash.Scheduling
                 {
                     try
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
-
-                        await task.ExecuteAsync(cancellationToken);
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            await task.ExecuteAsync(cancellationToken);
+                        }
                     }
                     catch (TaskCanceledException taskCanceledException)
                     {
@@ -42,6 +43,14 @@ namespace Unleash.Scheduling
                     {
                         Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                     }
+                    finally
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            // Stop the timer.
+                            timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
+                        }
+                    }
                 }
 
                 var dueTime = task.ExecuteDuringStartup
@@ -52,13 +61,17 @@ namespace Unleash.Scheduling
                     ? Timeout.InfiniteTimeSpan
                     : task.Interval;
 
+                // Don't start the timer before it has been added to the dictionary.
                 var timer = new Timer(
                     callback: Callback,
                     state: null,
-                    dueTime: dueTime,
-                    period: period);
+                    dueTime: Timeout.Infinite,
+                    period: Timeout.Infinite);
 
                 timers.Add(name, timer);
+
+                // Now it's ok to start the timer.
+                timer.SafeTimerChange(dueTime, period, ref disposeEnded);
             }
         }
 
