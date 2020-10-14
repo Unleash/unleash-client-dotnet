@@ -62,7 +62,7 @@ namespace Unleash.Tests.Scheduling
         {
             using (var reset = new ManualResetEventSlim(false))
             using (var cts = new CancellationTokenSource())
-            using(var scheduler = new SystemTimerScheduledTaskManager())
+            using (var scheduler = new SystemTimerScheduledTaskManager())
             {
                 var task = new TestBackgroundTask()
                 {
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Scheduling
 
                 reset.Wait(TimeSpan.FromMilliseconds(200));
                 
-                task.Counter.Should().BeInRange(2, 4);
+                task.Counter.Should().BeInRange(4, 6);
             }
         }
     }

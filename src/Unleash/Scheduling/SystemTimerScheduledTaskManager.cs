@@ -21,58 +21,63 @@ namespace Unleash.Scheduling
         {
             foreach (var task in tasks)
             {
-                var name = task.Name;
+                ConfigureTask(task, cancellationToken);
+            }
+        }
 
-                async void Callback(object state)
+        private void ConfigureTask(IUnleashScheduledTask task, CancellationToken cancellationToken)
+        {
+            var name = task.Name;
+
+            async void Callback(object state)
+            {
+                try
                 {
-                    try
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
-                            await task.ExecuteAsync(cancellationToken);
-                        }
-                    }
-                    catch (TaskCanceledException taskCanceledException)
-                    {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
-                            Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
-                    }
-                    finally
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            // Stop the timer.
-                            timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
-                        }
+                        await task.ExecuteAsync(cancellationToken);
                     }
                 }
-
-                var dueTime = task.ExecuteDuringStartup
-                    ? TimeSpan.Zero
-                    : task.Interval;
-
-                var period = task.Interval == TimeSpan.Zero
-                    ? Timeout.InfiniteTimeSpan
-                    : task.Interval;
-
-                // Don't start the timer before it has been added to the dictionary.
-                var timer = new Timer(
-                    callback: Callback,
-                    state: null,
-                    dueTime: Timeout.Infinite,
-                    period: Timeout.Infinite);
-
-                timers.Add(name, timer);
-
-                // Now it's ok to start the timer.
-                timer.SafeTimerChange(dueTime, period, ref disposeEnded);
+                catch (TaskCanceledException taskCanceledException)
+                {
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                }
+                finally
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        // Stop the timer.
+                        timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
+                    }
+                }
             }
+
+            var dueTime = task.ExecuteDuringStartup
+                ? TimeSpan.Zero
+                : task.Interval;
+
+            var period = task.Interval == TimeSpan.Zero
+                ? Timeout.InfiniteTimeSpan
+                : task.Interval;
+
+            // Don't start the timer before it has been added to the dictionary.
+            var timer = new Timer(
+                callback: Callback,
+                state: null,
+                dueTime: Timeout.Infinite,
+                period: Timeout.Infinite);
+
+            timers.Add(name, timer);
+
+            // Now it's ok to start the timer.
+            timer.SafeTimerChange(dueTime, period, ref disposeEnded);
         }
 
         private bool disposeEnded;
