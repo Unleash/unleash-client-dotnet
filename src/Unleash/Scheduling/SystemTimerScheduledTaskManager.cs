@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Unleash.Logging;
 using Unleash.Internal;
+using Unleash.Logging;
 
 namespace Unleash.Scheduling
 {
@@ -14,7 +14,6 @@ namespace Unleash.Scheduling
     internal class SystemTimerScheduledTaskManager : IUnleashScheduledTaskManager
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(SystemTimerScheduledTaskManager));
-        private static readonly TimeSpan TimeSpanExecuteImmediately = TimeSpan.Zero;
 
         private readonly Dictionary<string, Timer> timers = new Dictionary<string, Timer>();
 
@@ -22,74 +21,63 @@ namespace Unleash.Scheduling
         {
             foreach (var task in tasks)
             {
-                var name = task.Name;
+                ConfigureTask(task, cancellationToken);
+            }
+        }
 
-                async void Callback(object state)
+        private void ConfigureTask(IUnleashScheduledTask task, CancellationToken cancellationToken)
+        {
+            var name = task.Name;
+
+            async void Callback(object state)
+            {
+                try
                 {
-                    if (!(state is CallbackState localState))
-                        return;
-
-                    if (!timers.TryGetValue(localState.Name, out Timer localTimer))
-                        return;
-
-                    try
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
-
                         await task.ExecuteAsync(cancellationToken);
                     }
-                    catch (TaskCanceledException taskCanceledException)
+                }
+                catch (TaskCanceledException taskCanceledException)
+                {
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
-                            Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
-                    }
-                    finally
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            // Do not schedule the next task
-                        }
-                        else
-                        {
-                            if (task.Interval == TimeSpanExecuteImmediately)
-                            {
-                                localTimer.SafeTimerChange(-1, Timeout.Infinite, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Stopped background task '{name}'...");
-                            }
-                            else
-                            {
-                                localTimer.SafeTimerChange(task.Interval, Timeout.InfiniteTimeSpan, ref disposeEnded);
-                                Logger.Trace($"UNLEASH: Scheduled background task '{name}' to run after '{task.Interval.TotalSeconds}' seconds...");
-                            }
-                        }
+                        Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
                     }
                 }
-
-                var dueTime = task.ExecuteDuringStartup
-                    ? TimeSpanExecuteImmediately
-                    : task.Interval;
-
-                var callbackState = new CallbackState
+                catch (Exception ex)
                 {
-                    Name = name,
-                    DueTime = dueTime
-                };
-
-                var timer = new Timer(
-                    callback: Callback,
-                    state: callbackState,
-                    dueTime: dueTime,
-                    period: Timeout.InfiniteTimeSpan);
-
-                timers.Add(name, timer);
+                    Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                }
+                finally
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        // Stop the timer.
+                        timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
+                    }
+                }
             }
+
+            var dueTime = task.ExecuteDuringStartup
+                ? TimeSpan.Zero
+                : task.Interval;
+
+            var period = task.Interval == TimeSpan.Zero
+                ? Timeout.InfiniteTimeSpan
+                : task.Interval;
+
+            // Don't start the timer before it has been added to the dictionary.
+            var timer = new Timer(
+                callback: Callback,
+                state: null,
+                dueTime: Timeout.Infinite,
+                period: Timeout.Infinite);
+
+            timers.Add(name, timer);
+
+            // Now it's ok to start the timer.
+            timer.SafeTimerChange(dueTime, period, ref disposeEnded);
         }
 
         private bool disposeEnded;
@@ -97,7 +85,7 @@ namespace Unleash.Scheduling
         {
             if (disposeEnded)
                 return;
-            
+
             var timeout = TimeSpan.FromSeconds(1);
 
             using (var waitHandle = new ManualResetEvent(false))
@@ -117,12 +105,6 @@ namespace Unleash.Scheduling
 
             disposeEnded = true;
             timers.Clear();
-        }
-
-        internal class CallbackState
-        {
-            public string Name { get; set; }
-            public TimeSpan DueTime { get; set; }
         }
     }
 }
