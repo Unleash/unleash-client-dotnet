@@ -52,7 +52,7 @@ var settings = new UnleashSettings()
 
 var unleash = new DefaultUnleash(settings);
 ```
-Note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediantly, see the [synchronous startup](#synchronous-startup) section
+Note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediately, see the [synchronous startup](#synchronous-startup) section
 
 When your application shuts down, remember to dispose the unleash instance.
 
