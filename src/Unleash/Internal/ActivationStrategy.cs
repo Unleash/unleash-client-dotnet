@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Unleash.Internal
 {
-    internal class ActivationStrategy
+    public class ActivationStrategy
     {
         public string Name { get; }
         public Dictionary<string, string> Parameters { get; }

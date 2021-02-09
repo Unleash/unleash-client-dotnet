@@ -53,13 +53,13 @@ namespace Unleash.Tests.Serialization
 
             var collection = new ToggleCollection(new List<FeatureToggle>()
             {
-                new FeatureToggle("one", true, new List<ActivationStrategy>()
+                new FeatureToggle("one",  "release", true, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userByName", new Dictionary<string, string>(){
                         {"Demo", "Demo" }
                     })
                 }),
-                new FeatureToggle("two", false, new List<ActivationStrategy>()
+                new FeatureToggle("two",  "release", false, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userByName2", new Dictionary<string, string>()
                     {

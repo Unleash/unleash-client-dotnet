@@ -12,6 +12,11 @@ namespace Unleash
     public interface IUnleash : IDisposable
     {
         /// <summary>
+        /// Collection of currently loaded Feature Toggles
+        /// </summary>
+        ICollection<FeatureToggle> FeatureToggles { get; }
+
+        /// <summary>
         /// Determines if the given feature toggle is enabled or not, defaulting to <c>false</c> if the toggle cannot be found.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
