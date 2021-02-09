@@ -1,11 +1,9 @@
-using System;
-
 namespace Unleash
 {
+    using Internal;
     using Logging;
     using Strategies;
     using System.Collections.Generic;
-    using Internal;
     using System.Linq;
     using Unleash.Variants;
 
@@ -63,6 +61,8 @@ namespace Unleash
             Logger.Info($"UNLEASH: Unleash is initialized and configured with: {settings}");
         }
 
+        /// <inheritdoc />
+        public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
 
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
