@@ -7,7 +7,9 @@
 
 ## Introduction
 
-Unleash is a feature toggle system, that gives you a great overview over all feature toggles across all your applications and services. It comes with official client implementations for Java, Node.js and Go.
+Unleash Client SDK for .Net. It is compatible with the
+[Unleash-hosted.com SaaS offering](https://www.unleash-hosted.com/) and
+[Unleash Open-Source](https://github.com/finn-no/unleash).
 
 The main motivation for doing feature toggling is to decouple the process for deploying code to production and releasing new features. This helps reducing risk, and allow us to easily manage which features to enable.
 
