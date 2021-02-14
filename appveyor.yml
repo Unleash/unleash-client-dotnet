@@ -20,7 +20,7 @@ before_build:
   - ps: gitversion /l console /output buildserver 
 
 build_script:
- - ps: .\build.ps1 -Target "AppVeyor"
+ - ps: .\build.ps1 --Target "AppVeyor"
  
 test: off
 
