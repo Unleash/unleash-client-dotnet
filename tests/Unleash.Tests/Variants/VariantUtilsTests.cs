@@ -15,7 +15,7 @@ namespace Unleash.Tests.Variants
         public void ShouldReturnDefaultVariantWhenToggleHasNoVariants()
         {
             // Arrange
-            var toggle = new FeatureToggle("test.variants", true, new List<ActivationStrategy> { defaultStrategy });
+            var toggle = new FeatureToggle("test.variants", "release", true, new List<ActivationStrategy> { defaultStrategy });
             var context = new UnleashContext
             {
                 UserId = "userA",
@@ -41,6 +41,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -72,6 +73,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -101,6 +103,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -131,6 +134,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -161,6 +165,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -193,6 +198,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
@@ -226,6 +232,7 @@ namespace Unleash.Tests.Variants
 
             var toggle = new FeatureToggle(
                     "test.variants",
+                    "release",
                     true,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });

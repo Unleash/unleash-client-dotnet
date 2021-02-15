@@ -12,7 +12,7 @@ namespace Unleash.Tests.Mock
     {
         private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
         {
-            new FeatureToggle("one-enabled", true, new List<ActivationStrategy>()
+            new FeatureToggle("one-enabled",  "release", true, new List<ActivationStrategy>()
             {
                 new ActivationStrategy("userWithId", new Dictionary<string, string>(){
                     {"userIds", "userA" }
@@ -24,7 +24,7 @@ namespace Unleash.Tests.Mock
                 new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
             }
             ),
-            new FeatureToggle("one-disabled", false, new List<ActivationStrategy>()
+            new FeatureToggle("one-disabled",  "release", false, new List<ActivationStrategy>()
             {
                 new ActivationStrategy("userWithId", new Dictionary<string, string>()
                 {
