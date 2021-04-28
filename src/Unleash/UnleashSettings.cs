@@ -50,6 +50,11 @@ namespace Unleash
         public string InstanceTag { get; set; } = GetDefaultInstanceTag();
 
         /// <summary>
+        /// Gets or sets which projects feature toggles are to be used. Feature only available to Enterprise and Unleash-hosted customers.
+        /// </summary>
+        public string ProjectId { get; set; } = null;
+
+        /// <summary>
         /// Gets or sets the interval in which feature toggle changes are re-fetched.
         /// 
         /// Default: 30 seconds
