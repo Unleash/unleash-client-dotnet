@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
     <Compile Include="Communication\BaseUnleashApiClientTest.cs" />
+    <Compile Include="Communication\UnleashApiClient_Project_Tests.cs" />
     <Compile Include="Communication\UnleashApiClient_RegisterClient_Tests.cs" />
     <Compile Include="Communication\UnleashApiClient_SendMetrics_Tests.cs" />
     <Compile Include="Communication\UnleashHttpClientFactory_RegisterHttpClient_Tests.cs" />
