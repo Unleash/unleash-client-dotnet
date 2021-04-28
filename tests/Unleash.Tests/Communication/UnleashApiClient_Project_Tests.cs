@@ -45,5 +45,35 @@ namespace Unleash.Tests.Communication
             messageHandler.SentMessages.Count.Should().Be(1);
             messageHandler.SentMessages.First().RequestUri.Query.Should().Be("?project=" + project);
         }
+
+        [Test]
+        public async Task FetchToggles_WithoutProject()
+        {
+            var apiUri = new Uri("http://unleash.herokuapp.com/api/");
+
+            var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
+            jsonSerializer.TryLoad();
+
+            var requestHeaders = new UnleashApiClientRequestHeaders
+            {
+                AppName = "api-test-client",
+                InstanceTag = "instance1",
+                CustomHttpHeaders = null,
+                CustomHttpHeaderProvider = null
+            };
+
+            var messageHandler = new MockHttpMessageHandler();
+            var httpClient = new HttpClient(messageHandler)
+            {
+                BaseAddress = apiUri,
+                Timeout = TimeSpan.FromSeconds(5)
+            };
+
+            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders);
+            var toggles = await client.FetchToggles("", CancellationToken.None);
+            toggles.Should().NotBeNull();
+            messageHandler.SentMessages.Count.Should().Be(1);
+            messageHandler.SentMessages.First().RequestUri.Query.Should().Be("");
+        }
     }
 }
