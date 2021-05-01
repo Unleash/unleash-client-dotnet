@@ -15,11 +15,9 @@ namespace Unleash.Tests.Communication
 {
     public class UnleashApiClient_Project_Tests
     {
-        [Test]
-        public async Task FetchToggles_ForProject()
+        private UnleashApiClient NewTestableClient(string project, MockHttpMessageHandler messageHandler)
         {
             var apiUri = new Uri("http://unleash.herokuapp.com/api/");
-            var project = "testproject";
 
             var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
             jsonSerializer.TryLoad();
@@ -32,16 +30,25 @@ namespace Unleash.Tests.Communication
                 CustomHttpHeaderProvider = null
             };
 
-            var messageHandler = new MockHttpMessageHandler();
             var httpClient = new HttpClient(messageHandler)
             {
                 BaseAddress = apiUri,
                 Timeout = TimeSpan.FromSeconds(5)
             };
 
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, project);
+            return new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, project);
+        }
+
+        [Test]
+        public async Task FetchToggles_ForProject()
+        {
+            var project = "testproject";
+            var messageHandler = new MockHttpMessageHandler();
+            var client = NewTestableClient(project, messageHandler);
+
             var toggles = await client.FetchToggles("", CancellationToken.None);
             toggles.Should().NotBeNull();
+
             messageHandler.SentMessages.Count.Should().Be(1);
             messageHandler.SentMessages.First().RequestUri.Query.Should().Be("?project=" + project);
         }
@@ -49,29 +56,13 @@ namespace Unleash.Tests.Communication
         [Test]
         public async Task FetchToggles_WithoutProject()
         {
-            var apiUri = new Uri("http://unleash.herokuapp.com/api/");
-
-            var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
-            jsonSerializer.TryLoad();
-
-            var requestHeaders = new UnleashApiClientRequestHeaders
-            {
-                AppName = "api-test-client",
-                InstanceTag = "instance1",
-                CustomHttpHeaders = null,
-                CustomHttpHeaderProvider = null
-            };
-
+            string project = null;
             var messageHandler = new MockHttpMessageHandler();
-            var httpClient = new HttpClient(messageHandler)
-            {
-                BaseAddress = apiUri,
-                Timeout = TimeSpan.FromSeconds(5)
-            };
+            var client = NewTestableClient(project, messageHandler);
 
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders);
             var toggles = await client.FetchToggles("", CancellationToken.None);
             toggles.Should().NotBeNull();
+
             messageHandler.SentMessages.Count.Should().Be(1);
             messageHandler.SentMessages.First().RequestUri.Query.Should().Be("");
         }
