@@ -61,10 +61,6 @@ namespace Unleash.Strategies
         {
             switch (stickiness)
             {
-                case "userId":
-                    return context.UserId;
-                case "sessionId":
-                    return context.SessionId;
                 case "random":
                     return randomGenerator();
                 case "default":
