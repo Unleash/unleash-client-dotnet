@@ -67,10 +67,12 @@ namespace Unleash.Strategies
                     return context.SessionId;
                 case "random":
                     return randomGenerator();
-                default:
-                    return context.UserId 
-                        ?? context.SessionId 
+                case "default":
+                    return context.UserId
+                        ?? context.SessionId
                         ?? randomGenerator();
+                default:
+                    return context.GetByName(stickiness);
             }
         }
     }
