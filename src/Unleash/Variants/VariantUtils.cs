@@ -23,7 +23,8 @@ namespace Unleash.Variants
                 return variantOverride.ToVariant();
             }
 
-            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context), featureToggle.Name, totalWeight);
+            var stickiness = variantDefinitions[0].Stickiness ?? "default";
+            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), featureToggle.Name, totalWeight);
 
             var counter = 0;
             foreach (var variantDefinition in variantDefinitions)
@@ -70,12 +71,23 @@ namespace Unleash.Variants
             };
         }
 
-        private static string GetIdentifier(UnleashContext context)
+        private static string GetIdentifier(UnleashContext context, string stickiness)
         {
+            if (stickiness != "default")
+            {
+                var stickinessValue = context.GetByName(stickiness);
+                return stickinessValue ?? GetRandomValue();
+            }
+
             return context.UserId
                 ?? context.SessionId
                 ?? context.RemoteAddress
-                ?? new Random().NextDouble().ToString();
+                ?? GetRandomValue();
+        }
+
+        private static string GetRandomValue()
+        {
+            return new Random().NextDouble().ToString();
         }
     }
 }
