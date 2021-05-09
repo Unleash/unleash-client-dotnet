@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Unleash.Internal;
+using Unleash.Strategies;
 using Unleash.Variants;
 
 namespace Unleash.Tests.Variants
@@ -250,6 +251,39 @@ namespace Unleash.Tests.Variants
 
             // Assert
             variant.Name.Should().Be(v2.Name);
+        }
+
+        [Test]
+        public void Custom_Stickiness_CustomField_528_Yields_Blue()
+        {
+            // Arrange
+            var sessionId = "122221";
+
+            var val1Payload = new Payload("string", "val1");
+            var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
+            var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
+            var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
+            var yellow = new VariantDefinition("yellow", 25, val1Payload, null, "customField");
+            var toggle = new FeatureToggle(
+                    "Feature.flexible.rollout.custom.stickiness_100",
+                    "release",
+                    true,
+                    new List<ActivationStrategy> { defaultStrategy },
+                    new List<VariantDefinition> { blue, red, green, yellow });
+
+            var context = new UnleashContext
+            {
+                UserId = "11",
+                SessionId = sessionId,
+                RemoteAddress = "remoteAddress",
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "528" } }
+            };
+
+            // Act
+            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+
+            // Assert
+            variant.Name.Should().Be(blue.Name);
         }
     }
 }
