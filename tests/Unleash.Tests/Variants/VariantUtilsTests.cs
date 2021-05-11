@@ -285,5 +285,137 @@ namespace Unleash.Tests.Variants
             // Assert
             variant.Name.Should().Be(blue.Name);
         }
+
+        [Test]
+        public void Custom_Stickiness_CustomField_16_Yields_Blue()
+        {
+            // Arrange
+            var sessionId = "122221";
+
+            var val1Payload = new Payload("string", "val1");
+            var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
+            var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
+            var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
+            var yellow = new VariantDefinition("yellow", 25, val1Payload, null, "customField");
+            var toggle = new FeatureToggle(
+                    "Feature.flexible.rollout.custom.stickiness_100",
+                    "release",
+                    true,
+                    new List<ActivationStrategy> { defaultStrategy },
+                    new List<VariantDefinition> { blue, red, green, yellow });
+
+            var context = new UnleashContext
+            {
+                UserId = "13",
+                SessionId = sessionId,
+                RemoteAddress = "remoteAddress",
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "16" } }
+            };
+
+            // Act
+            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+
+            // Assert
+            variant.Name.Should().Be(blue.Name);
+        }
+
+        [Test]
+        public void Custom_Stickiness_CustomField_198_Yields_Red()
+        {
+            // Arrange
+            var sessionId = "122221";
+
+            var val1Payload = new Payload("string", "val1");
+            var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
+            var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
+            var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
+            var yellow = new VariantDefinition("yellow", 25, val1Payload, null, "customField");
+            var toggle = new FeatureToggle(
+                    "Feature.flexible.rollout.custom.stickiness_100",
+                    "release",
+                    true,
+                    new List<ActivationStrategy> { defaultStrategy },
+                    new List<VariantDefinition> { blue, red, green, yellow });
+
+            var context = new UnleashContext
+            {
+                UserId = "13",
+                SessionId = sessionId,
+                RemoteAddress = "remoteAddress",
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "198" } }
+            };
+
+            // Act
+            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+
+            // Assert
+            variant.Name.Should().Be(red.Name);
+        }
+
+        [Test]
+        public void Custom_Stickiness_CustomField_43_Yields_Green()
+        {
+            // Arrange
+            var sessionId = "122221";
+
+            var val1Payload = new Payload("string", "val1");
+            var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
+            var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
+            var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
+            var yellow = new VariantDefinition("yellow", 25, val1Payload, null, "customField");
+            var toggle = new FeatureToggle(
+                    "Feature.flexible.rollout.custom.stickiness_100",
+                    "release",
+                    true,
+                    new List<ActivationStrategy> { defaultStrategy },
+                    new List<VariantDefinition> { blue, red, green, yellow });
+
+            var context = new UnleashContext
+            {
+                UserId = "13",
+                SessionId = sessionId,
+                RemoteAddress = "remoteAddress",
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "43" } }
+            };
+
+            // Act
+            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+
+            // Assert
+            variant.Name.Should().Be(green.Name);
+        }
+
+        [Test]
+        public void Custom_Stickiness_CustomField_112_Yields_Yellow()
+        {
+            // Arrange
+            var sessionId = "122221";
+
+            var val1Payload = new Payload("string", "val1");
+            var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
+            var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
+            var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
+            var yellow = new VariantDefinition("yellow", 25, val1Payload, null, "customField");
+            var toggle = new FeatureToggle(
+                    "Feature.flexible.rollout.custom.stickiness_100",
+                    "release",
+                    true,
+                    new List<ActivationStrategy> { defaultStrategy },
+                    new List<VariantDefinition> { blue, red, green, yellow });
+
+            var context = new UnleashContext
+            {
+                UserId = "13",
+                SessionId = sessionId,
+                RemoteAddress = "remoteAddress",
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "112" } }
+            };
+
+            // Act
+            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+
+            // Assert
+            variant.Name.Should().Be(yellow.Name);
+        }
     }
 }
