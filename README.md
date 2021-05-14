@@ -62,6 +62,22 @@ When your application shuts down, remember to dispose the unleash instance.
 unleash?.Dispose()
 ```
 
+### Configuring projects in unleash client
+
+If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
+
+```csharp
+
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    ProjectId = "projectId"
+};
+
+```
+
 ### Feature toggle api
 
 It is really simple to use unleash.
