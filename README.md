@@ -97,6 +97,7 @@ The .Net client comes with implementations for the built-in activation strategie
 - GradualRolloutSessionIdStrategy
 - RemoteAddressStrategy
 - ApplicationHostnameStrategy
+- FlexibleRolloutStrategy
 
 Read more about the strategies in [activation-strategy.md](https://github.com/Unleash/unleash/blob/master/docs/activation-strategies.md).
 
@@ -113,6 +114,22 @@ IUnleash unleash = new DefaultUnleash(config, s1, s2);
 ### Unleash context
 
 In order to use some of the common activation strategies you must provide an [unleash-context](https://github.com/Unleash/unleash/blob/master/docs/unleash-context.md).
+
+If you have configured custom stickiness and want to use that with the FlexibleRolloutStrategy or Variants, add the custom stickiness parameters to the Properties dictionary on the Unleash Context:
+
+```csharp
+HttpContext.Current.Items["UnleashContext"] = new UnleashContext
+{
+    UserId = HttpContext.Current.User?.Identity?.Name,
+    SessionId = HttpContext.Current.Session?.SessionID,
+    RemoteAddress = HttpContext.Current.Request.UserHostAddress,
+    Properties = new Dictionary<string, string>
+    {
+        // Obtain "customField" and add it to the context properties
+        { "customField", HttpContext.Current.Items["customField"].ToString() }
+    }
+};
+```
 
 #### UnleashContextProvider
 The provider typically binds the context to the same thread as the request. If you are using Asp.Net the `UnleashContextProvider` will typically be a 'request scoped' instance. 
