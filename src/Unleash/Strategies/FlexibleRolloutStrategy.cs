@@ -61,16 +61,14 @@ namespace Unleash.Strategies
         {
             switch (stickiness)
             {
-                case "userId":
-                    return context.UserId;
-                case "sessionId":
-                    return context.SessionId;
                 case "random":
                     return randomGenerator();
-                default:
-                    return context.UserId 
-                        ?? context.SessionId 
+                case "default":
+                    return context.UserId
+                        ?? context.SessionId
                         ?? randomGenerator();
+                default:
+                    return context.GetByName(stickiness);
             }
         }
     }

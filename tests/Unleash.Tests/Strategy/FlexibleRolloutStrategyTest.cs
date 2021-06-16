@@ -221,5 +221,103 @@ namespace Unleash.Tests.Strategy
             // Assert
             enabled.Should().BeFalse();
         }
+
+        [Test]
+        public void Should_be_enabled_for_rollout_50_and_custom_stickiness_customField_388()
+        {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "50" },
+                { "stickiness", "customField" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_50" }
+            };
+            var context = new UnleashContext()
+            {
+                Properties = new Dictionary<string, string>()
+                {
+                    { "customField", "388" }
+                }
+            };
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, context);
+
+            // Assert
+            enabled.Should().BeTrue();
+        }
+
+        [Test]
+        public void Should_not_be_enabled_for_rollout_50_and_custom_stickiness_customField_402()
+        {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "50" },
+                { "stickiness", "customField" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_50" }
+            };
+            var context = new UnleashContext
+            {
+                Properties = new Dictionary<string, string>
+                {
+                    { "customField", "402" }
+                }
+            };
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, context);
+
+            // Assert
+            enabled.Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_not_be_enabled_for_rollout_50_and_custom_stickiness_customField_no_value()
+        {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "50" },
+                { "stickiness", "customField" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_50" }
+            };
+            var context = new UnleashContext();
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, context);
+
+            // Assert
+            enabled.Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_be_enabled_for_rollout_100_and_custom_stickiness_customField_any_value()
+        {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "100" },
+                { "stickiness", "customField" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_100" }
+            };
+            var context = new UnleashContext
+            {
+                Properties = new Dictionary<string, string>
+                {
+                    { "customField", "any_value" }
+                }
+            };
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, context);
+
+            // Assert
+            enabled.Should().BeTrue();
+        }
     }
 }
