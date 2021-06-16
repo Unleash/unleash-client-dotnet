@@ -5,8 +5,6 @@ name: Pull request
 # Controls when the action will run. 
 on:
   push:
-  
-  pull_request:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -33,7 +31,10 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.5
         
       - name: Restore packages with NuGet
-        run: nuget restore Unleash.sln
+        run: nuget restore Unleash.sln /p:Configuration=Release
         
       - name: Build the solution
         run: msbuild Unleash.sln
+        
+      - name: Run the tests
+        run: '& "$(vswhere -property installationPath)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" tests\Unleash.Tests\bin\Release\Unleash.Tests.dll'
