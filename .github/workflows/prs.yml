@@ -35,6 +35,8 @@ jobs:
         
       - name: Build the solution
         run: msbuild Unleash.sln /p:Configuration=Release
-        
-      - name: Run the tests
-        run: '& "$(vswhere -property installationPath)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" tests\Unleash.Tests\bin\Release\Unleash.Tests.dll'
+      
+      # '& "$(vswhere -property installationPath)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" tests\Unleash.Tests\bin\Release\Unleash.Tests.dll'
+      - name: Run the tests with cake
+        run: build.ps1
+        shell: powershell
