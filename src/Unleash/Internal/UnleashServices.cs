@@ -61,7 +61,7 @@ namespace Unleash
                     InstanceTag = settings.InstanceTag,
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider
-                });
+                }, settings.ProjectId);
             }
             else
             {

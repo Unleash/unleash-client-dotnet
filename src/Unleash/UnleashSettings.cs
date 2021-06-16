@@ -50,6 +50,11 @@ namespace Unleash
         public string InstanceTag { get; set; } = GetDefaultInstanceTag();
 
         /// <summary>
+        /// Sets the project to fetch feature toggles for.
+        /// </summary>
+        public string ProjectId { get; set; } = null;
+
+        /// <summary>
         /// Gets or sets the interval in which feature toggle changes are re-fetched.
         /// 
         /// Default: 30 seconds

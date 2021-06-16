@@ -18,20 +18,25 @@ namespace Unleash.Communication
         private readonly HttpClient httpClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
+        private readonly string projectId;
 
         public UnleashApiClient(
             HttpClient httpClient, 
             IJsonSerializer jsonSerializer, 
-            UnleashApiClientRequestHeaders clientRequestHeaders)
+            UnleashApiClientRequestHeaders clientRequestHeaders,
+            string projectId = null)
         {
             this.httpClient = httpClient;
             this.jsonSerializer = jsonSerializer;
             this.clientRequestHeaders = clientRequestHeaders;
+            this.projectId = projectId;
         }
 
         public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
         {
-            const string resourceUri = "client/features";
+            string resourceUri = "client/features";
+            if (!string.IsNullOrWhiteSpace(this.projectId))
+                resourceUri += "?project=" + this.projectId;
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, resourceUri))
             {
