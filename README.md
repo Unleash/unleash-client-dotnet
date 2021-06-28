@@ -50,6 +50,10 @@ var settings = new UnleashSettings()
     AppName = "dotnet-test",
     InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    CustomHttpHeaders = new Dictionary()
+    {
+      {"Authorization","API token" }
+    }
 };
 
 var unleash = new DefaultUnleash(settings);
@@ -60,6 +64,22 @@ When your application shuts down, remember to dispose the unleash instance.
 
 ```csharp
 unleash?.Dispose()
+```
+
+### Configuring projects in unleash client
+
+If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
+
+```csharp
+
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    ProjectId = "projectId"
+};
+
 ```
 
 ### Feature toggle api
@@ -97,6 +117,7 @@ The .Net client comes with implementations for the built-in activation strategie
 - GradualRolloutSessionIdStrategy
 - RemoteAddressStrategy
 - ApplicationHostnameStrategy
+- FlexibleRolloutStrategy
 
 Read more about the strategies in [activation-strategy.md](https://github.com/Unleash/unleash/blob/master/docs/activation-strategies.md).
 
@@ -113,6 +134,22 @@ IUnleash unleash = new DefaultUnleash(config, s1, s2);
 ### Unleash context
 
 In order to use some of the common activation strategies you must provide an [unleash-context](https://github.com/Unleash/unleash/blob/master/docs/unleash-context.md).
+
+If you have configured custom stickiness and want to use that with the FlexibleRolloutStrategy or Variants, add the custom stickiness parameters to the Properties dictionary on the Unleash Context:
+
+```csharp
+HttpContext.Current.Items["UnleashContext"] = new UnleashContext
+{
+    UserId = HttpContext.Current.User?.Identity?.Name,
+    SessionId = HttpContext.Current.Session?.SessionID,
+    RemoteAddress = HttpContext.Current.Request.UserHostAddress,
+    Properties = new Dictionary<string, string>
+    {
+        // Obtain "customField" and add it to the context properties
+        { "customField", HttpContext.Current.Items["customField"].ToString() }
+    }
+};
+```
 
 #### UnleashContextProvider
 The provider typically binds the context to the same thread as the request. If you are using Asp.Net the `UnleashContextProvider` will typically be a 'request scoped' instance. 
@@ -147,6 +184,10 @@ var settings = new UnleashSettings()
     InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
+    CustomHttpHeaders = new Dictionary()
+    {
+      {"Authorization", "API token" }
+    }
 };
 ``` 
 
@@ -162,7 +203,7 @@ var settings = new UnleashSettings()
     UnleashContextProvider = new AspNetContextProvider(),
     CustomHttpHeaders = new Dictionary<string, string>()
     {
-        {"Authorization","some-secret" }
+        {"Authorization", "API token" }
     }
 };
 ```
