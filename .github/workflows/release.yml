@@ -43,4 +43,4 @@ jobs:
         run: msbuild Unleash.sln /p:Configuration=Release /p:Version=${{ env.nuget }} /p:FileVersion=${{ env.file }} /p:AssemblyVersion=${{ env.assembly }}
         
       - name: Publish package
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: nuget push **\Unleash.Client.*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{ secrets.NUGET_API_KEY }}
