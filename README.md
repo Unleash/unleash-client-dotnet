@@ -1,7 +1,6 @@
 # Unleash FeatureToggle Client for .Net
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](code-of-conduct.md)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/unleash/unleash-client-dotnet?branch=master&svg=true)](https://ci.appveyor.com/project/ivarconr/unleash-client-dotnet)
 [![NuGet](https://img.shields.io/nuget/v/Unleash.Client.svg)](https://www.nuget.org/packages/Unleash.Client/)
 
 
