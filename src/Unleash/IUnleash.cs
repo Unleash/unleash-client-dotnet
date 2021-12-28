@@ -46,20 +46,27 @@ namespace Unleash
 
         /// <summary>
         /// Get a weighted variant from a feature that is available.
-        /// Should be used with care, is not a sticky variant, will weight by call. 
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
-        /// <returns>A weighted variant or null if feature is not available</returns>
+        /// <returns>A weighted variant or Variant.DISABLED_VARIANT if feature is not available</returns>
         Variant GetVariant(string toggleName);
 
         /// <summary>
         /// Get a weighted variant from a feature that is available.
-        /// Should be used with care, is not a sticky variant, will weight by call. 
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
-        /// <param name="defaultValue">If a toglge is not found, the default value will be returned. (Default: Variant.DISABLED_VARIANT)</param>
-        /// <returns>A weighted variant or null if feature is not available</returns>
+        /// <param name="defaultValue">If a toggle is not found, the default value will be returned.</param>
+        /// <returns>A weighted variant or the supplied default value if feature is not available</returns>
         Variant GetVariant(string toggleName, Variant defaultValue);
+
+        /// <summary>
+        /// Get a weighted variant from a feature that is available.
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <param name="context">The Unleash context to evaluate the toggle state against</param>
+        /// <param name="defaultValue">If a toggle is not found, the default value will be returned.</param>
+        /// <returns>A weighted variant or the supplied default value if feature is not available</returns>
+        Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue);
 
         IEnumerable<VariantDefinition> GetVariants(string toggleName);
     }
