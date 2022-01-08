@@ -78,7 +78,7 @@
     <Compile Include="Integration\TestCaseVariant.cs" />
     <Compile Include="Integration\TestDefinition.cs" />
     <Compile Include="Integration\UnleashContextDefinition.cs" />
-    <Compile Include="Internal\CachedFilesLoader_Tests.cs" />
+    <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
     <Compile Include="Metrics\MetricsBucketTests.cs" />
     <Compile Include="Mock\MockApiClient.cs" />
     <Compile Include="Mock\MockHttpMessageHandler.cs" />

@@ -7,7 +7,7 @@ using Unleash.Tests.Serialization;
 
 namespace Unleash.Tests.Internal
 {
-    public class CachedFilesLoader_Tests
+    public class CachedFilesLoader_Backup_And_Etag_Tests
     {
         protected string AppDataFile(string filename)
         {
