@@ -257,4 +257,5 @@ somewhere.xml
 doc-target
 
 # Cake build
-tools/
+tools/*
+!tools/packages.config
