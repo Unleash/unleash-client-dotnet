@@ -99,6 +99,7 @@
     <Compile Include="Synchronization\SynchronizationTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
+    <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />
     <Compile Include="ClientFactory\SyncStartupUnitTest.cs" />
   </ItemGroup>
