@@ -125,6 +125,11 @@ namespace Unleash
         internal IFileSystem FileSystem { get; set; }
 
         /// <summary>
+        /// INTERNAL: Gets or sets the toggle bootstrap provider (file, url, etc). Can be used for testing/mocking etc.
+        /// </summary>
+        internal IToggleBootstrapProvider ToggleBootstrapProvider { get; set; }
+
+        /// <summary>
         /// INTERNAL: Gets or sets if the feature toggle fetch should be immeditely scheduled. Used by the client factory to prevent redundant initial fetches.
         /// </summary>
         internal bool ScheduleFeatureToggleFetchImmediatly { get; set; } = true;
