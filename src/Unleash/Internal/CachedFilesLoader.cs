@@ -6,13 +6,15 @@ namespace Unleash.Internal
     {
         private readonly IJsonSerializer jsonSerializer;
         private readonly IFileSystem fileSystem;
+        private readonly ToggleBootstrapHandler toggleBootstrapHandler;
         private readonly string toggleFile;
         private readonly string etagFile;
 
-        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, string toggleFile, string etagFile)
+        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, ToggleBootstrapHandler toggleBootstrapHandler, string toggleFile, string etagFile)
         {
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
+            this.toggleBootstrapHandler = toggleBootstrapHandler;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
