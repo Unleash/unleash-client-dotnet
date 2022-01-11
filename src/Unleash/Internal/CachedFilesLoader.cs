@@ -52,7 +52,6 @@ namespace Unleash.Internal
             {
                 result.InitialETag = string.Empty;
                 result.InitialToggleCollection = toggleBootstrapHandler.Read();
-
             }
 
             return result;

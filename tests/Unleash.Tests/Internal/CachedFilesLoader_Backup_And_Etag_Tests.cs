@@ -17,7 +17,9 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+            var settings = new UnleashSettings();
+            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -35,7 +37,9 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-missing.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+            var settings = new UnleashSettings();
+            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -55,7 +59,9 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+            var settings = new UnleashSettings();
+            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -75,7 +81,9 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-missing.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+            var settings = new UnleashSettings();
+            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
