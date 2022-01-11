@@ -240,6 +240,44 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 * When .json file does not exists
 * When the named feature toggle does not exist in .json file
 
+## Bootstrapping
+* Unleash supports bootstrapping from a JSON string.
+* Configure your own custom provider implementing the `IToggleBootstrapProvider` interface's single method `string Read()`.
+  This should return a JSON string in the same format returned from `/api/client/features`
+* Example bootstrap files can be found in the json files located in [tests/Unleash.Tests/App_Data](tests/Unleash.Tests/App_Data)
+* Our assumption is this can be use for applications deployed to ephemeral containers or more locked down file systems where Unleash's need to write the backup file is not desirable or possible.
+* Loading with bootstrapping only occurs if there were no feature toggles loaded from Local Backup
+
+Configuring it with the UnleashSettings:
+```csharp
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    CustomHttpHeaders = new Dictionary()
+    {
+      {"Authorization","API token" }
+    },
+    ToggleBootstrapProvider = new MyToggleBootstrapProvider()
+};
+```
+
+### Provided Bootstrappers
+* These are found in the `Unleash.Utilities` namespace
+* To configure them instantiate with constructor parameters and set on the `UnleashSettings.ToggleBootstrapProvider` property
+
+#### ToggleBootstrapFileProvider
+* Unleash comes with a `ToggleBootstrapFileProvider` which implements the `IToggleBootstrapProvider` interface.
+* Constructor takes the `path` parameter used to find the JSON source file
+
+#### ToggleBootstrapUrlProvider
+* Unleash also comes with a `ToggleBootstrapUrlProvider` which implements the `IToggleBootstrapProvider` interface.
+* Fetches JSON from a webaddress using `HttpMethod.Get`
+* The constructor takes the `path` parameter as the webaddress for the JSON
+* The constructor takes an optional `client` `HttpClient` parameter, use when reusing clients or configuring custom headers
+* The constructpr also takes an optional `throwOnFail` `bool` parameter that defaults to `false`. Set it to `true` if you need HTTP 404:s and 500:s etc to throw
+
 ## Json Serialization
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
 
