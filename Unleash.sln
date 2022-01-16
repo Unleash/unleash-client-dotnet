@@ -17,22 +17,24 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCore", "samples\WebAp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{F098FC57-35D3-4289-8040-B11161E2AB0D}"
 	ProjectSection(SolutionItems) = preProject
-		.\.gitignore = .\.gitignore
-		.\appveyor.yml = .\appveyor.yml
-		.\build.cake = .\build.cake
-		.\CHANGELOG.md = .\CHANGELOG.md
-		.\README.md = .\README.md
+		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
+		build.cake = build.cake
+		CHANGELOG.md = CHANGELOG.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests.Benchmarks", "tests\Unleash.Tests.Benchmarks\Unleash.Tests.Benchmarks.csproj", "{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "samples\WebApplication\WebApplication.csproj", "{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "samples\WebApplication\WebApplication.csproj", "{961F50B2-3297-4C07-8E9E-5B4BB110B5B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{29C4317B-9580-4E56-ACE0-06D3E74269D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A703F9CB-157F-4166-B81D-27779B586DCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BootstrapHost", "samples\BootstrapHost\BootstrapHost.csproj", "{23B73DA0-9635-41DC-A513-F9B0EAA94E81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BootstrapHost", "samples\BootstrapHost\BootstrapHost.csproj", "{23B73DA0-9635-41DC-A513-F9B0EAA94E81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnleashDemo", "UnleashDemo\UnleashDemo\UnleashDemo.csproj", "{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,19 +74,24 @@ Global
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{4CF2127B-8FC8-46FC-8614-3918148463A5} = {29C4317B-9580-4E56-ACE0-06D3E74269D1}
+		{FF268018-34C4-45EB-937E-2E0AB25EEEDA} = {A703F9CB-157F-4166-B81D-27779B586DCB}
 		{E719FE03-4F57-45B5-916A-8E844E90B95C} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{7A73D92C-B746-48F6-BF60-C69382141C2D} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{8F8EFAF2-7747-4C1F-A473-4E3248B3B9F6} = {9326EDD7-F842-4D01-880D-250102C0D689}
-		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2} = {9326EDD7-F842-4D01-880D-250102C0D689}
-		{4CF2127B-8FC8-46FC-8614-3918148463A5} = {29C4317B-9580-4E56-ACE0-06D3E74269D1}
-		{FF268018-34C4-45EB-937E-2E0AB25EEEDA} = {A703F9CB-157F-4166-B81D-27779B586DCB}
 		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6} = {A703F9CB-157F-4166-B81D-27779B586DCB}
+		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81} = {9326EDD7-F842-4D01-880D-250102C0D689}
+		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217} = {29C4317B-9580-4E56-ACE0-06D3E74269D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8777E71-3209-4072-B7D9-466A4F5C7A75}
