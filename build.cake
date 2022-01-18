@@ -1,6 +1,7 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.4.0
 #tool "nuget:?package=GitVersion.CommandLine"
-#addin "nuget:?package=Cake.Json"
+#addin "nuget:?package=Cake.Json&version=6.0.1"
+#addin "nuget:?package=Newtonsoft.Json&version=12.0.2"
 
 // #tool "nuget:?package=gitlink"
 
