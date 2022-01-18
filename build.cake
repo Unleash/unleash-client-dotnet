@@ -1,6 +1,7 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.4.0
 #tool "nuget:?package=GitVersion.CommandLine"
-#addin "nuget:?package=Cake.Json"
+#addin "nuget:?package=Cake.Json&version=6.0.1"
+#addin "nuget:?package=Newtonsoft.Json&version=12.0.2"
 
 // #tool "nuget:?package=gitlink"
 
@@ -66,14 +67,14 @@ Task("Download-Client-Specifications")
     .Does(() =>
 {
     var indexPath = File("./tests/Unleash.Tests/Integration/Data/index.json");
-    DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/master/specifications/index.json", indexPath);
-	
-	foreach (var fileName in DeserializeJsonFromFile<string[]>(indexPath)) 
+    DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/main/specifications/index.json", indexPath);
+
+	foreach (var fileName in DeserializeJsonFromFile<string[]>(indexPath))
 	{
 		var filePath = File("./tests/Unleash.Tests/Integration/Data/" + fileName);
-		DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/master/specifications/" + fileName, filePath);
+		DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/main/specifications/" + fileName, filePath);
 	}
-	
+
 });
 
 Task("Run-Unit-Tests")
