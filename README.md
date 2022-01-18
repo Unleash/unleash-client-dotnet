@@ -118,7 +118,7 @@ The .Net client comes with implementations for the built-in activation strategie
 - ApplicationHostnameStrategy
 - FlexibleRolloutStrategy
 
-Read more about the strategies in [activation-strategy.md](https://github.com/Unleash/unleash/blob/main/docs/activation-strategies.md).
+Read more about the strategies in [activation-strategy.md](https://docs.getunleash.io/user_guide/activation_strategy).
 
 #### Custom strategies
 You may also specify and implement your own strategies. The specification must be registered in the Unleash UI and you must register the strategy implementation when you wire up unleash. 
@@ -132,7 +132,7 @@ IUnleash unleash = new DefaultUnleash(config, s1, s2);
 
 ### Unleash context
 
-In order to use some of the common activation strategies you must provide an [unleash-context](https://github.com/Unleash/unleash/blob/main/docs/unleash-context.md).
+In order to use some of the common activation strategies you must provide an [unleash-context](https://docs.getunleash.io/user_guide/unleash_context).
 
 If you have configured custom stickiness and want to use that with the FlexibleRolloutStrategy or Variants, add the custom stickiness parameters to the Properties dictionary on the Unleash Context:
 
