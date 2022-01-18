@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -22,7 +23,11 @@ namespace Unleash.Tests.Communication
             {
                 AppName = "api-test-client",
                 InstanceTag = "instance1",
-                CustomHttpHeaders = null,
+                CustomHttpHeaders = new Dictionary<string, string>()
+                {
+                    // "Test" token from 21.10.2021
+                    { "Authorization", "*:default.77c45b703a681983b714fee87e575a823bfb1fd0ab282d9399647243" }
+                },
                 CustomHttpHeaderProvider = null
             };
 
