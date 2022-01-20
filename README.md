@@ -276,7 +276,7 @@ var settings = new UnleashSettings()
 * Fetches JSON from a webaddress using `HttpMethod.Get`
 * The constructor takes the `path` parameter as the webaddress for the JSON
 * The constructor takes an optional `client` `HttpClient` parameter, use when reusing clients or configuring custom headers
-* The constructpr also takes an optional `throwOnFail` `bool` parameter that defaults to `false`. Set it to `true` if you need HTTP 404:s and 500:s etc to throw
+* The constructor also takes an optional `throwOnFail` `bool` parameter that defaults to `false`. Set it to `true` if you need HTTP 404:s and 500:s etc to throw
 
 ## Json Serialization
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
