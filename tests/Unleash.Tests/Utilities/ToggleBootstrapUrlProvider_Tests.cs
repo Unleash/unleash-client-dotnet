@@ -70,7 +70,7 @@ namespace Unleash.Tests.Utilities
             var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, true);
 
             // Act, Assert
-            Assert.Throws<AggregateException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
+            Assert.Throws<FetchingToggleBootstrapUrlFailedException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
         }
     }
 }

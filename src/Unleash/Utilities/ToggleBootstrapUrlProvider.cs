@@ -31,7 +31,7 @@ namespace Unleash.Utilities
 
         public string Read()
         {
-            return Task.Run(() => FetchFile()).Result;
+            return Task.Run(() => FetchFile()).GetAwaiter().GetResult();
         }
 
         private async Task<string> FetchFile()

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Unleash.Utilities
 {
-    public class FetchingToggleBootstrapUrlFailedException : Exception
+    public class FetchingToggleBootstrapUrlFailedException : UnleashException
     {
         public FetchingToggleBootstrapUrlFailedException(string errorMessage, HttpStatusCode statusCode) : base(errorMessage)
         {
