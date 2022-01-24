@@ -9,6 +9,7 @@ using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Scheduling;
 using Unleash.Serialization;
+using Unleash.Utilities;
 
 namespace Unleash
 {
@@ -202,6 +203,16 @@ namespace Unleash
             return new string($"{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}"
                 .Where(c => !invalidFileNameChars.Contains(c))
                 .ToArray());
+        }
+
+        public void UseBootstrapUrlProvider(string path, bool shouldThrowOnError)
+        {
+            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), shouldThrowOnError);
+        }
+
+        public void UseBootstrapFileProvider(string path)
+        {
+            ToggleBootstrapProvider = new ToggleBootstrapFileProvider(path, FileSystem);
         }
     }
 }
