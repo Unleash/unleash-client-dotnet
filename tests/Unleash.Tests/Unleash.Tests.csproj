@@ -78,7 +78,6 @@
     <Compile Include="Integration\TestCaseVariant.cs" />
     <Compile Include="Integration\TestDefinition.cs" />
     <Compile Include="Integration\UnleashContextDefinition.cs" />
-    <Compile Include="Internal\ToggleBootstrapHandler_Tests.cs" />
     <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
     <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
     <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
@@ -156,9 +155,7 @@
       <Name>Unleash</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientFactory\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

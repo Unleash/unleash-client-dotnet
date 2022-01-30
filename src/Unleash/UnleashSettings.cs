@@ -207,12 +207,12 @@ namespace Unleash
 
         public void UseBootstrapUrlProvider(string path, bool shouldThrowOnError)
         {
-            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), shouldThrowOnError);
+            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), JsonSerializer, shouldThrowOnError);
         }
 
         public void UseBootstrapFileProvider(string path)
         {
-            ToggleBootstrapProvider = new ToggleBootstrapFileProvider(path, FileSystem);
+            ToggleBootstrapProvider = new ToggleBootstrapFileProvider(path, FileSystem, JsonSerializer);
         }
     }
 }

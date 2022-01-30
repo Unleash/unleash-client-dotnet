@@ -10,7 +10,7 @@ namespace Unleash.Internal
     {
     }
 
-    internal class ToggleCollection
+    public class ToggleCollection
     {
         public int Version = 1;
 

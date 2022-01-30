@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Internal;
+using Unleash.Serialization;
 
 namespace Unleash.Utilities
 {
@@ -12,29 +13,24 @@ namespace Unleash.Utilities
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly HttpClient client;
+        private readonly IJsonSerializer jsonSerializer;
         private readonly string path;
         private readonly bool throwOnFail;
 
-        public ToggleBootstrapUrlProvider(string path, bool throwOnFail = false)
-        {
-            this.path = path;
-            client = new HttpClient();
-            this.throwOnFail = throwOnFail;
-        }
-
-        public ToggleBootstrapUrlProvider(string path, HttpClient client, bool throwOnFail = false)
+        public ToggleBootstrapUrlProvider(string path, HttpClient client, IJsonSerializer jsonSerializer, bool throwOnFail = false)
         {
             this.path = path;
             this.client = client;
+            this.jsonSerializer = jsonSerializer;
             this.throwOnFail = throwOnFail;
         }
 
-        public string Read()
+        public ToggleCollection Read()
         {
             return Task.Run(() => FetchFile()).GetAwaiter().GetResult();
         }
 
-        private async Task<string> FetchFile()
+        private async Task<ToggleCollection> FetchFile()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, path))
             {
@@ -45,10 +41,11 @@ namespace Unleash.Utilities
                         if (throwOnFail)
                             throw new FetchingToggleBootstrapUrlFailedException("Failed to fetch feature toggles", response.StatusCode);
 
-                        return string.Empty;
+                        return null;
                     }
 
-                    return await response.Content.ReadAsStringAsync();
+                    var togglesResponseStream = await response.Content.ReadAsStreamAsync();
+                    return jsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
                 }
             }
         }

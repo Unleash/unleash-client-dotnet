@@ -6,15 +6,15 @@ namespace Unleash.Internal
     {
         private readonly IJsonSerializer jsonSerializer;
         private readonly IFileSystem fileSystem;
-        private readonly IToggleBootstrapHandler toggleBootstrapHandler;
+        private readonly IToggleBootstrapProvider toggleBootstrapProvider;
         private readonly string toggleFile;
         private readonly string etagFile;
 
-        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, IToggleBootstrapHandler toggleBootstrapHandler, string toggleFile, string etagFile)
+        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, IToggleBootstrapProvider toggleBootstrapProvider, string toggleFile, string etagFile)
         {
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
-            this.toggleBootstrapHandler = toggleBootstrapHandler;
+            this.toggleBootstrapProvider = toggleBootstrapProvider;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
@@ -51,7 +51,9 @@ namespace Unleash.Internal
             if (result.InitialToggleCollection == null)
             {
                 result.InitialETag = string.Empty;
-                result.InitialToggleCollection = toggleBootstrapHandler.Read();
+
+                if (toggleBootstrapProvider != null)
+                    result.InitialToggleCollection = toggleBootstrapProvider.Read();
             }
 
             return result;

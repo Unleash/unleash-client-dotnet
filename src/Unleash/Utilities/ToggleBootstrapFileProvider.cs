@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Unleash.Internal;
+using Unleash.Serialization;
 
 namespace Unleash.Utilities
 {
@@ -9,25 +10,20 @@ namespace Unleash.Utilities
     {
         private readonly string filePath;
         private readonly IFileSystem fileSystem;
+        private readonly IJsonSerializer jsonSerializer;
 
-        public ToggleBootstrapFileProvider(string filePath)
-        {
-            this.filePath = filePath;
-            fileSystem = new FileSystem(Encoding.UTF8);
-        }
 
-        internal ToggleBootstrapFileProvider(string filePath, IFileSystem fileSystem)
+        internal ToggleBootstrapFileProvider(string filePath, IFileSystem fileSystem, IJsonSerializer jsonSerializer)
         {
             this.filePath = filePath;
             this.fileSystem = fileSystem;
+            this.jsonSerializer = jsonSerializer;
         }
 
-        public string Read()
+        public ToggleCollection Read()
         {
-            if (!fileSystem.FileExists(filePath))
-                return string.Empty;
-
-            return fileSystem.ReadAllText(filePath);
+            using (var togglesStream = fileSystem.FileOpenRead(filePath))
+                return jsonSerializer.Deserialize<ToggleCollection>(togglesStream);
         }
     }
 }
