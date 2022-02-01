@@ -18,8 +18,7 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var settings = new UnleashSettings();
-            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -38,8 +37,7 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var settings = new UnleashSettings();
-            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -60,8 +58,7 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var settings = new UnleashSettings();
-            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -82,8 +79,7 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var settings = new UnleashSettings();
-            var toggleBootstrapHandler = new ToggleBootstrapHandler(settings);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, toggleBootstrapHandler, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();

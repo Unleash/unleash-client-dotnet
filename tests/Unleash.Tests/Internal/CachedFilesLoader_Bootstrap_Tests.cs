@@ -48,24 +48,24 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
-            var bootstrapHandlerFake = A.Fake<IToggleBootstrapHandler>();
-            A.CallTo(() => bootstrapHandlerFake.Read())
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapHandlerFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
 
             // Assert
-            A.CallTo(() => bootstrapHandlerFake.Read())
+            A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappenedOnceExactly();
             ensureResult.InitialETag.Should().Be(string.Empty);
             ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
         }
 
         [Test]
-        public void Loads_From_Bootstrap_Handler_When_Backup_File_Is_Missing_And_Returns_Null_When_Bootstrap_File_Returns_Null()
+        public void Loads_From_Bootstrap_Provider_When_Backup_File_Is_Missing_And_Returns_Null_When_Bootstrap_File_Returns_Null()
         {
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-v1-missing.json");
@@ -73,17 +73,17 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             ToggleCollection bootstrapToggles = null;
-            var bootstrapHandlerFake = A.Fake<IToggleBootstrapHandler>();
-            A.CallTo(() => bootstrapHandlerFake.Read())
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapHandlerFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
 
             // Assert
-            A.CallTo(() => bootstrapHandlerFake.Read())
+            A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappenedOnceExactly();
             ensureResult.InitialETag.Should().Be(string.Empty);
             ensureResult.InitialToggleCollection.Should().BeNull();
@@ -98,15 +98,15 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
-            var bootstrapHandlerFake = A.Fake<IToggleBootstrapHandler>();
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapHandlerFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
 
             // Assert
-            A.CallTo(() => bootstrapHandlerFake.Read())
+            A.CallTo(() => bootstrapProviderFake.Read())
                 .MustNotHaveHappened();
             ensureResult.InitialETag.Should().Be(string.Empty);
             ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);

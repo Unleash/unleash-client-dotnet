@@ -7,7 +7,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Unleash.Internal;
+using Unleash.Serialization;
 using Unleash.Tests.Mock;
+using Unleash.Tests.Serialization;
 using Unleash.Utilities;
 
 namespace Unleash.Tests.Utilities
@@ -27,13 +29,13 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer());
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
 
             // Assert
-            responseContent.Should().Be(content);
+            responseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -47,13 +49,13 @@ namespace Unleash.Tests.Utilities
             var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null);
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
 
             // Assert
-            responseContent.Should().Be(string.Empty);
+            responseContent.Should().Be(null);
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -67,7 +69,7 @@ namespace Unleash.Tests.Utilities
             var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, true);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null, true);
 
             // Act, Assert
             Assert.Throws<FetchingToggleBootstrapUrlFailedException>(() => { var responseContent = bootstrapUrlProvider.Read(); });

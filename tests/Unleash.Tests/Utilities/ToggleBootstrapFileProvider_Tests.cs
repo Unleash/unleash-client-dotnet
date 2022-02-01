@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unleash.Internal;
+using Unleash.Serialization;
+using Unleash.Tests.Serialization;
 using Unleash.Utilities;
 
 namespace Unleash.Tests.Utilities
@@ -25,7 +27,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1-missing.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem);
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem, new JsonNetSerializer());
 
             // Act
             var emptyResult = toggleFileProvider.Read();
@@ -40,7 +42,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem);
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem, new JsonNetSerializer());
             var fileContent = fileSystem.ReadAllText(toggleFileName);
 
             // Act
