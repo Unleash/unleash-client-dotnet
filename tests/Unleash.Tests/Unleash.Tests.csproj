@@ -89,6 +89,7 @@
     <Compile Include="Mock\MockFileSystem.cs" />
     <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
     <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
+    <Compile Include="Strategy\Constraints\DateConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\Constraints\NumberConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
     <Compile Include="Strategy\StrategyTest.cs" />
