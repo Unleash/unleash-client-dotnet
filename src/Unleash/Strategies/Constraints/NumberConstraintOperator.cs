@@ -14,28 +14,29 @@ namespace Unleash.Strategies.Constraints
             if (string.IsNullOrWhiteSpace(contextValueString))
                 return false;
 
-            if (!double.TryParse(contextValueString, out var contextValue))
+            if (!double.TryParse(contextValueString, out var contextNumber))
                 return false;
 
-            return constraint.Values?.Select(val =>
-                double.TryParse(val, out var constraintVal) ? (double?)constraintVal : null
-            ).Any(val => val.HasValue && Eval(constraint.Operator, val.Value, contextValue)) ?? false;
+            if (string.IsNullOrWhiteSpace(constraint.Value) || !double.TryParse(constraint.Value, out var constraintNumber))
+                return false;
+
+            return Eval(constraint.Operator, constraintNumber, contextNumber);
         }
 
-        private bool Eval(Operator @operator, double constraintValue, double contextValue)
+        private bool Eval(Operator @operator, double constraintNumber, double contextNumber)
         {
             switch (@operator)
             {
                 case Operator.NUM_EQ:
-                    return contextValue == constraintValue;
+                    return contextNumber == constraintNumber;
                 case Operator.NUM_GT:
-                    return contextValue > constraintValue;
+                    return contextNumber > constraintNumber;
                 case Operator.NUM_GTE:
-                    return contextValue >= constraintValue;
+                    return contextNumber >= constraintNumber;
                 case Operator.NUM_LT:
-                    return contextValue < constraintValue;
+                    return contextNumber < constraintNumber;
                 case Operator.NUM_LTE:
-                    return contextValue <= constraintValue;
+                    return contextNumber <= constraintNumber;
                 default:
                     return false;
             }

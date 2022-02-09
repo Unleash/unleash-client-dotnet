@@ -17,7 +17,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "3");
             // Act
@@ -32,7 +32,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "5");
             // Act
@@ -47,7 +47,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "6");
             // Act
@@ -62,7 +62,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "3");
             // Act
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "5");
             // Act
@@ -92,7 +92,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_LTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_LTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "6");
             // Act
@@ -107,7 +107,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "3");
             // Act
@@ -122,7 +122,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "5");
             // Act
@@ -137,7 +137,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GT, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GT);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "6");
             // Act
@@ -152,7 +152,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "3");
             // Act
@@ -167,7 +167,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "5");
             // Act
@@ -182,7 +182,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_GTE, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_GTE);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "6");
             // Act
@@ -197,7 +197,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_EQ, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_EQ);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "3");
             // Act
@@ -212,7 +212,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_EQ, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_EQ);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "5");
             // Act
@@ -227,7 +227,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new NumberConstraintOperator();
-            var constraint = new Constraint("item_count", Operator.NUM_EQ, "5");
+            var constraint = new Constraint("item_count", "5", Operator.NUM_EQ);
             var context = new UnleashContext();
             context.Properties.Add("item_count", "6");
             // Act
