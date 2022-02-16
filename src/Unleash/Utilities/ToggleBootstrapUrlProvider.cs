@@ -5,12 +5,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Internal;
+using Unleash.Logging;
 using Unleash.Serialization;
 
 namespace Unleash.Utilities
 {
     public class ToggleBootstrapUrlProvider : IToggleBootstrapProvider
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(ToggleBootstrapUrlProvider));
+
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly HttpClient client;
         private readonly IJsonSerializer jsonSerializer;
@@ -48,6 +51,9 @@ namespace Unleash.Utilities
                 {
                     if (!response.IsSuccessStatusCode)
                     {
+                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}': " + error);
+
                         if (throwOnFail)
                             throw new FetchingToggleBootstrapUrlFailedException("Failed to fetch feature toggles", response.StatusCode);
 
