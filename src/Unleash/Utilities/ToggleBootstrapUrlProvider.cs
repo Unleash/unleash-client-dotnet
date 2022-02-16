@@ -16,13 +16,15 @@ namespace Unleash.Utilities
         private readonly IJsonSerializer jsonSerializer;
         private readonly string path;
         private readonly bool throwOnFail;
+        private readonly Dictionary<string, string> customHeaders;
 
-        public ToggleBootstrapUrlProvider(string path, HttpClient client, IJsonSerializer jsonSerializer, bool throwOnFail = false)
+        public ToggleBootstrapUrlProvider(string path, HttpClient client, IJsonSerializer jsonSerializer, bool throwOnFail = false, Dictionary<string, string> customHeaders = null)
         {
             this.path = path;
             this.client = client;
             this.jsonSerializer = jsonSerializer;
             this.throwOnFail = throwOnFail;
+            this.customHeaders = customHeaders;
         }
 
         public ToggleCollection Read()
@@ -34,6 +36,14 @@ namespace Unleash.Utilities
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, path))
             {
+                if (customHeaders != null)
+                {
+                    foreach (var keyValuePair in customHeaders)
+                    {
+                        request.Headers.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
+                }
+
                 using (var response = await client.SendAsync(request, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (!response.IsSuccessStatusCode)

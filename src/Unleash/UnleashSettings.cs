@@ -205,9 +205,9 @@ namespace Unleash
                 .ToArray());
         }
 
-        public void UseBootstrapUrlProvider(string path, bool shouldThrowOnError)
+        public void UseBootstrapUrlProvider(string path, bool shouldThrowOnError, Dictionary<string, string> customHeaders = null)
         {
-            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), JsonSerializer, shouldThrowOnError);
+            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), JsonSerializer, shouldThrowOnError, customHeaders);
         }
 
         public void UseBootstrapFileProvider(string path)
