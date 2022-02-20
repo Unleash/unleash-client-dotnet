@@ -10,7 +10,7 @@ namespace Unleash.Internal
         private readonly string toggleFile;
         private readonly string etagFile;
 
-        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, IToggleBootstrapProvider toggleBootstrapProvider, string toggleFile, string etagFile)
+        public CachedFilesLoader(IJsonSerializer jsonSerializer, IFileSystem fileSystem, IToggleBootstrapProvider toggleBootstrapProvider, string toggleFile, string etagFile, bool bootstrapOverride = true)
         {
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;

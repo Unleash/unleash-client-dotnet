@@ -90,7 +90,7 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
-        public void Does_Not_Call_Bootstrap_Handler_When_Backup_File_Exists()
+        public void Default_Override_Calls_Bootstrap_Handler_When_Backup_File_Exists()
         {
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
@@ -101,6 +101,29 @@ namespace Unleash.Tests.Internal
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
 
             var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
+
+            // Act
+            var ensureResult = fileLoader.EnsureExistsAndLoad();
+
+            // Assert
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .MustHaveHappened();
+            ensureResult.InitialETag.Should().Be(string.Empty);
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Does_Not_Call_Bootstrap_Handler_When_Backup_File_Exists_And_Override_Is_False()
+        {
+            // Arrange
+            string toggleFileName = AppDataFile("unleash-repo-v1.json");
+            string etagFileName = AppDataFile("etag-missing.txt");
+            var serializer = new JsonNetSerializer();
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            var bootstrapToggles = GetTestToggles();
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
