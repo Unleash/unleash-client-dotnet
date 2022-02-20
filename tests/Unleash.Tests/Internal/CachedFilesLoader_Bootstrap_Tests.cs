@@ -136,5 +136,24 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be(string.Empty);
             ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
         }
+
+        [Test]
+        public void Default_Override_Null_Should_Not_Null_Out_Backup_Toggles()
+        {
+            // Arrange
+            string toggleFileName = AppDataFile("unleash-repo-v1.json");
+            string etagFileName = AppDataFile("etag-12345.txt");
+            var serializer = new JsonNetSerializer();
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            var settings = new UnleashSettings();
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+
+            // Act
+            var ensureResult = fileLoader.EnsureExistsAndLoad();
+
+            // Assert
+            ensureResult.InitialETag.Should().Be("12345");
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+        }
     }
 }
