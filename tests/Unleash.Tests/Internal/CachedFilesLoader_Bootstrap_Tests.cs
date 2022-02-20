@@ -99,6 +99,8 @@ namespace Unleash.Tests.Internal
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns(bootstrapToggles);
 
             var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
 
@@ -109,7 +111,7 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappened();
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
         }
 
         [Test]
