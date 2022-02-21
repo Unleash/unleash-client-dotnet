@@ -199,5 +199,28 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be("12345");
             ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
         }
+
+        [Test]
+        public void Bootstrap_Override_Disabled_Bootstraps_When_Backup_Is_Empty_Collection()
+        {
+            // Arrange
+            string toggleFileName = AppDataFile("features-v1-empty.json");
+            string etagFileName = AppDataFile("etag-12345.txt");
+            var serializer = new JsonNetSerializer();
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            var settings = new UnleashSettings();
+            var bootstrapToggles = GetTestToggles();
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns(bootstrapToggles);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, false);
+
+            // Act
+            var ensureResult = fileLoader.EnsureExistsAndLoad();
+
+            // Assert
+            ensureResult.InitialETag.Should().Be("12345");
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+        }
     }
 }

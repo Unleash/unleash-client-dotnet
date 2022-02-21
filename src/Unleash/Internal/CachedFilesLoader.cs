@@ -55,7 +55,7 @@ namespace Unleash.Internal
                 result.InitialETag = string.Empty;
             }
 
-            if ((result.InitialToggleCollection == null || bootstrapOverride) && toggleBootstrapProvider != null)
+            if ((result.InitialToggleCollection == null || result.InitialToggleCollection.Features?.Count == 0 || bootstrapOverride) && toggleBootstrapProvider != null)
             {
                 var bootstrapCollection = toggleBootstrapProvider.Read();
                 if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
