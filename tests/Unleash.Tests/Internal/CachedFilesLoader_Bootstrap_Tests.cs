@@ -155,5 +155,49 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be("12345");
             ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
         }
+
+        [Test]
+        public void Default_Override_Should_Not_Null_Out_Backup_Toggles_When_Bootstrap_Result_Is_Null()
+        {
+            // Arrange
+            string toggleFileName = AppDataFile("unleash-repo-v1.json");
+            string etagFileName = AppDataFile("etag-12345.txt");
+            var serializer = new JsonNetSerializer();
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            var settings = new UnleashSettings();
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns(null);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, true);
+
+            // Act
+            var ensureResult = fileLoader.EnsureExistsAndLoad();
+
+            // Assert
+            ensureResult.InitialETag.Should().Be("12345");
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Default_Override_Should_Not_Override_Backup_Toggles_When_Bootstrap_Result_Is_Empty_Collection()
+        {
+            // Arrange
+            string toggleFileName = AppDataFile("unleash-repo-v1.json");
+            string etagFileName = AppDataFile("etag-12345.txt");
+            var serializer = new JsonNetSerializer();
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            var settings = new UnleashSettings();
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns(new ToggleCollection());
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, true);
+
+            // Act
+            var ensureResult = fileLoader.EnsureExistsAndLoad();
+
+            // Assert
+            ensureResult.InitialETag.Should().Be("12345");
+            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+        }
     }
 }
