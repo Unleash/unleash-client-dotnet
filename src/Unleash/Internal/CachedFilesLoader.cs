@@ -57,7 +57,9 @@ namespace Unleash.Internal
 
             if ((result.InitialToggleCollection == null || bootstrapOverride) && toggleBootstrapProvider != null)
             {
-                result.InitialToggleCollection = toggleBootstrapProvider.Read();
+                var bootstrapCollection = toggleBootstrapProvider.Read();
+                if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
+                    result.InitialToggleCollection = bootstrapCollection;
             }
 
             return result;
