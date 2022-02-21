@@ -166,6 +166,7 @@ namespace Unleash
             sb.AppendLine($"Application name: {AppName}");
             sb.AppendLine($"Environment: {Environment}");
             sb.AppendLine($"Instance tag: {InstanceTag}");
+            sb.AppendLine($"Project Id: {ProjectId}");
             sb.AppendLine($"Server Uri: {UnleashApi}");
             sb.AppendLine($"Sdk version: {SdkVersion}");
 
@@ -182,6 +183,9 @@ namespace Unleash
             sb.AppendLine($"HttpClient Factory: {HttpClientFactory.GetType().Name}");
             sb.AppendLine($"Json serializer: {JsonSerializer.GetType().Name}");
             sb.AppendLine($"Context provider: {UnleashContextProvider.GetType().Name}");
+
+            sb.AppendLine($"Bootstrap overrides: {BootstrapOverride}");
+            sb.AppendLine($"Bootstrap provider: {ToggleBootstrapProvider.GetType().Name}");
 
             return sb.ToString();
         }
