@@ -55,7 +55,7 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, "prod")
+                new Constraint("environment", Operator.IN, false, "prod")
             };
 
             // Act
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, "test", "prod")
+                new Constraint("environment", Operator.IN, false, "test", "prod")
             };
 
             // Act
@@ -99,7 +99,7 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.NOT_IN, "prod")
+                new Constraint("environment", Operator.NOT_IN, false, "prod")
             };
 
             // Act
@@ -126,9 +126,9 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, "test", "prod"),
-                new Constraint("userId", Operator.IN, "123"),
-                new Constraint("customerId", Operator.IN, "red", "blue")
+                new Constraint("environment", Operator.IN, false, "test", "prod"),
+                new Constraint("userId", Operator.IN, false, "123"),
+                new Constraint("customerId", Operator.IN, false, "red", "blue")
             };
 
             // Act
@@ -155,9 +155,9 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, "test", "prod"),
-                new Constraint("userId", Operator.IN, "123"),
-                new Constraint("customerId", Operator.IN, "red", "blue")
+                new Constraint("environment", Operator.IN, false, "test", "prod"),
+                new Constraint("userId", Operator.IN, false, "123"),
+                new Constraint("customerId", Operator.IN, false, "red", "blue")
             };
 
             // Act

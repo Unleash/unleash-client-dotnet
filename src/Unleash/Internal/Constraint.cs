@@ -11,17 +11,20 @@ namespace Unleash.Internal
         public string[] Values { get; private set; }
         public string Value { get; internal set; }
 
-        public Constraint(string contextName, Operator @operator, params string[] values)
+        public bool CaseInsensitive { get; private set; }
+        public Constraint(string contextName, Operator @operator, bool caseInsensitive, params string[] values)
         {
             ContextName = contextName;
             Operator = @operator;
             Values = values;
+            CaseInsensitive = caseInsensitive;
         }
-        public Constraint(string contextName, string value, Operator @operator)
+        public Constraint(string contextName, string value, Operator @operator, bool caseInsensitive)
         {
             ContextName = contextName;
             Operator = @operator;
             Value = value;
+            CaseInsensitive = caseInsensitive;
         }
     }
 }
