@@ -17,7 +17,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.0", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.1");
 
@@ -33,7 +33,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.0", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.1.0");
 
@@ -49,7 +49,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.1", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.1");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.1.0");
 
@@ -65,7 +65,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.1.0", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.1.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "2.0.0");
 
@@ -81,7 +81,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.0", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "2.0.0");
 
@@ -97,7 +97,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.2", Operator.SEMVER_EQ, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_EQ, false, "1.0.2");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.2");
 
@@ -113,7 +113,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.2.0", Operator.SEMVER_EQ, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_EQ, false, "1.2.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.2.0");
 
@@ -129,7 +129,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "2.0.0", Operator.SEMVER_EQ, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_EQ, false, "2.0.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "2.0.0");
 
@@ -145,7 +145,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.2", Operator.SEMVER_LT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_LT, false, "1.0.2");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.1");
 
@@ -161,7 +161,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.2.0", Operator.SEMVER_LT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_LT, false, "1.2.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.1.0");
 
@@ -177,7 +177,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "2.0.0", Operator.SEMVER_LT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_LT, false, "2.0.0");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.0");
 
@@ -193,7 +193,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.2-alpha", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.2-alpha");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.2-beta");
 
@@ -209,7 +209,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.2-beta2", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.2-beta2");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.2-rc1");
 
@@ -225,7 +225,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new SemverConstraintOperator();
-            var constraint = new Constraint("operator_semver_test", "1.0.2-rc2", Operator.SEMVER_GT, false);
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, "1.0.2-rc2");
             var context = new UnleashContext();
             context.Properties.Add("operator_semver_test", "1.0.2");
 

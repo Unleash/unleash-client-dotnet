@@ -17,7 +17,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "sentence", Operator.STR_CONTAINS, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, false, "sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -34,7 +34,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "sentence", Operator.STR_CONTAINS, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, false, "sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A SENTENCE containing a word that should be matched");
 
@@ -51,7 +51,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "something", Operator.STR_CONTAINS, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, false, "something");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -68,7 +68,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "sentence", Operator.STR_CONTAINS, true);
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, true, "sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A SENTENCE containing a word that should be matched");
 
@@ -85,7 +85,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "A sentence", Operator.STR_STARTS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_STARTS_WITH, false, "A sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -102,7 +102,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "A sentence", Operator.STR_STARTS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_STARTS_WITH, false, "A sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A SENTENCE containing a word that should be matched");
 
@@ -119,7 +119,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "something", Operator.STR_STARTS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_STARTS_WITH, false, "something");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -136,7 +136,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "a sentence", Operator.STR_STARTS_WITH, true);
+            var constraint = new Constraint("operator_string_test", Operator.STR_STARTS_WITH, true, "a sentence");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A SENTENCE containing a word that should be matched");
 
@@ -153,7 +153,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "matched", Operator.STR_ENDS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, false, "matched");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -170,7 +170,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "matched", Operator.STR_ENDS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, false, "matched");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be MATCHED");
 
@@ -187,7 +187,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "something", Operator.STR_ENDS_WITH, false);
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, false, "something");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
@@ -204,7 +204,7 @@ namespace Unleash.Tests.Strategy.Constraints
         {
             // Arrange
             var target = new StringConstraintOperator();
-            var constraint = new Constraint("operator_string_test", "matched", Operator.STR_ENDS_WITH, true);
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, true, "matched");
             var context = new UnleashContext();
             context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
 
