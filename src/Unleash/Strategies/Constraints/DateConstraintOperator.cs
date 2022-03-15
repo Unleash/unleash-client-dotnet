@@ -16,6 +16,9 @@ namespace Unleash.Strategies.Constraints
             if (string.IsNullOrWhiteSpace(contextValue) || !DateTimeOffset.TryParse(contextValue, out var contextDate))
                 return false;
 
+            if (constraint.Inverted)
+                return !Eval(constraint.Operator, constraintDate, contextDate);
+
             return Eval(constraint.Operator, constraintDate, contextDate);
         }
 

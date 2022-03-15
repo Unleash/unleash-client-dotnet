@@ -20,6 +20,9 @@ namespace Unleash.Strategies.Constraints
             if (string.IsNullOrWhiteSpace(constraint.Value) || !double.TryParse(constraint.Value, out var constraintNumber))
                 return false;
 
+            if (constraint.Inverted)
+                return !Eval(constraint.Operator, constraintNumber, contextNumber);
+
             return Eval(constraint.Operator, constraintNumber, contextNumber);
         }
 

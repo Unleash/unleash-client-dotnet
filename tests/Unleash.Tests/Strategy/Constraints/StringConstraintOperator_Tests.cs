@@ -215,5 +215,39 @@ namespace Unleash.Tests.Strategy.Constraints
             result.Should().BeTrue();
 
         }
+
+        [Test]
+        public void STR_ENDS_WITH_CaseInsensitive_False_Does_Not_Match_When_String_Is_Missing_Inverted()
+        {
+            // Arrange
+            var target = new StringConstraintOperator();
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, false, true, "something");
+            var context = new UnleashContext();
+            context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+
+        }
+
+        [Test]
+        public void STR_ENDS_WITH_CaseInsensitive_True_Matches_When_Case_Differs_Inverted()
+        {
+            // Arrange
+            var target = new StringConstraintOperator();
+            var constraint = new Constraint("operator_string_test", Operator.STR_ENDS_WITH, true, true, "matched");
+            var context = new UnleashContext();
+            context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeFalse();
+
+        }
     }
 }

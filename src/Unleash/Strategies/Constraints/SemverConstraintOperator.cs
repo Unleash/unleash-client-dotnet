@@ -27,13 +27,25 @@ namespace Unleash.Strategies.Constraints
                 return constraint.Values.Where(constraintVal =>
                 {
                     SemanticVersion constraintSemver;
-                    return SemanticVersion.TryParse(constraintVal, out constraintSemver) && Eval(constraint.Operator, contextSemver, constraintSemver);
+                    if (!SemanticVersion.TryParse(constraintVal, out constraintSemver))
+                        return false;
+                    
+                    if (constraint.Inverted)
+                        return !Eval(constraint.Operator, contextSemver, constraintSemver);
+
+                    return Eval(constraint.Operator, contextSemver, constraintSemver);
                 }).Any();
             }
             else if (!string.IsNullOrWhiteSpace(constraint.Value))
             {
                 SemanticVersion constraintSemver;
-                return SemanticVersion.TryParse(constraint.Value, out constraintSemver) && Eval(constraint.Operator, contextSemver, constraintSemver);
+                if (!SemanticVersion.TryParse(constraint.Value, out constraintSemver))
+                    return false;
+                
+                if (constraint.Inverted)
+                    return !Eval(constraint.Operator, contextSemver, constraintSemver);
+
+                return Eval(constraint.Operator, contextSemver, constraintSemver);
             }
 
             return false;

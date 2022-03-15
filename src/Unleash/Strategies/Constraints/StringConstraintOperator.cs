@@ -16,6 +16,9 @@ namespace Unleash.Strategies.Constraints
             if (string.IsNullOrWhiteSpace(contextValue))
                 return false;
 
+            if (constraint.Inverted)
+                return !Eval(constraint.Operator, constraint.Value, contextValue, constraint.CaseInsensitive);
+
             return Eval(constraint.Operator, constraint.Value, contextValue, constraint.CaseInsensitive);
         }
 

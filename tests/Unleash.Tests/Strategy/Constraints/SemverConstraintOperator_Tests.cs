@@ -235,5 +235,21 @@ namespace Unleash.Tests.Strategy.Constraints
             // Assert
             result.Should().BeTrue();
         }
+
+        [Test]
+        public void Release_Is_Greater_Than_RC_Inverted()
+        {
+            // Arrange
+            var target = new SemverConstraintOperator();
+            var constraint = new Constraint("operator_semver_test", Operator.SEMVER_GT, false, true, "1.0.2-rc2");
+            var context = new UnleashContext();
+            context.Properties.Add("operator_semver_test", "1.0.2");
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeFalse();
+        }
     }
 }

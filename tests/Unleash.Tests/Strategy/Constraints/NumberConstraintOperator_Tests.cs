@@ -236,5 +236,35 @@ namespace Unleash.Tests.Strategy.Constraints
             // Assert
             result.Should().BeFalse();
         }
+
+        [Test]
+        public void NUM_EQ_Item_Count_Of_5_Is_Equal_To_Constraint_Value_5_Inverted()
+        {
+            // Arrange
+            var target = new NumberConstraintOperator();
+            var constraint = new Constraint("item_count", Operator.NUM_EQ, false, true, "5");
+            var context = new UnleashContext();
+            context.Properties.Add("item_count", "5");
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void NUM_EQ_Item_Count_Of_6_Is_Equal_To_Constraint_Value_5_Inverted()
+        {
+            // Arrange
+            var target = new NumberConstraintOperator();
+            var constraint = new Constraint("item_count", Operator.NUM_EQ, false, true, "5");
+            var context = new UnleashContext();
+            context.Properties.Add("item_count", "6");
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
