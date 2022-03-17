@@ -13,13 +13,25 @@ namespace Unleash.Strategies.Constraints
                 return false;
 
             var contextValue = context.GetByName(constraint.ContextName);
-            if (string.IsNullOrWhiteSpace(contextValue) || !DateTimeOffset.TryParse(contextValue, out var contextDate))
-                return false;
+            DateTimeOffset? contextDate;
+            if (!string.IsNullOrWhiteSpace(contextValue))
+            {
+                if (!DateTimeOffset.TryParse(contextValue, out var date))
+                    return false;
+                else
+                    contextDate = date;
+            }
+            else
+            {
+                contextDate = context.CurrentTime;
+                if (!contextDate.HasValue)
+                    return false;
+            }
 
             if (constraint.Inverted)
-                return !Eval(constraint.Operator, constraintDate, contextDate);
+                return !Eval(constraint.Operator, constraintDate, contextDate.Value);
 
-            return Eval(constraint.Operator, constraintDate, contextDate);
+            return Eval(constraint.Operator, constraintDate, contextDate.Value);
         }
 
         private bool Eval(Operator @operator, DateTimeOffset constraintDate, DateTimeOffset contextDate)

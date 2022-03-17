@@ -1,5 +1,6 @@
 namespace Unleash
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -13,6 +14,7 @@ namespace Unleash
         public string UserId { get; set; }
         public string SessionId { get; set; }
         public string RemoteAddress { get; set; }
+        public DateTimeOffset? CurrentTime { get; set; }
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
 
         public string GetByName(string contextName)
@@ -65,6 +67,7 @@ namespace Unleash
             private string userId;
             private string sessionId;
             private string remoteAddress;
+            private DateTimeOffset? currentTime;
             private readonly Dictionary<string, string> properties = new Dictionary<string, string>();
 
             public Builder()
@@ -79,6 +82,7 @@ namespace Unleash
                 userId = context.UserId;
                 sessionId = context.SessionId;
                 remoteAddress = context.RemoteAddress;
+                currentTime = context.CurrentTime;
                 properties = context.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
@@ -112,6 +116,18 @@ namespace Unleash
                 return this;
             }
 
+            public Builder CurrentTime(DateTimeOffset currentTime)
+            {
+                this.currentTime = currentTime;
+                return this;
+            }
+
+            public Builder Now()
+            {
+                this.currentTime = DateTimeOffset.UtcNow;
+                return this;
+            }
+
             public Builder AddProperty(string name, string value)
             {
                 properties.Add(name, value);
@@ -128,6 +144,7 @@ namespace Unleash
                     SessionId = sessionId,
                     RemoteAddress = remoteAddress,
                     Properties = properties,
+                    CurrentTime = currentTime
                 };
             }
         }

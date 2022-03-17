@@ -135,7 +135,8 @@ namespace Unleash.Tests.Specifications
                 .SessionId(contextDefinition.SessionId)
                 .RemoteAddress(contextDefinition.RemoteAddress)
                 .Environment(contextDefinition.Environment)
-                .AppName(contextDefinition.AppName);
+                .AppName(contextDefinition.AppName)
+                .CurrentTime(contextDefinition.CurrentTime);
                     
             if (contextDefinition.Properties != null)
             {

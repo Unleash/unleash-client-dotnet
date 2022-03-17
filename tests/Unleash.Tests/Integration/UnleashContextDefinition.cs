@@ -9,6 +9,7 @@ namespace Unleash.Tests.Specifications
         public string RemoteAddress { get; set; }
         public string Environment { get; set; }
         public string AppName { get; set; }
+        public DateTimeOffset CurrentTime { get; set; }
         public Dictionary<string, string> Properties { get; set; }
     }
 }
