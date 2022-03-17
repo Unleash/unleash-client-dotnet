@@ -9,6 +9,7 @@ namespace Unleash.Tests.Communication
     public class UnleashApiClient_SendMetrics_Tests : BaseUnleashApiClientTest
     {
         [Test]
+        [Ignore("Requires a valid accesstoken")]
         public async Task SendMetrics_Success()
         {
             var metricsBucket = new ThreadSafeMetricsBucket();
