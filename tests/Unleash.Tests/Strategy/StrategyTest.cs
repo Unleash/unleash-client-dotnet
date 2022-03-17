@@ -77,7 +77,7 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, false, false, "test", "prod")
+                new Constraint("environment", Operator.IN, false, false, null, "test", "prod")
             };
 
             // Act
@@ -126,9 +126,9 @@ namespace Unleash.Tests.Strategy
             };
             var constraints = new List<Constraint>
             {
-                new Constraint("environment", Operator.IN, false, false, "test", "prod"),
-                new Constraint("userId", Operator.IN, false, false, "123"),
-                new Constraint("customerId", Operator.IN, false, false, "red", "blue")
+                new Constraint("environment", Operator.IN, false, false, null, "test", "prod"),
+                new Constraint("userId", Operator.IN, false, false, null, "123"),
+                new Constraint("customerId", Operator.IN, false, false, null, "red", "blue")
             };
 
             // Act
