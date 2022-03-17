@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Unleash.Internal;
@@ -14,10 +15,10 @@ namespace Unleash.Strategies.Constraints
             if (string.IsNullOrWhiteSpace(contextValueString))
                 return false;
 
-            if (!double.TryParse(contextValueString, out var contextNumber))
+            if (!double.TryParse(contextValueString, NumberStyles.Number, CultureInfo.InvariantCulture, out var contextNumber))
                 return false;
 
-            if (string.IsNullOrWhiteSpace(constraint.Value) || !double.TryParse(constraint.Value, out var constraintNumber))
+            if (string.IsNullOrWhiteSpace(constraint.Value) || !double.TryParse(constraint.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out var constraintNumber))
                 return false;
 
             if (constraint.Inverted)
