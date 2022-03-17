@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unleash.Internal;
 
@@ -9,7 +10,7 @@ namespace Unleash.Strategies.Constraints
     {
         public bool Evaluate(Constraint constraint, UnleashContext context)
         {
-            if (string.IsNullOrWhiteSpace(constraint.Value))
+            if (constraint.Values == null || !constraint.Values.Any())
                 return false;
 
             var contextValue = context.GetByName(constraint.ContextName);
@@ -17,9 +18,9 @@ namespace Unleash.Strategies.Constraints
                 return false;
 
             if (constraint.Inverted)
-                return !Eval(constraint.Operator, constraint.Value, contextValue, constraint.CaseInsensitive);
+                return !constraint.Values.Any(val => Eval(constraint.Operator, val, contextValue, constraint.CaseInsensitive));
 
-            return Eval(constraint.Operator, constraint.Value, contextValue, constraint.CaseInsensitive);
+            return constraint.Values.Any(val => Eval(constraint.Operator, val, contextValue, constraint.CaseInsensitive));
         }
 
         private bool Eval(Operator @operator, string value, string contextValue, bool caseInsensitive)
