@@ -22,21 +22,7 @@ namespace Unleash.Strategies.Constraints
                 return false;
             }
 
-            if (constraint.Values != null && constraint.Values.Any())
-            {
-                return constraint.Values.Where(constraintVal =>
-                {
-                    SemanticVersion constraintSemver;
-                    if (!SemanticVersion.TryParse(constraintVal, out constraintSemver))
-                        return false;
-                    
-                    if (constraint.Inverted)
-                        return !Eval(constraint.Operator, contextSemver, constraintSemver);
-
-                    return Eval(constraint.Operator, contextSemver, constraintSemver);
-                }).Any();
-            }
-            else if (!string.IsNullOrWhiteSpace(constraint.Value))
+            if (!string.IsNullOrWhiteSpace(constraint.Value))
             {
                 SemanticVersion constraintSemver;
                 if (!SemanticVersion.TryParse(constraint.Value, out constraintSemver))
