@@ -30,6 +30,40 @@ namespace Unleash.Tests.Strategy.Constraints
         }
 
         [Test]
+        public void STR_CONTAINS_CaseInsensitive_False_Matches_With_Same_Case_On_Atleast_One_Word()
+        {
+            // Arrange
+            var target = new StringConstraintOperator();
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, false, false, null, "was", "sentence", "nothing");
+            var context = new UnleashContext();
+            context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+
+        }
+
+        [Test]
+        public void STR_CONTAINS_CaseInsensitive_False_Matches_With_Same_Case_On_Both_Words()
+        {
+            // Arrange
+            var target = new StringConstraintOperator();
+            var constraint = new Constraint("operator_string_test", Operator.STR_CONTAINS, false, false, null, "sentence", "should");
+            var context = new UnleashContext();
+            context.Properties.Add("operator_string_test", "A sentence containing a word that should be matched");
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+
+        }
+
+        [Test]
         public void STR_CONTAINS_CaseInsensitive_False_Does_Not_Match_When_Case_Differs()
         {
             // Arrange
