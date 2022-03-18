@@ -11,6 +11,7 @@ namespace Unleash.Tests.Communication
     public class UnleashApiClient_RegisterClient_Tests : BaseUnleashApiClientTest
     {
         [Test]
+        [Ignore("Requires a valid accesstoken")]
         public async Task RegisterClient_Success()
         {
             var clientRegistration = new ClientRegistration()

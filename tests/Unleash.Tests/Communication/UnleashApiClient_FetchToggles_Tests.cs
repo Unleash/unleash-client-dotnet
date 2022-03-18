@@ -10,6 +10,7 @@ namespace Unleash.Tests.Communication
     public class UnleashApiClient_FetchToggles_Tests : BaseUnleashApiClientTest
     {
         [Test]
+        [Ignore("Requires a valid accesstoken")]
         public async Task Success()
         {
             var etag = ""; // first request
@@ -32,6 +33,7 @@ namespace Unleash.Tests.Communication
         }
 
         [Test]
+        [Ignore("Requires a valid accesstoken")]
         public async Task Timer_Test()
         {
             // Warmup
