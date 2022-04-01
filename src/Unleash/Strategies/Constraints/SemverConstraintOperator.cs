@@ -37,7 +37,7 @@ namespace Unleash.Strategies.Constraints
             return false;
         }
 
-        private bool Eval(Operator @operator, SemanticVersion contextSemver, SemanticVersion constraintSemver)
+        private bool Eval(string @operator, SemanticVersion contextSemver, SemanticVersion constraintSemver)
         {
             switch (@operator)
             {
