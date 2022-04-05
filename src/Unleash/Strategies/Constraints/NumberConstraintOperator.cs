@@ -27,7 +27,7 @@ namespace Unleash.Strategies.Constraints
             return Eval(constraint.Operator, constraintNumber, contextNumber);
         }
 
-        private bool Eval(Operator @operator, double constraintNumber, double contextNumber)
+        private bool Eval(string @operator, double constraintNumber, double contextNumber)
         {
             switch (@operator)
             {

@@ -7,7 +7,7 @@ namespace Unleash.Strategies
 {
     public class ConstraintUtils
     {
-        static Dictionary<Operator, IConstraintOperator> operators = new Dictionary<Operator, IConstraintOperator>()
+        static Dictionary<string, IConstraintOperator> operators = new Dictionary<string, IConstraintOperator>()
         {
             { Operator.STR_CONTAINS, new StringConstraintOperator() },
             { Operator.STR_ENDS_WITH, new StringConstraintOperator() },
@@ -39,6 +39,9 @@ namespace Unleash.Strategies
         private static bool ValidateConstraint(Constraint constraint, UnleashContext context)
         {
             var contextValue = context.GetByName(constraint.ContextName);
+            if (constraint.Operator == null)
+                return false;
+
             if (operators.ContainsKey(constraint.Operator))
                 return operators[constraint.Operator].Evaluate(constraint, context);
             else

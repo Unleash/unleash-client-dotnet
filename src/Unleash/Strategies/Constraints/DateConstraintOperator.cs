@@ -34,7 +34,7 @@ namespace Unleash.Strategies.Constraints
             return Eval(constraint.Operator, constraintDate, contextDate.Value);
         }
 
-        private bool Eval(Operator @operator, DateTimeOffset constraintDate, DateTimeOffset contextDate)
+        private bool Eval(string @operator, DateTimeOffset constraintDate, DateTimeOffset contextDate)
         {
             if (@operator == Operator.DATE_AFTER)
                 return contextDate > constraintDate;

@@ -23,7 +23,7 @@ namespace Unleash.Strategies.Constraints
             return constraint.Values.Any(val => Eval(constraint.Operator, val, contextValue, constraint.CaseInsensitive));
         }
 
-        private bool Eval(Operator @operator, string value, string contextValue, bool caseInsensitive)
+        private bool Eval(string @operator, string value, string contextValue, bool caseInsensitive)
         {
             var comparison = caseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
