@@ -4,6 +4,8 @@ using System.Text;
 
 namespace Unleash.Internal
 {
+    // Compile time checking of constant strings.
+    // Allows for invalid operators without crashing the application
     public class Operator
     {
         public const string IN = nameof(IN);
