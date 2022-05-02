@@ -34,8 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A703F9CB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BootstrapHost", "samples\BootstrapHost\BootstrapHost.csproj", "{23B73DA0-9635-41DC-A513-F9B0EAA94E81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnleashDemo", "UnleashDemo\UnleashDemo\UnleashDemo.csproj", "{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,10 +72,6 @@ Global
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,7 +85,6 @@ Global
 		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6} = {A703F9CB-157F-4166-B81D-27779B586DCB}
 		{961F50B2-3297-4C07-8E9E-5B4BB110B5B2} = {9326EDD7-F842-4D01-880D-250102C0D689}
 		{23B73DA0-9635-41DC-A513-F9B0EAA94E81} = {9326EDD7-F842-4D01-880D-250102C0D689}
-		{BCAF3E79-923B-4B3D-9C70-DAB35E59A217} = {29C4317B-9580-4E56-ACE0-06D3E74269D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8777E71-3209-4072-B7D9-466A4F5C7A75}
