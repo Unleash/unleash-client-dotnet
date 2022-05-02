@@ -33,6 +33,10 @@ namespace WebApp
                 //JsonSerializer = new JsonNetSerializer()
             };
 
+            /* Uncomment to test bootstrapping via url. This particular url points to the BootstapHost, a thin webapp hosting a bootstrap.json file
+            UnleashSettings.BootstrapOverride = true;
+            UnleashSettings.UseBootstrapUrlProvider("http://localhost:41028/bootstrap.json", true);
+            */
             UnleashInfo = UnleashSettings.ToString();
             
             Unleash = new DefaultUnleash(UnleashSettings);
