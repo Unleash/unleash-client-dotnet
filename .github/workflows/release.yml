@@ -35,8 +35,8 @@ jobs:
           NUGET_VERSION: ${{ github.event.release.tag_name }}
         run: |
           echo "nuget=${NUGET_VERSION}" >> $GITHUB_ENV
-          echo "file=${NUGET_VERSION%-beta}" >> $GITHUB_ENV
-          echo "assembly=${NUGET_VERSION%-beta}" >> $GITHUB_ENV
+          echo "file=${NUGET_VERSION%-beta*}" >> $GITHUB_ENV
+          echo "assembly=${NUGET_VERSION%-beta*}" >> $GITHUB_ENV
         shell: bash
 
       - name: Build the solution

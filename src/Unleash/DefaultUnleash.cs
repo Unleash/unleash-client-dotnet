@@ -124,7 +124,7 @@ namespace Unleash
             return GetVariant(toggleName, services.ContextProvider.Context, defaultVariant);
         }
 
-        private Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
+        public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
         {
             var toggle = GetToggle(toggleName);
 
