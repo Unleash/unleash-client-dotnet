@@ -185,7 +185,7 @@ namespace Unleash
             sb.AppendLine($"Context provider: {UnleashContextProvider.GetType().Name}");
 
             sb.AppendLine($"Bootstrap overrides: {BootstrapOverride}");
-            sb.AppendLine($"Bootstrap provider: {ToggleBootstrapProvider.GetType().Name}");
+            sb.AppendLine($"Bootstrap provider: {ToggleBootstrapProvider?.GetType().Name ?? "null"}");
 
             return sb.ToString();
         }

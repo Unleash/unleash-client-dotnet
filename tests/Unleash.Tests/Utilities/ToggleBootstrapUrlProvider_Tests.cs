@@ -46,7 +46,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var path = "http://localhost/path/to/file";
             var messageHandlerMock = new ConfigurableMessageHandlerMock();
-            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound) { Content = new StringContent("") };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
             var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null);
@@ -66,7 +66,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var path = "http://localhost/path/to/file";
             var messageHandlerMock = new ConfigurableMessageHandlerMock();
-            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound) { Content = new StringContent("") };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
             var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null, true);
