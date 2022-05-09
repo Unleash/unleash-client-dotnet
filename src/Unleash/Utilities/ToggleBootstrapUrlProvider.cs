@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -60,8 +61,20 @@ namespace Unleash.Utilities
                         return null;
                     }
 
-                    var togglesResponseStream = await response.Content.ReadAsStreamAsync();
-                    return jsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
+                    try
+                    {
+                        var togglesResponseStream = await response.Content.ReadAsStreamAsync();
+                        return jsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Trace($"UNLEASH: Exception in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}' during reading and deserializing ToggleCollection from stream: " + ex.Message);
+
+                        if (throwOnFail)
+                            throw new UnleashException("Exception during reading and deserializing ToggleCollection from stream", ex);
+
+                        return null;
+                    }
                 }
             }
         }

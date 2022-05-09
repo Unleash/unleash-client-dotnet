@@ -104,5 +104,48 @@ namespace Unleash.Tests.Utilities
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
             messageHandlerMock.SentMessages.First().Headers.Any(kvp => kvp.Key == configuredHeader.Key && kvp.Value.First() == configuredHeader.Value).Should().BeTrue();
         }
+
+        [Test]
+        public void Getting_Null_Exceptions_When_Reading_File_Content_Returns_Null_When_Configured_To_Not_Throw_On_Error()
+        {
+            // Arrange
+            var path = "http://localhost/path/to/file";
+            var messageHandlerMock = new ConfigurableMessageHandlerMock();
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                // Lets provoke a nullref
+                Content = null
+            };
+            messageHandlerMock.Configure(path, returnMessage);
+            var client = new HttpClient(messageHandlerMock);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer());
+
+            // Act
+            var responseContent = bootstrapUrlProvider.Read();
+
+            // Assert
+            responseContent.Should().BeNull();
+            messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
+            messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
+        }
+
+        [Test]
+        public void Getting_Null_Exceptions_When_Reading_File_Content_Throws_When_Configured_To_Throw_On_Error()
+        {
+            // Arrange
+            var path = "http://localhost/path/to/file";
+            var messageHandlerMock = new ConfigurableMessageHandlerMock();
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                // Lets provoke a nullref
+                Content = null
+            };
+            messageHandlerMock.Configure(path, returnMessage);
+            var client = new HttpClient(messageHandlerMock);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer(), true);
+
+            // Act, Assert
+            Assert.Throws<UnleashException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
+        }
     }
 }
