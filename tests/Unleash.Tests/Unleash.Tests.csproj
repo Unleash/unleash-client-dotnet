@@ -81,7 +81,11 @@
     <Compile Include="Integration\TestCaseVariant.cs" />
     <Compile Include="Integration\TestDefinition.cs" />
     <Compile Include="Integration\UnleashContextDefinition.cs" />
+    <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
+    <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
+    <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
     <Compile Include="Metrics\MetricsBucketTests.cs" />
+    <Compile Include="Mock\ConfigurableMessageHandlerMock.cs" />
     <Compile Include="Mock\MockApiClient.cs" />
     <Compile Include="Mock\MockHttpMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Mock\MockFileSystem.cs" />
     <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
     <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
+    <Compile Include="Strategy\Constraints\ConstraintUtilsTests.cs" />
     <Compile Include="Strategy\Constraints\DateConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\Constraints\NumberConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\Constraints\SemverConstraintOperator_Tests.cs" />
@@ -102,6 +107,8 @@
     <Compile Include="Synchronization\SynchronizationTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
+    <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
+    <Compile Include="Utilities\ToggleBootstrapUrlProvider_Tests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />
     <Compile Include="ClientFactory\SyncStartupUnitTest.cs" />
   </ItemGroup>
@@ -131,6 +138,9 @@
     <None Include="App_Data\unleash-repo-without-feature-field.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="App_Data\etag-12345.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -153,9 +163,7 @@
       <Name>Unleash</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientFactory\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

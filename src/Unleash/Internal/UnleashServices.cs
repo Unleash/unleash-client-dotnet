@@ -34,8 +34,7 @@ namespace Unleash
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-
-            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, backupFile, etagBackupFile);
+            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, settings.ToggleBootstrapProvider, backupFile, etagBackupFile, settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
             ToggleCollection = new ThreadSafeToggleCollection

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "features": [
+    {
+      "name": "Demo123",
+      "enabled": true,
+      "strategies": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}

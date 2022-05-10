@@ -9,6 +9,7 @@ using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Scheduling;
 using Unleash.Serialization;
+using Unleash.Utilities;
 
 namespace Unleash
 {
@@ -125,6 +126,16 @@ namespace Unleash
         internal IFileSystem FileSystem { get; set; }
 
         /// <summary>
+        /// Gets or sets the toggle bootstrap provider (file, url, etc). Can be used for testing/mocking etc.
+        /// </summary>
+        public IToggleBootstrapProvider ToggleBootstrapProvider { get; set; }
+
+        /// <summary>
+        /// Gets or sets the override behaviour of the Bootstrap Toggles feature
+        /// </summary>
+        public bool BootstrapOverride { get; set; } = true;
+
+        /// <summary>
         /// INTERNAL: Gets or sets if the feature toggle fetch should be immeditely scheduled. Used by the client factory to prevent redundant initial fetches.
         /// </summary>
         internal bool ScheduleFeatureToggleFetchImmediatly { get; set; } = true;
@@ -155,6 +166,7 @@ namespace Unleash
             sb.AppendLine($"Application name: {AppName}");
             sb.AppendLine($"Environment: {Environment}");
             sb.AppendLine($"Instance tag: {InstanceTag}");
+            sb.AppendLine($"Project Id: {ProjectId}");
             sb.AppendLine($"Server Uri: {UnleashApi}");
             sb.AppendLine($"Sdk version: {SdkVersion}");
 
@@ -171,6 +183,9 @@ namespace Unleash
             sb.AppendLine($"HttpClient Factory: {HttpClientFactory.GetType().Name}");
             sb.AppendLine($"Json serializer: {JsonSerializer.GetType().Name}");
             sb.AppendLine($"Context provider: {UnleashContextProvider.GetType().Name}");
+
+            sb.AppendLine($"Bootstrap overrides: {BootstrapOverride}");
+            sb.AppendLine($"Bootstrap provider: {ToggleBootstrapProvider?.GetType().Name ?? "null"}");
 
             return sb.ToString();
         }
@@ -197,6 +212,16 @@ namespace Unleash
             return new string($"{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}"
                 .Where(c => !invalidFileNameChars.Contains(c))
                 .ToArray());
+        }
+
+        public void UseBootstrapUrlProvider(string path, bool shouldThrowOnError, Dictionary<string, string> customHeaders = null)
+        {
+            ToggleBootstrapProvider = new ToggleBootstrapUrlProvider(path, HttpClientFactory.Create(new Uri(path)), JsonSerializer, shouldThrowOnError, customHeaders);
+        }
+
+        public void UseBootstrapFileProvider(string path)
+        {
+            ToggleBootstrapProvider = new ToggleBootstrapFileProvider(path, FileSystem, JsonSerializer);
         }
     }
 }

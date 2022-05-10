@@ -240,6 +240,57 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 * When .json file does not exists
 * When the named feature toggle does not exist in .json file
 
+## Bootstrapping
+* Unleash supports bootstrapping from a JSON string.
+* Configure your own custom provider implementing the `IToggleBootstrapProvider` interface's single method `ToggleCollection Read()`.
+  This should return a `ToggleCollection`. The `UnleashSettings.JsonSerializer` can be used to deserialize a JSON string in the same format returned from `/api/client/features`.
+* Example bootstrap files can be found in the json files located in [tests/Unleash.Tests/App_Data](tests/Unleash.Tests/App_Data)
+* Our assumption is this can be use for applications deployed to ephemeral containers or more locked down file systems where Unleash's need to write the backup file is not desirable or possible.
+* Loading with bootstrapping defaults to override feature toggles loaded from Local Backup, this override can be switched off by setting the `UnleashSettings.ToggleOverride` property to `false`
+
+Configuring with the UnleashSettings:
+```csharp
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    InstanceTag = "instance z",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    CustomHttpHeaders = new Dictionary()
+    {
+      {"Authorization","API token" }
+    },
+    ToggleOverride = false, // Defaults to true
+    ToggleBootstrapProvider = new MyToggleBootstrapProvider() // A toggle bootstrap provider implementing IToggleBootstrapProvider here
+};
+```
+
+### Provided Bootstrappers
+* Two ToggleBootstrapProviders are provided
+* These are found in the `Unleash.Utilities`:
+
+#### ToggleBootstrapFileProvider
+* Unleash comes with a `ToggleBootstrapFileProvider` which implements the `IToggleBootstrapProvider` interface.
+* Configure with `UnleashSettings` helper method:
+
+```csharp
+settings.UseBootstrapFileProvider("./path/to/file.json");
+```
+
+#### ToggleBootstrapUrlProvider
+* Unleash also comes with a `ToggleBootstrapUrlProvider` which implements the `IToggleBootstrapProvider` interface.
+* Fetches JSON from a webaddress using `HttpMethod.Get`
+
+* Configure with `UnleashSettings` helper method:
+
+```csharp
+var shouldThrowOnError = true; // Throws for 500, 404, etc
+var customHeaders = new Dictionary<string, string>()
+{
+    { "Authorization", "Bearer ABCdefg123" } // Or whichever set of headers would be required to GET this file
+}; // Defaults to null
+settings.UseBootstrapUrlProvider("://domain.top/path/to/file.json", shouldThrowOnError, customHeaders);
+```
+
 ## Json Serialization
 The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
 
