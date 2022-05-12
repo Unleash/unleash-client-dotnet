@@ -137,7 +137,12 @@ namespace Unleash
 
         public IEnumerable<VariantDefinition> GetVariants(string toggleName)
         {
-            if (!IsEnabled(toggleName)) return null;
+            return GetVariants(toggleName, services.ContextProvider.Context);
+        }
+
+        public IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context)
+        {
+            if (!IsEnabled(toggleName, context)) return null;
 
             var toggle = GetToggle(toggleName);
 
