@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Unleash.Internal
@@ -21,7 +22,8 @@ namespace Unleash.Internal
             Features = features ?? new List<FeatureToggle>(0);
             cache = new Dictionary<string, FeatureToggle>(Features.Count);
 
-            foreach (var featureToggle in Features) {
+            foreach (var featureToggle in Features)
+            {
                 cache.Add(featureToggle.Name, featureToggle);
             }
         }
@@ -30,8 +32,8 @@ namespace Unleash.Internal
 
         public FeatureToggle GetToggleByName(string name)
         {
-            return cache.TryGetValue(name, out var value) 
-                ? value 
+            return cache.TryGetValue(name, out var value)
+                ? value
                 : null;
         }
     }

@@ -64,7 +64,8 @@ namespace Unleash
             }
             else
             {
-                // Mocked backend: fill instance collection 
+                Console.WriteLine("This is disabled");
+                // Mocked backend: fill instance collection
                 apiClient = settings.UnleashApiClient;
             }
 
@@ -73,11 +74,11 @@ namespace Unleash
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
-                apiClient, 
-                ToggleCollection, 
-                settings.JsonSerializer, 
-                fileSystem, 
-                backupFile, 
+                apiClient,
+                ToggleCollection,
+                settings.JsonSerializer,
+                fileSystem,
+                backupFile,
                 etagBackupFile)
             {
                 ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
@@ -93,7 +94,7 @@ namespace Unleash
             if (settings.SendMetricsInterval != null)
             {
                 var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
-                    apiClient, 
+                    apiClient,
                     settings,
                     strategyMap.Select(pair => pair.Key).ToList())
                 {
@@ -104,8 +105,8 @@ namespace Unleash
                 scheduledTasks.Add(clientRegistrationBackgroundTask);
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
-                    apiClient, 
-                    settings, 
+                    apiClient,
+                    settings,
                     MetricsBucket)
                 {
                     Interval = settings.SendMetricsInterval.Value

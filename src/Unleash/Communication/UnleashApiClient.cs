@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,8 +22,8 @@ namespace Unleash.Communication
         private readonly string projectId;
 
         public UnleashApiClient(
-            HttpClient httpClient, 
-            IJsonSerializer jsonSerializer, 
+            HttpClient httpClient,
+            IJsonSerializer jsonSerializer,
             UnleashApiClientRequestHeaders clientRequestHeaders,
             string projectId = null)
         {
@@ -47,6 +48,7 @@ namespace Unleash.Communication
 
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
+
                     if (!response.IsSuccessStatusCode)
                     {
                         var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -61,18 +63,20 @@ namespace Unleash.Communication
 
                     var newEtag = response.Headers.ETag?.Tag;
                     if (newEtag == etag)
-                    { 
+                    {
                         return new FetchTogglesResult
                         {
                             HasChanged = false,
                             Etag = newEtag,
                             ToggleCollection = null,
                         };
+                    }else{
+                        Console.WriteLine("Didn't get an etag?");
                     }
 
                     var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                     var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
-
+                    Console.WriteLine("Got the following toggles" + toggleCollection);
                     if (toggleCollection == null)
                     {
                         return new FetchTogglesResult

@@ -23,10 +23,10 @@ namespace Unleash.Scheduling
 
         public FetchFeatureTogglesTask(
             IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection, 
+            ThreadSafeToggleCollection toggleCollection,
             IJsonSerializer jsonSerializer,
-            IFileSystem fileSystem, 
-            string toggleFile, 
+            IFileSystem fileSystem,
+            string toggleFile,
             string etagFile)
         {
             this.apiClient = apiClient;
@@ -51,9 +51,11 @@ namespace Unleash.Scheduling
                 return;
 
             toggleCollection.Instance = result.ToggleCollection;
+            Console.WriteLine("My toggle collection is now", result.ToggleCollection);
 
             using (var fs = fileSystem.FileOpenCreate(toggleFile))
             {
+                Console.WriteLine("Writing toggles to" + toggleFile);
                 jsonSerializer.Serialize(fs, result.ToggleCollection);
             }
 

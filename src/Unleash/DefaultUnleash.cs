@@ -3,6 +3,7 @@ namespace Unleash
     using Internal;
     using Logging;
     using Strategies;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Unleash.Variants;
@@ -32,7 +33,7 @@ namespace Unleash
         internal readonly UnleashServices services;
 
         ///// <summary>
-        ///// Initializes a new instance of Unleash client with a set of default strategies. 
+        ///// Initializes a new instance of Unleash client with a set of default strategies.
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
         ///// <param name="strategies">Additional custom strategies.</param>
@@ -95,7 +96,7 @@ namespace Unleash
             {
                 enabled = defaultSetting;
             }
-            else if(!featureToggle.Enabled)
+            else if (!featureToggle.Enabled)
             {
                 // Overall false
                 enabled = false;
@@ -197,14 +198,14 @@ namespace Unleash
 
         private IStrategy GetStrategyOrUnknown(string strategy)
         {
-            return strategyMap.ContainsKey(strategy) 
-                ? strategyMap[strategy] 
+            return strategyMap.ContainsKey(strategy)
+                ? strategyMap[strategy]
                 : UnknownStrategy;
         }
 
         public void Dispose()
         {
-            services?.Dispose(); 
+            services?.Dispose();
         }
     }
 }
