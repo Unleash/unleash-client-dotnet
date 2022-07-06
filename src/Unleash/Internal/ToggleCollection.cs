@@ -14,15 +14,15 @@ namespace Unleash.Internal
     {
         public int Version = 1;
 
-        private readonly Dictionary<string, FeatureToggle> cache;
+        private readonly Dictionary<string, FeatureToggle> togglesCache;
 
         public ToggleCollection(ICollection<FeatureToggle> features = null)
         {
             Features = features ?? new List<FeatureToggle>(0);
-            cache = new Dictionary<string, FeatureToggle>(Features.Count);
+            togglesCache = new Dictionary<string, FeatureToggle>(Features.Count);
 
             foreach (var featureToggle in Features) {
-                cache.Add(featureToggle.Name, featureToggle);
+                togglesCache.Add(featureToggle.Name, featureToggle);
             }
         }
 
@@ -30,7 +30,7 @@ namespace Unleash.Internal
 
         public FeatureToggle GetToggleByName(string name)
         {
-            return cache.TryGetValue(name, out var value) 
+            return togglesCache.TryGetValue(name, out var value) 
                 ? value 
                 : null;
         }
