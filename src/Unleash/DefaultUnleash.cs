@@ -107,7 +107,7 @@ namespace Unleash
             else
             {
                 var enhancedContext = context.ApplyStaticFields(settings);
-                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, s.Constraints));
+                enabled = EnabledByAnyStrategy(featureToggle, enhancedContext);
             }
 
             RegisterCount(toggleName, enabled);
@@ -200,6 +200,34 @@ namespace Unleash
             return strategyMap.ContainsKey(strategy) 
                 ? strategyMap[strategy] 
                 : UnknownStrategy;
+        }
+
+        private bool EnabledByAnyStrategy(FeatureToggle featureToggle, UnleashContext enhancedContext)
+        {
+            foreach (var activationStrategy in featureToggle.Strategies)
+            {
+                var segments = new List<Segment>(activationStrategy.Segments.Count);
+                foreach (var segmentId in activationStrategy.Segments)
+                {
+                    var segment = services.ToggleCollection.Instance.GetSegmentById(segmentId);
+                    if (segment == null)
+                    {
+                        return false;
+                    }
+                    segments.Add(segment);
+                }
+
+                var segmentConstraints = segments.SelectMany(s => s.Constraints);
+                var allConstraints = activationStrategy.Constraints.Concat(segmentConstraints)
+                    .ToList();
+                var strategy = GetStrategyOrUnknown(activationStrategy.Name);
+                if (strategy.IsEnabled(activationStrategy.Parameters, enhancedContext, allConstraints))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void Dispose()
