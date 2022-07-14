@@ -107,7 +107,7 @@ namespace Unleash
             else
             {
                 var enhancedContext = context.ApplyStaticFields(settings);
-                enabled = EnabledByAnyStrategy(featureToggle, enhancedContext);
+                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints)));
             }
 
             RegisterCount(toggleName, enabled);
@@ -202,32 +202,19 @@ namespace Unleash
                 : UnknownStrategy;
         }
 
-        private bool EnabledByAnyStrategy(FeatureToggle featureToggle, UnleashContext enhancedContext)
+        private IEnumerable<Constraint> ResolveConstraints(ActivationStrategy activationStrategy)
         {
-            foreach (var activationStrategy in featureToggle.Strategies)
+            foreach (var segmentId in activationStrategy.Segments)
             {
-                var segments = new List<Segment>(activationStrategy.Segments.Count);
-                foreach (var segmentId in activationStrategy.Segments)
+                var segment = services.ToggleCollection.Instance.GetSegmentById(segmentId);
+                if (segment != null)
                 {
-                    var segment = services.ToggleCollection.Instance.GetSegmentById(segmentId);
-                    if (segment == null)
+                    foreach (var constraint in segment.Constraints)
                     {
-                        return false;
+                        yield return constraint;
                     }
-                    segments.Add(segment);
-                }
-
-                var segmentConstraints = segments.SelectMany(s => s.Constraints);
-                var allConstraints = activationStrategy.Constraints.Concat(segmentConstraints)
-                    .ToList();
-                var strategy = GetStrategyOrUnknown(activationStrategy.Name);
-                if (strategy.IsEnabled(activationStrategy.Parameters, enhancedContext, allConstraints))
-                {
-                    return true;
                 }
             }
-
-            return false;
         }
 
         public void Dispose()
