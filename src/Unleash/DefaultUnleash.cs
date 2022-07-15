@@ -214,6 +214,10 @@ namespace Unleash
                         yield return constraint;
                     }
                 }
+                else
+                {
+                    yield return null;
+                }
             }
         }
 

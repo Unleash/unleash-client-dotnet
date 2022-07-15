@@ -37,6 +37,11 @@ namespace Unleash.Strategies
 
         private static bool ValidateConstraint(Constraint constraint, UnleashContext context)
         {
+            if (constraint == null)
+            {
+                return false;
+            }
+
             var contextValue = context.GetByName(constraint.ContextName);
             if (constraint.Operator == null)
                 return false;
