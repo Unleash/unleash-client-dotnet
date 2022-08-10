@@ -63,11 +63,11 @@ namespace Unleash
         public TimeSpan FetchTogglesInterval { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
-        /// Gets or sets the interval in which metriccs are sent to the server. When null, no metrics is sent.
+        /// Gets or sets the interval in which metrics are sent to the server. When null, no metrics is sent.
         /// 
-        /// Default: null
+        /// Default: 60s
         /// </summary>
-        public TimeSpan? SendMetricsInterval { get; set; } = null;
+        public TimeSpan? SendMetricsInterval { get; set; } = TimeSpan.FromSeconds(60);
 
         /// <summary>
         /// Gets or set a directory for storing temporary files (toggles and current etag values). 
