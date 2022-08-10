@@ -67,12 +67,12 @@ Task("Download-Client-Specifications")
     .Does(() =>
 {
     var indexPath = File("./tests/Unleash.Tests/Integration/Data/index.json");
-    DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/main/specifications/index.json", indexPath);
+    DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/v4.1.0/specifications/index.json", indexPath);
 
 	foreach (var fileName in DeserializeJsonFromFile<string[]>(indexPath))
 	{
 		var filePath = File("./tests/Unleash.Tests/Integration/Data/" + fileName);
-		DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/main/specifications/" + fileName, filePath);
+		DownloadFile("https://raw.githubusercontent.com/Unleash/client-specification/v4.1.0/specifications/" + fileName, filePath);
 	}
 
 });
