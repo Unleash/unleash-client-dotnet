@@ -14,7 +14,7 @@ var unleashProjectFile = "./src/Unleash/Unleash.csproj";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
 var csTestsVersion = "v4.1.0"
-var clientSpecificationTestsURL = "https://raw.githubusercontent.com/Unleash/client-specification/" + csTestsVersion + /specifications/";
+var clientSpecificationTestsURL = "https://raw.githubusercontent.com/Unleash/client-specification/" + csTestsVersion + "/specifications/";
 
 //
 // TASKS
