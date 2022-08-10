@@ -70,7 +70,7 @@ Task("Download-Client-Specifications")
     .Does(() =>
 {
     var indexPath = File("./tests/Unleash.Tests/Integration/Data/index.json");
-    DownloadFile(string.format(clientSpecificationTestsURL + "index.json", indexPath);
+    DownloadFile(clientSpecificationTestsURL + "index.json", indexPath);
 
 	foreach (var fileName in DeserializeJsonFromFile<string[]>(indexPath))
 	{
