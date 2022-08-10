@@ -102,6 +102,7 @@
     <Compile Include="Strategy\Constraints\SemverConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\Constraints\StringConstraintOperator_Tests.cs" />
     <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
+    <Compile Include="Strategy\Segments\Segments_Large_Tests.cs" />
     <Compile Include="Strategy\StrategyTest.cs" />
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
