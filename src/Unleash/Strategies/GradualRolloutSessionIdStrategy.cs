@@ -40,7 +40,7 @@ namespace Unleash.Strategies
             return percentage > 0 && normalizedSessionId <= percentage;
         }
 
-        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, IEnumerable<Constraint> constraints)
         {
             return StrategyUtils.IsEnabled(this, parameters, context, constraints);
         }

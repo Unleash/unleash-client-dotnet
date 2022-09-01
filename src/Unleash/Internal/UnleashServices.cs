@@ -16,6 +16,8 @@ namespace Unleash
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
+        const string supportedSpecVersion = "4.2.0";
+
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }
         internal ThreadSafeToggleCollection ToggleCollection { get; }
@@ -59,7 +61,8 @@ namespace Unleash
                     AppName = settings.AppName,
                     InstanceTag = settings.InstanceTag,
                     CustomHttpHeaders = settings.CustomHttpHeaders,
-                    CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider
+                    CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
+                    SupportedSpecVersion = supportedSpecVersion
                 }, settings.ProjectId);
             }
             else

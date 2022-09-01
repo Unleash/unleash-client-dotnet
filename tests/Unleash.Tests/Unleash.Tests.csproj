@@ -104,6 +104,7 @@
     <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
     <Compile Include="Strategy\StrategyTest.cs" />
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
+    <Compile Include="Strategy\Segments_Tests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />

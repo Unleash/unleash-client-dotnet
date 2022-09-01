@@ -53,7 +53,7 @@ namespace Unleash.Strategies
             return p;
         }
 
-        public static bool IsEnabled(IStrategy strategy, Dictionary<string, string> parameters, UnleashContext context, List<Constraint> constraints)
+        public static bool IsEnabled(IStrategy strategy, Dictionary<string, string> parameters, UnleashContext context, IEnumerable<Constraint> constraints)
         {
             return ConstraintUtils.Validate(constraints, context) && strategy.IsEnabled(parameters, context);
         }

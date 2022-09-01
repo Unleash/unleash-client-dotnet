@@ -24,20 +24,24 @@ namespace Unleash.Strategies
             { Operator.SEMVER_LT, new SemverConstraintOperator() },
         };
 
-        public static bool Validate(List<Constraint> constraints, UnleashContext context)
+        public static bool Validate(IEnumerable<Constraint> constraints, UnleashContext context)
         {
-            if (constraints?.Count > 0)
-            {
-                return constraints.TrueForAll(c => ValidateConstraint(c, context));
-            }
-            else
+            // No need to check count - all returns true if no elements
+            if (constraints == null)
             {
                 return true;
             }
+
+            return constraints.All(c => ValidateConstraint(c, context));
         }
 
         private static bool ValidateConstraint(Constraint constraint, UnleashContext context)
         {
+            if (constraint == null)
+            {
+                return false;
+            }
+
             var contextValue = context.GetByName(constraint.ContextName);
             if (constraint.Operator == null)
                 return false;

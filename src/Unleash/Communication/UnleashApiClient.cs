@@ -150,8 +150,11 @@ namespace Unleash.Communication
             const string appNameHeader = "UNLEASH-APPNAME";
             const string instanceIdHeader = "UNLEASH-INSTANCEID";
 
+            const string supportedSpecVersionHeader = "Unleash-Client-Spec";
+
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
+            requestMessage.Headers.TryAddWithoutValidation(supportedSpecVersionHeader, headers.SupportedSpecVersion);
 
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider?.CustomHeaders);
