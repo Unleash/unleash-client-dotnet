@@ -106,6 +106,7 @@
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
     <Compile Include="Strategy\Segments_Tests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
+    <Compile Include="DefaultUnleashTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
     <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />

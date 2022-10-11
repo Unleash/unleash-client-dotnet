@@ -3,6 +3,7 @@ namespace Unleash
     using Internal;
     using Logging;
     using Strategies;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Unleash.Variants;
@@ -63,6 +64,8 @@ namespace Unleash
 
         /// <inheritdoc />
         public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
+
+        private EventCallbackConfig EventConfig => new EventCallbackConfig();
 
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
@@ -218,6 +221,23 @@ namespace Unleash
                 {
                     yield return null;
                 }
+            }
+        }
+
+        public void ConfigureEvents(Action<EventCallbackConfig> callback)
+        {
+            if (callback == null)
+            {
+                Logger.Error($"UNLEASH: Unleash->ConfigureEvents parameter callback is null");
+            }
+
+            try
+            {
+                callback(EventConfig);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"UNLEASH: Unleash->ConfigureEvents executing callback threw exception {ex.Message}");
             }
         }
 
