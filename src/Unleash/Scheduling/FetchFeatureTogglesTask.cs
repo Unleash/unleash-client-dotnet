@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Serialization;
+using Unleash.Logging;
 
 namespace Unleash.Scheduling
 {
     internal class FetchFeatureTogglesTask : IUnleashScheduledTask
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
         private readonly string toggleFile;
         private readonly string etagFile;
 
@@ -23,10 +25,10 @@ namespace Unleash.Scheduling
 
         public FetchFeatureTogglesTask(
             IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection, 
+            ThreadSafeToggleCollection toggleCollection,
             IJsonSerializer jsonSerializer,
-            IFileSystem fileSystem, 
-            string toggleFile, 
+            IFileSystem fileSystem,
+            string toggleFile,
             string etagFile)
         {
             this.apiClient = apiClient;
@@ -52,13 +54,28 @@ namespace Unleash.Scheduling
 
             toggleCollection.Instance = result.ToggleCollection;
 
-            using (var fs = fileSystem.FileOpenCreate(toggleFile))
+            try
             {
-                jsonSerializer.Serialize(fs, result.ToggleCollection);
+                using (var fs = fileSystem.FileOpenCreate(toggleFile))
+                {
+                    jsonSerializer.Serialize(fs, result.ToggleCollection);
+                }
+            } 
+            catch (IOException ex)
+            {
+                Logger.ErrorException($"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
             }
 
             Etag = result.Etag;
-            fileSystem.WriteAllText(etagFile, Etag);
+
+            try
+            {
+                fileSystem.WriteAllText(etagFile, Etag);
+            }
+            catch (IOException ex)
+            {
+                Logger.ErrorException($"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
+            }
         }
 
         public string Name => "fetch-feature-toggles-task";
