@@ -71,7 +71,7 @@ namespace Unleash
             if (currentInstanceNo >= WarnOnInstanceCount)
             {
                 Logger.Warn($"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
-                Logger.Warn("Ideally you should only need 1 instance of Unleash per app/process, we recommend setting up Unleash as a singleton.");
+                Logger.Warn("Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
             }
         }
 
