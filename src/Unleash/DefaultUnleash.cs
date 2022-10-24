@@ -3,8 +3,10 @@ namespace Unleash
     using Internal;
     using Logging;
     using Strategies;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using Unleash.Variants;
 
     /// <inheritdoc />
@@ -13,6 +15,10 @@ namespace Unleash
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(DefaultUnleash));
 
         private static readonly UnknownStrategy UnknownStrategy = new UnknownStrategy();
+
+        private static int InitializedInstanceCount = 0;
+
+        private const int WarnOnInstanceCount = 10;
 
         private static readonly IStrategy[] DefaultStrategies = {
             new DefaultStrategy(),
@@ -48,6 +54,8 @@ namespace Unleash
         ///// <param name="strategies">Custom strategies.</param>
         public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, params IStrategy[] strategies)
         {
+            var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
+
             this.settings = settings;
 
             var settingsValidator = new UnleashSettingsValidator();
@@ -58,7 +66,13 @@ namespace Unleash
 
             services = new UnleashServices(settings, strategyMap);
 
-            Logger.Info($"UNLEASH: Unleash is initialized and configured with: {settings}");
+            Logger.Info($"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
+
+            if (currentInstanceNo >= WarnOnInstanceCount)
+            {
+                Logger.Warn($"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
+                Logger.Warn("Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
+            }
         }
 
         /// <inheritdoc />
