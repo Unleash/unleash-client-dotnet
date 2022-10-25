@@ -65,7 +65,7 @@ namespace Unleash
         /// <inheritdoc />
         public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
 
-        private EventCallbackConfig EventConfig => new EventCallbackConfig();
+        private EventCallbackConfig EventConfig { get; set; }
 
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
@@ -229,15 +229,18 @@ namespace Unleash
             if (callback == null)
             {
                 Logger.Error($"UNLEASH: Unleash->ConfigureEvents parameter callback is null");
+                return;
             }
 
             try
             {
-                callback(EventConfig);
+                var evtConfig = new EventCallbackConfig();
+                callback(evtConfig);
+                EventConfig = evtConfig;
             }
             catch (Exception ex)
             {
-                Logger.Error($"UNLEASH: Unleash->ConfigureEvents executing callback threw exception {ex.Message}");
+                Logger.Error($"UNLEASH: Unleash->ConfigureEvents executing callback threw exception: {ex.Message}");
             }
         }
 
