@@ -14,14 +14,14 @@ namespace Unleash.Serialization
     {
         private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
         {
-            new FeatureToggle("Feature1", "release", true, new List<ActivationStrategy>()
+            new FeatureToggle("Feature1", "release", true, false, new List<ActivationStrategy>()
             {
                 new ActivationStrategy("remoteAddress", new Dictionary<string, string>()
                 {
                     {"IPs", "127.0.0.1"}
                 })
             }),
-            new FeatureToggle("feature2", "release", false, new List<ActivationStrategy>()
+            new FeatureToggle("feature2", "release", false, false, new List<ActivationStrategy>()
             {
                 new ActivationStrategy("userWithId", new Dictionary<string, string>()
                 {

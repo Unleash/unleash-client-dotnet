@@ -16,7 +16,7 @@ namespace Unleash.Tests.Variants
         public void ShouldReturnDefaultVariantWhenToggleHasNoVariants()
         {
             // Arrange
-            var toggle = new FeatureToggle("test.variants", "release", true, new List<ActivationStrategy> { defaultStrategy });
+            var toggle = new FeatureToggle("test.variants", "release", true, false, new List<ActivationStrategy> { defaultStrategy });
             var context = new UnleashContext
             {
                 UserId = "userA",
@@ -44,6 +44,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -76,6 +77,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -106,6 +108,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -137,6 +140,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -168,6 +172,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -201,6 +206,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -235,6 +241,7 @@ namespace Unleash.Tests.Variants
                     "test.variants",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { v1, v2, v3 });
 
@@ -268,6 +275,7 @@ namespace Unleash.Tests.Variants
                     "Feature.flexible.rollout.custom.stickiness_100",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { blue, red, green, yellow });
 
@@ -301,6 +309,7 @@ namespace Unleash.Tests.Variants
                     "Feature.flexible.rollout.custom.stickiness_100",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { blue, red, green, yellow });
 
@@ -334,6 +343,7 @@ namespace Unleash.Tests.Variants
                     "Feature.flexible.rollout.custom.stickiness_100",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { blue, red, green, yellow });
 
@@ -367,6 +377,7 @@ namespace Unleash.Tests.Variants
                     "Feature.flexible.rollout.custom.stickiness_100",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { blue, red, green, yellow });
 
@@ -400,6 +411,7 @@ namespace Unleash.Tests.Variants
                     "Feature.flexible.rollout.custom.stickiness_100",
                     "release",
                     true,
+                    false,
                     new List<ActivationStrategy> { defaultStrategy },
                     new List<VariantDefinition> { blue, red, green, yellow });
 

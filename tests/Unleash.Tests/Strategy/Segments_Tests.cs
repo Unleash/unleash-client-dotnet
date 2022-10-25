@@ -27,7 +27,7 @@ namespace Unleash.Tests.Strategy.Segments
             var segmentIds = new List<string>() { "1", "2" };
             var toggles = new List<FeatureToggle>()
             {
-                new FeatureToggle("item", "release", true, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), null, segmentIds) })
+                new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), null, segmentIds) })
             };
 
             var segments = segmentIds.Select(id => new Segment(id, new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") })).ToList();
@@ -52,7 +52,7 @@ namespace Unleash.Tests.Strategy.Segments
             var segmentIds = new List<string>() { "1" };
             var toggles = new List<FeatureToggle>()
             {
-                new FeatureToggle("item", "release", true, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "15") }, segmentIds) })
+                new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "15") }, segmentIds) })
             };
 
             var segments = segmentIds.Select(id => new Segment(id, new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") })).ToList();
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Strategy.Segments
             var segmentIds = new List<string>() { "1" };
             var toggles = new List<FeatureToggle>()
             {
-                new FeatureToggle("item", "release", true, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") }, segmentIds) })
+                new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") }, segmentIds) })
             };
 
             var segments = segmentIds.Select(id => new Segment(id, new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") })).ToList();
