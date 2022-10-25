@@ -6,5 +6,6 @@ namespace Unleash.Internal
 {
     public class EventCallbackConfig
     {
+        public Action<ImpressionEvent> ImpressionEvent { get; set; }
     }
 }
