@@ -1,9 +1,13 @@
+using System.IO;
+using Unleash.Logging;
+using Unleash.Scheduling;
 using Unleash.Serialization;
 
 namespace Unleash.Internal
 {
     internal class CachedFilesLoader
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
         private readonly IJsonSerializer jsonSerializer;
         private readonly IFileSystem fileSystem;
         private readonly IToggleBootstrapProvider toggleBootstrapProvider;
@@ -28,25 +32,53 @@ namespace Unleash.Internal
             if (!fileSystem.FileExists(etagFile))
             {
                 // Ensure files exists.
-                fileSystem.WriteAllText(etagFile, string.Empty);
-                result.InitialETag = string.Empty;
+                try
+                {
+                    fileSystem.WriteAllText(etagFile, string.Empty);
+                    result.InitialETag = string.Empty;
+                }
+                catch (IOException ex)
+                {
+                    Logger.ErrorException($"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
+                }
             }
             else
             {
-                result.InitialETag = fileSystem.ReadAllText(etagFile);
+                try
+                {
+                    result.InitialETag = fileSystem.ReadAllText(etagFile);
+                }
+                catch (IOException ex)
+                {
+                    Logger.ErrorException($"UNLEASH: Unhandled exception when reading from ETag file '{etagFile}'.", ex);
+                }
             }
 
             // Toggles
             if (!fileSystem.FileExists(toggleFile))
             {
-                fileSystem.WriteAllText(toggleFile, string.Empty);
-                result.InitialToggleCollection = null;
+                try
+                {
+                    fileSystem.WriteAllText(toggleFile, string.Empty);
+                    result.InitialToggleCollection = null;
+                }
+                catch (IOException ex)
+                {
+                    Logger.ErrorException($"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
+                }
             }
             else
             {
-                using (var fileStream = fileSystem.FileOpenRead(toggleFile))
+                try
                 {
-                    result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
+                    using (var fileStream = fileSystem.FileOpenRead(toggleFile))
+                    {
+                        result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
+                    }
+                }
+                catch (IOException ex)
+                {
+                    Logger.ErrorException($"UNLEASH: Unhandled exception when reading from toggle file '{toggleFile}'.", ex);
                 }
             }
 

@@ -56,8 +56,14 @@ var settings = new UnleashSettings()
 };
 
 var unleash = new DefaultUnleash(settings);
+
+// Add to Container as Singleton
+// .NET Core 3/.NET 5/...
+services.AddSingleton<IUnleash>(c => unleash);
+
 ```
-Note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediately, see the [synchronous startup](#synchronous-startup) section
+Unleash will attempt to log a warning for each new instance after instance count reaches 10.
+Also note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediately, see the [synchronous startup](#synchronous-startup) section
 
 When your application shuts down, remember to dispose the unleash instance.
 
