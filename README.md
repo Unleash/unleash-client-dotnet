@@ -71,6 +71,27 @@ When your application shuts down, remember to dispose the unleash instance.
 unleash?.Dispose()
 ```
 
+### Handling events
+Currently supported events:
+- [Impression data events](https://docs.getunleash.io/advanced/impression-data#impression-event-data)
+
+```csharp
+
+var settings = new UnleashSettings()
+{
+    // ...
+};
+
+var unleash = new DefaultUnleash(settings);
+
+// Set up handling of impression events
+unleash.ConfigureEvents(cfg =>
+{
+    cfg.ImpressionEvent = evt => { Console.WriteLine($"{evt.FeatureName}: {evt.Enabled}"); };
+});
+
+```
+
 ### Configuring projects in unleash client
 
 If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
