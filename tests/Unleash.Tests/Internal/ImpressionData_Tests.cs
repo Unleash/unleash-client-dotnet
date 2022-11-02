@@ -53,6 +53,86 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
+        public void Impression_Event_Does_Not_Get_Called_When_Not_Opted_In()
+        {
+            // Arrange
+            ImpressionEvent callbackEvent = null;
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+            unleash.ConfigureEvents(cfg =>
+            {
+                cfg.ImpressionEvent = evt => { callbackEvent = evt; };
+            });
+
+            // Act
+            var result = unleash.IsEnabled("item");
+            unleash.Dispose();
+
+            // Assert
+            result.Should().BeTrue();
+            callbackEvent.Should().BeNull();
+        }
+
+        [Test]
+        public void Impression_Event_Callback_Invoker_Catches_Exception()
+        {
+            // Arrange
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+            unleash.ConfigureEvents(cfg =>
+            {
+                cfg.ImpressionEvent = evt => { throw new Exception("Something bad just happened!"); };
+            });
+
+            // Act, Assert
+            Assert.DoesNotThrow(() => { unleash.IsEnabled("item"); });
+            unleash.Dispose();
+        }
+
+        [Test]
+        public void Impression_Event_Callback_Null_Does_Not_Throw()
+        {
+            // Arrange
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+            unleash.ConfigureEvents(cfg =>
+            {
+                cfg.ImpressionEvent = null;
+            });
+
+            // Act, Assert
+            Assert.DoesNotThrow(() => { unleash.IsEnabled("item"); });
+            unleash.Dispose();
+        }
+
+        [Test]
         public void Impression_Event_Gets_Called_For_Variants()
         {
             // Arrange
