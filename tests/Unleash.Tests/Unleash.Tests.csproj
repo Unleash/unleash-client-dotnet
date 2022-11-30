@@ -84,6 +84,7 @@
     <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
     <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
     <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
+    <Compile Include="Internal\ImpressionData_Tests.cs" />
     <Compile Include="IOTests.cs" />
     <Compile Include="Metrics\MetricsBucketTests.cs" />
     <Compile Include="Mock\ConfigurableMessageHandlerMock.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Strategy\StrategyUtilsTests.cs" />
     <Compile Include="Strategy\Segments_Tests.cs" />
     <Compile Include="Synchronization\SynchronizationTests.cs" />
+    <Compile Include="DefaultUnleashTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
     <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
@@ -116,6 +118,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="App_Data\impressiondata-v2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="App_Data\empty-v1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

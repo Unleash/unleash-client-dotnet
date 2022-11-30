@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "features": [
+    {
+      "name": "Tests only",
+      "description": "Where name has test in it",
+      "enabled": true,
+      "impressionData": true,
+      "strategies": [
+        {
+          "name": "default",
+          "parameters": {},
+          "segments": [ 1 ]
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "id": 1,
+      "constraints": [
+        {
+          "contextName": "name",
+          "operator": "STR_CONTAINS",
+          "value": "test"
+        }
+      ]
+    }
+  ]
+}

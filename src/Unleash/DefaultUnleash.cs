@@ -78,6 +78,8 @@ namespace Unleash
         /// <inheritdoc />
         public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
 
+        private EventCallbackConfig EventConfig { get; set; }
+
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
         {
@@ -125,6 +127,9 @@ namespace Unleash
             }
 
             RegisterCount(toggleName, enabled);
+
+            if (featureToggle?.ImpressionData ?? false) EmitImpressionEvent("isEnabled", context, enabled, featureToggle.Name);
+
             return enabled;
         }
 
@@ -146,6 +151,9 @@ namespace Unleash
             var variant = enabled ? VariantUtils.SelectVariant(toggle, context, defaultValue) : defaultValue;
 
             RegisterVariant(toggleName, variant);
+
+            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", context, enabled, toggle.Name, variant.Name);
+
             return variant;
         }
 
@@ -232,6 +240,52 @@ namespace Unleash
                 {
                     yield return null;
                 }
+            }
+        }
+
+        public void ConfigureEvents(Action<EventCallbackConfig> callback)
+        {
+            if (callback == null)
+            {
+                Logger.Error($"UNLEASH: Unleash->ConfigureEvents parameter callback is null");
+                return;
+            }
+
+            try
+            {
+                var evtConfig = new EventCallbackConfig();
+                callback(evtConfig);
+                EventConfig = evtConfig;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"UNLEASH: Unleash->ConfigureEvents executing callback threw exception: {ex.Message}");
+            }
+        }
+
+        private void EmitImpressionEvent(string type, UnleashContext context, bool enabled, string name, string variant = null)
+        {
+            if (EventConfig.ImpressionEvent == null)
+            {
+                Logger.Error($"UNLEASH: Unleash->ImpressionData callback is null, unable to emit event");
+                return;
+            }
+
+            try
+            {
+                EventConfig.ImpressionEvent(new ImpressionEvent
+                {
+                    Type = type,
+                    Context = context,
+                    EventId = Guid.NewGuid().ToString(),
+                    Enabled = enabled,
+                    FeatureName = name,
+                    Variant = variant
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
             }
         }
 

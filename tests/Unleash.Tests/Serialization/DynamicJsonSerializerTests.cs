@@ -7,6 +7,8 @@ using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
 using Unleash.Serialization;
 using Unleash.Internal;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Unleash.Tests.Serialization
 {
@@ -53,13 +55,13 @@ namespace Unleash.Tests.Serialization
 
             var collection = new ToggleCollection(new List<FeatureToggle>()
             {
-                new FeatureToggle("one",  "release", true, new List<ActivationStrategy>()
+                new FeatureToggle("one",  "release", true, false, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userByName", new Dictionary<string, string>(){
                         {"Demo", "Demo" }
                     })
                 }),
-                new FeatureToggle("two",  "release", false, new List<ActivationStrategy>()
+                new FeatureToggle("two",  "release", false, false, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userByName2", new Dictionary<string, string>()
                     {
@@ -98,6 +100,41 @@ namespace Unleash.Tests.Serialization
 
                 resultingJson.Should().Be(expected);
             }
+        }
+
+        [Test]
+        public void Deserializes_ImpressionData_Property()
+        {
+            // Arrange
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "App_Data", "impressiondata-v2.json");
+            var originalJson = File.ReadAllText(path);
+
+            // Act
+            var deserialized = JsonConvert.DeserializeObject<ToggleCollection>(originalJson);
+            var toggle = deserialized.Features.First();
+            toggle.Should().NotBeNull();
+            toggle.ImpressionData.Should().BeTrue();
+        }
+
+        [Test]
+        public void Serializes_ImpressionData_Property()
+        {
+            // Arrange
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
+            };
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+
+            // Act
+            var serialized = JsonConvert.SerializeObject(toggles, new JsonSerializerSettings());
+
+            // Assert
+            var contains = serialized.IndexOf("\"ImpressionData\":true") >= 0;
+            contains.Should().BeTrue();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Unleash.Tests.Internal
         {
             return new ToggleCollection(new List<FeatureToggle>
             {
-                new FeatureToggle("one-enabled",  "release", true, new List<ActivationStrategy>()
+                new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userWithId", new Dictionary<string, string>(){
                         {"userIds", "userA" }
@@ -29,7 +29,7 @@ namespace Unleash.Tests.Internal
                     new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
                 }
                 ),
-                new FeatureToggle("one-disabled",  "release", false, new List<ActivationStrategy>()
+                new FeatureToggle("one-disabled",  "release", false, false, new List<ActivationStrategy>()
                 {
                     new ActivationStrategy("userWithId", new Dictionary<string, string>()
                     {

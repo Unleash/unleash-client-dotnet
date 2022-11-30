@@ -82,5 +82,7 @@ namespace Unleash
         /// /// <param name="context">The Unleash context to evaluate the toggle state against.</param>
         /// <returns>A list of available variants.</returns>
         IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context);
+
+        void ConfigureEvents(Action<EventCallbackConfig> config);
     }
 }
