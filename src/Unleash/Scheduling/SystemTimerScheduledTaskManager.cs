@@ -54,7 +54,10 @@ namespace Unleash.Scheduling
                     if (cancellationToken.IsCancellationRequested)
                     {
                         // Stop the timer.
-                        timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
+                        if (timers.ContainsKey(name))
+                        {
+                            timers[name].SafeTimerChange(Timeout.Infinite, Timeout.Infinite, ref disposeEnded);
+                        }
                     }
                 }
             }
