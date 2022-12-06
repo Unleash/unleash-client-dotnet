@@ -17,6 +17,9 @@ namespace Unleash.Utilities
             cidrCount = int.Parse(ipAndCidrPair[1]);
             ipAddress = IPAddress.Parse(ipAndCidrPair[0]);
             baseIPBytes = ipAddress.GetAddressBytes();
+
+            if (cidrCount > (baseIPBytes.Length * 8))
+                cidrCount = baseIPBytes.Length * 8;
         }
 
         public bool Contains(IPAddress remoteAddress)
