@@ -59,17 +59,16 @@ namespace Unleash.Tests.Utilities
             var input = "74.125.228.1";
 
             var rangeTester = new IPCIDRAddressRange(range);
-            rangeTester.Contains(IPAddress.Parse(input)).Should().BeFalse();
+            rangeTester.Contains(IPAddress.Parse(input)).Should().BeTrue();
         }
 
         [Test]
-        public void IPv4_Junk_In_Cidr_TODO()
+        public void IPv4_Junk_In_Cidr_Throws()
         {
             var range = "74.125.227.0/junk";
-            var input = "74.125.228.1";
 
-            var rangeTester = new IPCIDRAddressRange(range);
-            rangeTester.Contains(IPAddress.Parse(input)).Should().BeFalse();
+            Action action = () => new IPCIDRAddressRange(range);
+            action.Should().Throw<FormatException>();
         }
 
         [Test]
