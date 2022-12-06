@@ -1,13 +1,16 @@
 namespace Unleash.Strategies
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using Unleash.Internal;
+    using Unleash.Logging;
     using Unleash.Utilities;
 
     public class RemoteAddressStrategy : IStrategy
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(DefaultUnleash));
         internal static readonly string PARAM = "IPs";
 
         public string Name => "remoteAddress";
@@ -30,10 +33,7 @@ namespace Unleash.Strategies
                 if (addresses.Contains(remoteAddress))
                     return true;
 
-                var addressRanges = addresses
-                    .Where(address => address.IndexOf('/') > -1)
-                    .Select(address => new IPCIDRAddressRange(address))
-                    .ToList();
+                var addressRanges = ToAddressRanges(addresses);
 
                 if (!addressRanges.Any()) 
                     return false;
@@ -43,6 +43,24 @@ namespace Unleash.Strategies
             }
 
             return false;
+        }
+
+        private List<IPCIDRAddressRange> ToAddressRanges(List<string> ipAddresses)
+        {
+            var addressRanges = new List<IPCIDRAddressRange>(ipAddresses.Count);
+            foreach (var address in ipAddresses.Where(address => address.IndexOf('/') > -1))
+            {
+                try
+                {
+                    addressRanges.Add(new IPCIDRAddressRange(address));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"UNLEASH: RemoteAddressStrategy->ToAddressRanges threw exception: {ex.Message}. (Badly formatted IP/CIDR?)");
+                }
+            }
+
+            return addressRanges;
         }
 
         public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context, IEnumerable<Constraint> constraints)
