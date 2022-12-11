@@ -36,11 +36,7 @@ namespace Unleash
 
             return _httpClientCache.GetOrAdd(key, k =>
             {
-                var client = new HttpClient
-                {
-                    BaseAddress = unleashApiUri,
-                    Timeout = Timeout
-                };
+                var client = CreateHttpClientInstance(unleashApiUri);
                 // Refresh DNS cache each 60 seconds
                 var servicePoint = ServicePointManager.FindServicePoint(unleashApiUri);
                 ConfigureServicePoint(servicePoint);
@@ -49,6 +45,17 @@ namespace Unleash
 
                 return client;
             });
+        }
+
+        protected virtual HttpClient CreateHttpClientInstance(Uri unleashApiUri)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = unleashApiUri,
+                Timeout = Timeout
+            };
+
+            return client;
         }
 
         protected virtual void ConfigureHttpClient(HttpClient httpClient)

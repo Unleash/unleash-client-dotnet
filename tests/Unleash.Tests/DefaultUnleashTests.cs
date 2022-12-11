@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
+using Unleash.Tests.Mock;
 
 namespace Unleash.Tests
 {
@@ -26,6 +27,20 @@ namespace Unleash.Tests
 
             // Assert
             callbackCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public void Configure_Http_Client_Factory()
+        {
+            // Arrange
+            var factory = new HttpClientFactoryMock();
+            var apiUri = new Uri("http://localhost:8080/");
+
+            // Act
+            var client = factory.Create(apiUri);
+
+            // Assert
+            factory.CreateHttpClientInstanceCalled.Should().BeTrue();
         }
     }
 }
