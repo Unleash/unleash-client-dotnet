@@ -234,6 +234,33 @@ var settings = new UnleashSettings()
 };
 ```
 
+### HttpMessageHandlers/Custom HttpClient initialization
+If you need to specify HttpMessageHandlers or to control the instantiation of the HttpClient, you can create a custom
+HttpClientFactory that inherits from DefaultHttpClientFactory, and override the method CreateHttpClientInstance.
+Then configure UnleashSettings to use your custom HttpClientFactory. 
+
+```csharp
+internal class CustomHttpClientFactory : DefaultHttpClientFactory
+{
+    protected override HttpClient CreateHttpClientInstance(Uri unleashApiUri)
+    {
+        var messageHandler = new CustomHttpMessageHandler();
+        var httpClient = new HttpClient(messageHandler)
+        {
+            BaseAddress = apiUri,
+            Timeout = TimeSpan.FromSeconds(5)
+        };
+    }
+}
+
+var settings = new UnleashSettings
+{
+    AppName = "dotnet-test",
+    //...
+    HttpClientFactory = new CustomHttpClientFactory()
+};
+```
+
 ### Dynamic custom HTTP headers
 If you need custom http headers that change during the lifetime of the client, a provider can be defined via the `UnleashSettings`. 
 
