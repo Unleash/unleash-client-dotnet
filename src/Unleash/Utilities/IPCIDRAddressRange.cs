@@ -8,15 +8,14 @@ namespace Unleash.Utilities
     internal class IPCIDRAddressRange
     {
         private int cidrCount;
-        private IPAddress ipAddress;
-        private byte[] baseIPBytes;
+        private IPAddress baseIPAddress;
 
         public IPCIDRAddressRange(string address)
         {
             var ipAndCidrPair = address.Split('/');
             cidrCount = int.Parse(ipAndCidrPair[1]);
-            ipAddress = IPAddress.Parse(ipAndCidrPair[0]);
-            baseIPBytes = ipAddress.GetAddressBytes();
+            baseIPAddress = IPAddress.Parse(ipAndCidrPair[0]);
+            var baseIPBytes = baseIPAddress.GetAddressBytes();
 
             if (cidrCount > (baseIPBytes.Length * 8))
                 cidrCount = baseIPBytes.Length * 8;
@@ -24,6 +23,7 @@ namespace Unleash.Utilities
 
         public bool Contains(IPAddress remoteAddress)
         {
+            var baseIPBytes = baseIPAddress.GetAddressBytes();
             var remoteBytes = remoteAddress.GetAddressBytes();
 
             if (remoteBytes.Length != baseIPBytes.Length)
