@@ -122,5 +122,19 @@ namespace Unleash.Tests.Strategy
             var parameters = setupParameterMap(range);
             strategy.IsEnabled(parameters, context).Should().BeTrue();
         }
+
+        [Test]
+        public void RepeatingAndReusingTheCheckDoesntBreakThings()
+        {
+            var range = "73.125.227.0/29";
+            var correctInput = "73.125.227.7";
+            var wrongInput = "73.125.227.9";
+            var contextWithCorrect = UnleashContext.New().RemoteAddress(correctInput).Build();
+            var contextWithWrong = UnleashContext.New().RemoteAddress(wrongInput).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, contextWithCorrect).Should().BeTrue();
+            strategy.IsEnabled(parameters, contextWithWrong).Should().BeFalse();
+            strategy.IsEnabled(parameters, contextWithCorrect).Should().BeTrue();
+        }
     }
 }
