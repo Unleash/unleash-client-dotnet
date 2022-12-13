@@ -111,6 +111,7 @@
     <Compile Include="DefaultUnleashTests.cs" />
     <Compile Include="UnleashContextTests.cs" />
     <Compile Include="UnleashSettingsTests.cs" />
+    <Compile Include="Utilities\IPCIDRAddressRange_Tests.cs" />
     <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
     <Compile Include="Utilities\ToggleBootstrapUrlProvider_Tests.cs" />
     <Compile Include="Variants\VariantUtilsTests.cs" />

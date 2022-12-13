@@ -62,5 +62,79 @@ namespace Unleash.Tests.Strategy
             parameters.Add(RemoteAddressStrategy.PARAM, ipstring);
             return parameters;
         }
+
+        [Test]
+        public void FindsInCIDRRange()
+        {
+            var range = "73.125.227.0/29";
+            var input = "73.125.227.7";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeTrue();
+        }
+
+        [Test]
+        public void MatchOnRangeAndSingleIP()
+        {
+            var range = "73.125.227.0/29,73.125.227.7";
+            var input = "73.125.227.7";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeTrue();
+        }
+
+        [Test]
+        public void MatchOnSingleIPOutsideRange()
+        {
+            var range = "73.125.227.0/29,73.125.227.114";
+            var input = "73.125.227.114";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeTrue();
+        }
+
+        [Test]
+        public void MatchOnRangeNotSingleIP()
+        {
+            var range = "73.125.227.0/29,73.125.227.114";
+            var input = "73.125.227.7";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesntMatchOnCIDRJunk()
+        {
+            var range = "73.125.227.0/junk";
+            var input = "73.125.227.7";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeFalse();
+        }
+
+        [Test]
+        public void GuardsAgainstTooHighCIDR()
+        {
+            var range = "73.125.227.1/59";
+            var input = "73.125.227.1";
+            var context = UnleashContext.New().RemoteAddress(input).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, context).Should().BeTrue();
+        }
+
+        [Test]
+        public void RepeatingAndReusingTheCheckDoesntBreakThings()
+        {
+            var range = "73.125.227.0/29";
+            var correctInput = "73.125.227.7";
+            var wrongInput = "73.125.227.9";
+            var contextWithCorrect = UnleashContext.New().RemoteAddress(correctInput).Build();
+            var contextWithWrong = UnleashContext.New().RemoteAddress(wrongInput).Build();
+            var parameters = setupParameterMap(range);
+            strategy.IsEnabled(parameters, contextWithCorrect).Should().BeTrue();
+            strategy.IsEnabled(parameters, contextWithWrong).Should().BeFalse();
+            strategy.IsEnabled(parameters, contextWithCorrect).Should().BeTrue();
+        }
     }
 }
