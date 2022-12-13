@@ -88,6 +88,7 @@
     <Compile Include="IOTests.cs" />
     <Compile Include="Metrics\MetricsBucketTests.cs" />
     <Compile Include="Mock\ConfigurableMessageHandlerMock.cs" />
+    <Compile Include="Mock\HttpClientFactoryMock.cs" />
     <Compile Include="Mock\MockApiClient.cs" />
     <Compile Include="Mock\MockHttpMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
