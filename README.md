@@ -35,23 +35,41 @@ Extendable architecture
 - Inject your own implementations of key components (Json serializer, background task scheduler, http client factory)
 
 ## Getting started
-Install the latest version of `Unleash.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.Client/).
+
+### Install the package
+
+Install the latest version of `Unleash.Client` from [nuget.org](https://www.nuget.org/packages/Unleash.Client/) or use the `dotnet` cli:
+
+``` bash
+dotnet add package unleash.client
+```
 
 ### Create a new a Unleash instance
 
-It is easy to get a new instance of Unleash. In your app you typically *just want one instance of Unleash*, and inject that where you need it. You will typically use a dependency injection frameworks to manage this. 
+---
 
-To create a new instance of Unleash you need to pass in a settings object:
+**⚠️ Important:** In almost every case, you only want a **single, shared instance of the Unleash  client (a *singleton*)** in your application . You would typically use a dependency injection framework to inject it where you need it. Having multiple instances of the client in your application could lead to inconsistencies and performance degradation.
+
+If you create more than 10 instances, Unleash will attempt to log warnings about your usage.
+
+---
+
+To create a new instance of Unleash you need to create and pass in an `UnleashSettings` object.
+
+When creating an instance of the Unleash client, you can choose to do it either **synchronously** or **asynchronously**.
+The SDK will synchronize with the Unleash API on initialization, so it can take a moment for the client to reach the correct state.
+This is usually not an issue and Unleash will do this in the background as soon as you initialize it.
+However, if it's important that you do not continue execution until the SDK has synchronized, then you should use the configuration explained in the [synchronous startup](#synchronous-startup) section.
+
 ```csharp
 
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    UnleashApi = new Uri("<your-api-url>"),
     CustomHttpHeaders = new Dictionary()
     {
-      {"Authorization","API token" }
+      {"Authorization","<your-api-token>" }
     }
 };
 
@@ -62,8 +80,6 @@ var unleash = new DefaultUnleash(settings);
 services.AddSingleton<IUnleash>(c => unleash);
 
 ```
-Unleash will attempt to log a warning for each new instance after instance count reaches 10.
-Also note that the `DefaultUnleash` constructor sets up the toggle caching and periodic background fetching. If you want the cache to be populated immediately, see the [synchronous startup](#synchronous-startup) section
 
 When your application shuts down, remember to dispose the unleash instance.
 
@@ -71,7 +87,88 @@ When your application shuts down, remember to dispose the unleash instance.
 unleash?.Dispose()
 ```
 
-### Handling events
+#### Synchronous startup
+
+This unleash client does not throw any exceptions if the unleash server is unreachable. Also, fetching features will return the default value if the feature toggle cache has not yet been populated. In many situations it is perferable to throw an error than allow an application to startup with incorrect feature toggle values. For these cases, we provide a client factory with the option for synchronous initialization.
+
+```csharp
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    UnleashApi = new Uri("<your-api-url>"),
+    CustomHttpHeaders = new Dictionary<string, string>(),
+    {
+       {"Authorization","<your-api-token>" }
+    }
+};
+var unleashFactory = new UnleashClientFactory();
+
+IUnleash unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
+
+// this `unleash` has successfully fetched feature toggles and written them to its cache.
+// if network errors or disk permissions prevented this from happening, the above await would have thrown an exception
+
+var awesome = unleash.IsEnabled("SuperAwesomeFeature");
+```
+
+The `CreateClientAsync` method was introduced in version 1.5.0, making the previous `Generate` method obsolete. There's also a `CreateClient` method available if you don't prefer the async version.
+
+
+#### Configuring projects in unleash client
+
+If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
+
+```csharp
+
+var settings = new UnleashSettings()
+{
+    AppName = "dotnet-test",
+    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
+    ProjectId = "projectId"
+};
+
+```
+
+### Check feature toggles
+
+The `IsEnabled` method allows you to check whether a feature is enabled:
+
+```csharp
+if(unleash.IsEnabled("SuperAwesomeFeature"))
+{
+  //do some magic
+}
+else
+{
+  //do old boring stuff
+}
+```
+
+If the Unleash client can't find the feature you're trying to check, it will default to returning `false`. You can change this behavior on a per-invocation basis by providing a fallback value as a second argument.
+
+For instance, `unleash.IsEnabled("SuperAwesomeFeature")` would return `false` if `SuperAwesomeFeature` doesn't exist. But if you'd rather it returned `true`, then you could pass that as the second argument:
+
+```csharp
+unleash.IsEnabled("SuperAwesomeFeature", true)
+```
+
+#### Providing context
+
+You can also **provide an [Unleash context](https://docs.getunleash.io/reference/unleash-context)** to the `IsEnabled` method:
+
+```csharp
+var context = new UnleashContext
+{
+  UserId = "61"
+};
+
+unleash.IsEnabled("someToggle", context);
+```
+
+Refer to the [Unleash context](#unleash-context) section for more information about using the Unleash context in the .NET SDK.
+
+## Handling events
+
 Currently supported events:
 - [Impression data events](https://docs.getunleash.io/advanced/impression-data#impression-event-data)
 
@@ -92,49 +189,10 @@ unleash.ConfigureEvents(cfg =>
 
 ```
 
-### Configuring projects in unleash client
 
-If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
+## Activation strategies
 
-```csharp
-
-var settings = new UnleashSettings()
-{
-    AppName = "dotnet-test",
-    InstanceTag = "instance z",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    ProjectId = "projectId"
-};
-
-```
-
-### Feature toggle api
-
-It is really simple to use unleash.
-
-```csharp
-if(unleash.IsEnabled("SuperAwesomeFeature")) 
-{
-  //do some magic
-} 
-else 
-{
-  //do old boring stuff
-}
-```
-
-Calling `unleash.IsEnabled("SuperAwesomeFeature")` is the equvivalent of calling `unleash.IsEnabled("SuperAwesomeFeature", false)`. 
-Which means that it will return `false` if it cannot find the named toggle. 
-
-If you want it to default to `true` instead, you can pass `true` as the second argument:
-
-```csharp
-unleash.IsEnabled("SuperAwesomeFeature", true)
-```
-
-### Activation strategies
-
-The .Net client comes with implementations for the built-in activation strategies provided by unleash. 
+The .Net client comes with implementations for the built-in activation strategies provided by unleash.
 
 - DefaultStrategy
 - UserWithIdStrategy
@@ -145,10 +203,11 @@ The .Net client comes with implementations for the built-in activation strategie
 - ApplicationHostnameStrategy
 - FlexibleRolloutStrategy
 
-Read more about the strategies in [activation-strategy.md](https://docs.getunleash.io/user_guide/activation_strategy).
+Read more about the strategies in [the activation strategy reference docs](https://docs.getunleash.io/reference/activation-strategies).
 
-#### Custom strategies
-You may also specify and implement your own strategies. The specification must be registered in the Unleash UI and you must register the strategy implementation when you wire up unleash. 
+### Custom strategies
+
+You may also specify and implement your own strategies. The specification must be registered in the Unleash UI and you must register the strategy implementation when you wire up unleash.
 
 ```csharp
 IStrategy s1 = new MyAwesomeStrategy();
@@ -157,9 +216,9 @@ IStrategy s2 = new MySuperAwesomeStrategy();
 IUnleash unleash = new DefaultUnleash(config, s1, s2);
 ```
 
-### Unleash context
+## Unleash context
 
-In order to use some of the common activation strategies you must provide an [unleash-context](https://docs.getunleash.io/user_guide/unleash_context).
+In order to use some of the common activation strategies you must provide an [Unleash context](https://docs.getunleash.io/reference/unleash-context).
 
 If you have configured custom stickiness and want to use that with the FlexibleRolloutStrategy or Variants, add the custom stickiness parameters to the Properties dictionary on the Unleash Context:
 
@@ -177,8 +236,9 @@ HttpContext.Current.Items["UnleashContext"] = new UnleashContext
 };
 ```
 
-#### UnleashContextProvider
-The provider typically binds the context to the same thread as the request. If you are using Asp.Net the `UnleashContextProvider` will typically be a 'request scoped' instance. 
+### UnleashContextProvider
+
+The provider typically binds the context to the same thread as the request. If you are using Asp.Net the `UnleashContextProvider` will typically be a 'request scoped' instance.
 
 
 ```csharp
@@ -215,10 +275,11 @@ var settings = new UnleashSettings()
       {"Authorization", "API token" }
     }
 };
-``` 
+```
 
-### Custom HTTP headers
-If you want the client to send custom HTTP Headers with all requests to the Unleash api you can define that by setting them via the `UnleashSettings`. 
+## Custom HTTP headers
+
+If you want the client to send custom HTTP Headers with all requests to the Unleash api you can define that by setting them via the `UnleashSettings`.
 
 ```csharp
 var settings = new UnleashSettings()
@@ -407,32 +468,6 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
 ```
 
 The server api needs camel cased json, but not for certain dictionary keys. The implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
-
-## Synchronous Startup
-This unleash client does not throw any exceptions if the unleash server is unreachable. Also, fetching features will return the default value if the feature toggle cache has not yet been populated. In many situations it is perferable to throw an error than allow an application to startup with incorrect feature toggle values. In this case, we provice a client factory with the option for synchronous initialization. 
-
-```csharp
-var settings = new UnleashSettings()
-{
-    AppName = "dotnet-test",
-    InstanceTag = "instance z",
-    UnleashApi = new Uri("https://app.unleash-hosted.com/demo/api/"),
-    CustomHttpHeaders = new Dictionary<string, string>(),
-    {
-       {"Authorization","56907a2fa53c1d16101d509a10b78e36190b0f918d9f122d" }
-    }
-};
-var unleashFactory = new UnleashClientFactory();
-
-IUnleash unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
-
-// this `unleash` has successfully fetched feature toggles and written them to its cache.
-// if network errors or disk permissions prevented this from happening, the above await would have thrown an exception
-
-var awesome = unleash.IsEnabled("SuperAwesomeFeature");
-```
-
-The `CreateClientAsync` method was introduced in version 1.5.0, making the previous `Generate` method obsolete. There's also a `CreateClient` method available if you don't prefer the async version.
 
 ## Run unleash server with Docker locally
 The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.
