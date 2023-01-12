@@ -207,7 +207,7 @@ Read more about the strategies in [the activation strategy reference docs](https
 
 ### Custom strategies
 
-You may also specify and implement your own strategies. The specification must be registered in the Unleash UI and you must register the strategy implementation when you wire up unleash.
+You can also specify and implement your own [custom strategies](https://docs.getunleash.io/reference/custom-activation-strategies). The specification must be registered in the Unleash UI and you must register the strategy implementation when you wire up unleash.
 
 ```csharp
 IStrategy s1 = new MyAwesomeStrategy();
