@@ -18,13 +18,13 @@ jobs:
       - name: Setup MSBuild in PATH
         uses: microsoft/setup-msbuild@v1
 
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: '7.0.x'
 
       # Get NuGet setup for restoring, packaging and pushing
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
+        uses: NuGet/setup-nuget@v1.1
 
       - name: Restore packages with NuGet
         run: nuget restore Unleash.sln
