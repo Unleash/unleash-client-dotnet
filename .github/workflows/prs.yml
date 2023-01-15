@@ -34,7 +34,7 @@ jobs:
         run: nuget restore Unleash.sln
         
       - name: Build the solution
-        run: msbuild Unleash.sln /p:Configuration=Release
+        run: dotnet build Unleash.sln -p:Configuration=Release
       
       # '& "$(vswhere -property installationPath)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" tests\Unleash.Tests\bin\Release\Unleash.Tests.dll'
       - name: Run the tests with cake
