@@ -31,7 +31,7 @@ jobs:
         uses: NuGet/setup-nuget@v1
         
       - name: Restore packages with NuGet
-        run: nuget restore Unleash.sln
+        run: dotnet restore Unleash.sln
         
       - name: Build the solution
         run: dotnet build Unleash.sln -p:Configuration=Release
