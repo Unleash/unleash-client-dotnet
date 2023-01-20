@@ -57,7 +57,7 @@ If you create more than 10 instances, Unleash will attempt to log warnings about
 To create a new instance of Unleash you need to create and pass in an `UnleashSettings` object.
 
 When creating an instance of the Unleash client, you can choose to do it either **synchronously** or **asynchronously**.
-The SDK will synchronize with the Unleash API on initialization, so it can take a moment for the client to reach the correct state.
+The SDK will synchronize with the Unleash API on initialization, so it can take a moment for the it to reach the correct state. With an asynchronous startup, this would happen in the background while the rest of your code keeps executing. In most cases, this isn't an issue. But if you want to **wait until the SDK is fully synchronized**, then you should use the configuration explained in the [synchronous startup](#synchronous-startup) section.
 This is usually not an issue and Unleash will do this in the background as soon as you initialize it.
 However, if it's important that you do not continue execution until the SDK has synchronized, then you should use the configuration explained in the [synchronous startup](#synchronous-startup) section.
 
