@@ -327,7 +327,7 @@ namespace Unleash.Tests.Strategy
             var parameters = new Dictionary<string, string>
             {
                 { "rollout", "100" },
-                { "stickiness", "customField" },
+                { "stickiness", "default" },
                 { "groupId", "Feature.flexible.rollout.custom.stickiness_100" }
             };
 

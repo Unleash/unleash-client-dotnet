@@ -68,7 +68,7 @@ namespace Unleash.Strategies
                         ?? context?.SessionId
                         ?? randomGenerator();
                 default:
-                    return context?.GetByName(stickiness) ?? randomGenerator();
+                    return context.GetByName(stickiness);
             }
         }
     }
