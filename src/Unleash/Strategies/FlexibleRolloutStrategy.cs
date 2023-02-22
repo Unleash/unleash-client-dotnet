@@ -64,8 +64,8 @@ namespace Unleash.Strategies
                 case "random":
                     return randomGenerator();
                 case "default":
-                    return context.UserId
-                        ?? context.SessionId
+                    return context?.UserId
+                        ?? context?.SessionId
                         ?? randomGenerator();
                 default:
                     return context.GetByName(stickiness);

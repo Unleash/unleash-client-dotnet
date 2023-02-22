@@ -319,5 +319,23 @@ namespace Unleash.Tests.Strategy
             // Assert
             enabled.Should().BeTrue();
         }
+
+        [Test]
+        public void Should_be_enabled_without_a_context() {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "100" },
+                { "stickiness", "default" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_100" }
+            };
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, null);
+
+            // Assert
+            enabled.Should().BeTrue();
+        }
     }
 }
