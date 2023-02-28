@@ -73,10 +73,6 @@ namespace Unleash
             headers.ConnectionClose = false;
             headers.TryAddWithoutValidation("Accept", "application/json");
             headers.TryAddWithoutValidation("Content-Type", "application/json");
-            headers.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = false
-            };
 
             if (CustomDefaultHttpHeaders != null)
             {
