@@ -8,7 +8,7 @@
 
 Unleash Client SDK for .Net. It is compatible with the
 [Unleash-hosted.com SaaS offering](https://www.unleash-hosted.com/) and
-[Unleash Open-Source](https://github.com/finn-no/unleash).
+[Unleash Open-Source](https://github.com/unleash/unleash).
 
 The main motivation for doing feature toggling is to decouple the process for deploying code to production and releasing new features. This helps reducing risk, and allow us to easily manage which features to enable.
 
@@ -18,7 +18,7 @@ Take a look at the demonstration site at [unleash.herokuapp.com](http://unleash.
 
 Read more of the main project at [github.com/unleash/unleash](https://github.com/Unleash/unleash)
 
-![dashboard](https://raw.githubusercontent.com/stiano/unleash-client-dotnet/master/resources/dashboard.png "Unleash Server Dashboard")
+![dashboard](https://raw.githubusercontent.com/unleash/unleash-client-dotnet/master/resources/dashboard.png "Unleash Server Dashboard")
 
 ## Features
 Supported Frameworks
