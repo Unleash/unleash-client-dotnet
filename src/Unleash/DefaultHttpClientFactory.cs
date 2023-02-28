@@ -75,7 +75,7 @@ namespace Unleash
             headers.TryAddWithoutValidation("Content-Type", "application/json");
             headers.CacheControl = new CacheControlHeaderValue
             {
-                NoCache = true
+                NoCache = false
             };
 
             if (CustomDefaultHttpHeaders != null)
