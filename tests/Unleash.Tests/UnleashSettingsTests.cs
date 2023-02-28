@@ -22,7 +22,7 @@ namespace Unleash.Tests
             var settings = new UnleashSettings();
 
             // Assert
-            settings.SdkVersion.Should().Be("awesome");
+            settings.SdkVersion.Should().StartWith("unleash-client-dotnet:v");
         }
     }
 }
