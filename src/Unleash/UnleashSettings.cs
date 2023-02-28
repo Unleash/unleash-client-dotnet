@@ -146,7 +146,7 @@ namespace Unleash
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
             var version = assemblyName.Version.ToString(3);
 
-            return $"v{version}";
+            return $"{assemblyName}:v{version}";
         }
 
         private static string GetDefaultInstanceTag()
