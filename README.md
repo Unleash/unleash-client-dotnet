@@ -267,7 +267,6 @@ protected void Application_BeginRequest(object sender, EventArgs e)
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
     CustomHttpHeaders = new Dictionary()
@@ -285,7 +284,6 @@ If you want the client to send custom HTTP Headers with all requests to the Unle
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
     CustomHttpHeaders = new Dictionary<string, string>()
@@ -368,7 +366,6 @@ Configuring with the UnleashSettings:
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     CustomHttpHeaders = new Dictionary()
     {
@@ -415,7 +412,6 @@ With Newtonsoft.Json version 7.0.0.0, the following implementation can be used. 
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    InstanceTag = "instance z",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     JsonSerializer = new NewtonsoftJson7Serializer()
 };
