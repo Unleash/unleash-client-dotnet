@@ -166,6 +166,31 @@ namespace Unleash.Tests.Internal
             callbackEvent.Variant.Should().Be("blue");
         }
 
+        [Test]
+        public void Unhooked_Impression_Events_Doesnt_Cause_Everything_To_Fail()
+        {
+            // Arrange
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var payload = new Payload("string", "val1");
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("yup", "release", true, true, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+
+            // Act
+            var enabled = unleash.IsEnabled("yup");
+            unleash.Dispose();
+
+            // Assert
+            enabled.Should().BeTrue();
+        }
+
         public static IUnleash CreateUnleash(string name, ToggleCollection state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
