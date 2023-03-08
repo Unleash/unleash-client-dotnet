@@ -265,7 +265,7 @@ namespace Unleash
 
         private void EmitImpressionEvent(string type, UnleashContext context, bool enabled, string name, string variant = null)
         {
-            if (EventConfig.ImpressionEvent == null)
+            if (EventConfig?.ImpressionEvent == null)
             {
                 Logger.Error($"UNLEASH: Unleash->ImpressionData callback is null, unable to emit event");
                 return;
