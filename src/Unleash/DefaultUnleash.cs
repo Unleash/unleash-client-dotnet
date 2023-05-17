@@ -7,6 +7,7 @@ namespace Unleash
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Unleash.Events;
     using Unleash.Variants;
 
     /// <inheritdoc />
@@ -286,6 +287,7 @@ namespace Unleash
             catch (Exception ex)
             {
                 Logger.Error($"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
+                EventConfig.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.ImpressionEvent });
             }
         }
 

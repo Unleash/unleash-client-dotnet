@@ -166,5 +166,79 @@ namespace Unleash.Tests.Internal
             callbackEvent.Should().NotBeNull();
             callbackEvent.Error.Message.Should().Be(exceptionMessage);
         }
+
+        [Test]
+        public void DefaultUnleash_ImpressionEvent_Callback_Exception_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+            unleash.ConfigureEvents(cfg =>
+            {
+                cfg.ImpressionEvent = evt => { throw new Exception("Something went wrong in handling this callback"); };
+                cfg.ErrorEvent = evt => { callbackEvent = evt; };
+            });
+
+            // Act
+            var result = unleash.IsEnabled("item");
+            unleash.Dispose();
+
+            // Assert
+            result.Should().BeTrue();
+            callbackEvent.Should().NotBeNull();
+        }
+
+        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        {
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeHttpMessageHandler = new TestHttpMessageHandler();
+            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
+            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
+            var fakeFileSystem = new MockFileSystem();
+            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
+
+            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
+            A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
+            {
+                var task = ((IEnumerable<IUnleashScheduledTask>)action.Arguments[0]).First();
+                task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
+            });
+
+            fakeHttpMessageHandler.Response = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(toggleState, Encoding.UTF8, "application/json"),
+                Headers =
+                {
+                    ETag = new EntityTagHeaderValue("\"123\"")
+                }
+            };
+
+            var contextBuilder = new UnleashContext.Builder();
+            contextBuilder.AddProperty("item-id", "1");
+
+            var settings = new UnleashSettings
+            {
+                AppName = name,
+                UnleashContextProvider = new DefaultUnleashContextProvider(contextBuilder.Build()),
+                HttpClientFactory = fakeHttpClientFactory,
+                ScheduledTaskManager = fakeScheduler,
+                FileSystem = fakeFileSystem
+            };
+
+            var unleash = new DefaultUnleash(settings);
+
+            return unleash;
+        }
     }
 }
