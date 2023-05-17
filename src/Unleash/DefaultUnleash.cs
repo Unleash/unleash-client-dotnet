@@ -64,7 +64,7 @@ namespace Unleash
             strategies = SelectStrategies(strategies, overrideDefaultStrategies);
             strategyMap = BuildStrategyMap(strategies);
 
-            services = new UnleashServices(settings, strategyMap);
+            services = new UnleashServices(settings, EventConfig, strategyMap);
 
             Logger.Info($"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
 

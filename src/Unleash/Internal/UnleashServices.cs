@@ -25,7 +25,7 @@ namespace Unleash
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
 
-        public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
+        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
         {
             var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
 
@@ -63,7 +63,7 @@ namespace Unleash
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
-                }, settings.ProjectId);
+                }, eventConfig, settings.ProjectId);
             }
             else
             {
