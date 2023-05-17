@@ -18,6 +18,7 @@ using Unleash.Communication;
 using Unleash.Serialization;
 using FluentAssertions;
 using Unleash.Metrics;
+using System.IO;
 
 namespace Unleash.Tests.Internal
 {
@@ -99,6 +100,71 @@ namespace Unleash.Tests.Internal
 
             // Assert
             callbackEvent.Should().NotBeNull();
+        }
+
+        [Test]
+        public void FetchFeatureToggleTask_Serialization_Throws_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var exceptionMessage = "Serialization failed";
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var fakeApiClient = A.Fake<IUnleashApiClient>();
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+
+            var collection = new ThreadSafeToggleCollection();
+            var serializer = A.Fake<IJsonSerializer>();
+            A.CallTo(() => serializer.Serialize(A<Stream>._, A<ToggleCollection>._))
+                .Throws(() => new IOException(exceptionMessage));
+
+            var filesystem = new MockFileSystem();
+            var tokenSource = new CancellationTokenSource();
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+
+            // Act
+            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+            callbackEvent.Error.Message.Should().Be(exceptionMessage);
+        }
+
+        [Test]
+        public void FetchFeatureToggleTask_Etag_Writing_Throws_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var exceptionMessage = "Writing failed";
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var fakeApiClient = A.Fake<IUnleashApiClient>();
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+
+            var collection = new ThreadSafeToggleCollection();
+            var serializer = A.Fake<IJsonSerializer>();
+
+            var filesystem = A.Fake<IFileSystem>();
+            A.CallTo(() => filesystem.WriteAllText(A<string>._, A<string>._))
+                .Throws(() => new IOException(exceptionMessage));
+
+            var tokenSource = new CancellationTokenSource();
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+
+            // Act
+            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+            callbackEvent.Error.Message.Should().Be(exceptionMessage);
         }
     }
 }
