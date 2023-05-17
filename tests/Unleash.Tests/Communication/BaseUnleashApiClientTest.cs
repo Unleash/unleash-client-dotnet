@@ -4,6 +4,8 @@ using System.Threading;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Unleash.Communication;
+using Unleash.Events;
+using Unleash.Internal;
 using Unleash.Serialization;
 
 namespace Unleash.Tests.Communication
@@ -32,7 +34,7 @@ namespace Unleash.Tests.Communication
             };
 
             var httpClient = httpClientFactory.Create(apiUri);
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders);
+            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig());
             return client;
         }
 

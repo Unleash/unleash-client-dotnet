@@ -6,6 +6,8 @@ using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Serialization;
 using Unleash.Logging;
+using Unleash.Events;
+using System.Net.Http;
 
 namespace Unleash.Scheduling
 {
@@ -16,6 +18,7 @@ namespace Unleash.Scheduling
         private readonly string etagFile;
 
         private readonly IFileSystem fileSystem;
+        private readonly EventCallbackConfig eventConfig;
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly ThreadSafeToggleCollection toggleCollection;
@@ -28,6 +31,7 @@ namespace Unleash.Scheduling
             ThreadSafeToggleCollection toggleCollection,
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
+            EventCallbackConfig eventConfig,
             string toggleFile,
             string etagFile)
         {
@@ -35,13 +39,24 @@ namespace Unleash.Scheduling
             this.toggleCollection = toggleCollection;
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
+            this.eventConfig = eventConfig;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
+            FetchTogglesResult result;
+            try
+            {
+                result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
+            }
+            catch (HttpRequestException ex)
+            {
+                Logger.ErrorException($"UNLEASH: Unhandled exception when fetching toggles.", ex);
+                eventConfig.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, Error = ex });
+                return;
+            }
 
             if (!result.HasChanged)
                 return;
@@ -64,6 +79,7 @@ namespace Unleash.Scheduling
             catch (IOException ex)
             {
                 Logger.ErrorException($"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
+                eventConfig.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
 
             Etag = result.Etag;
@@ -75,6 +91,7 @@ namespace Unleash.Scheduling
             catch (IOException ex)
             {
                 Logger.ErrorException($"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
+                eventConfig.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
         }
 

@@ -73,5 +73,32 @@ namespace Unleash.Tests.Internal
             // Assert
             callbackEvent.Should().NotBeNull();
         }
+
+        [Test]
+        public void FetchFeatureToggleTask_HttpRequestException_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var fakeApiClient = A.Fake<IUnleashApiClient>();
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+                .ThrowsAsync(() => new HttpRequestException("The remote server refused the connection"));
+
+            var collection = new ThreadSafeToggleCollection();
+            var serializer = new DynamicNewtonsoftJsonSerializer();
+            var filesystem = new MockFileSystem();
+            var tokenSource = new CancellationTokenSource();
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+
+            // Act
+            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+        }
     }
 }
