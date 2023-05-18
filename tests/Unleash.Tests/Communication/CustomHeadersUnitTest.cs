@@ -105,6 +105,7 @@ namespace Unleash.Tests.Communication
             messageHandler.calls.Count.Should().Be(3);
             foreach (var call in messageHandler.calls)
             {
+                call.Headers.Should().ContainEquivalentOf(new KeyValuePair<string, IEnumerable<string>>("User-Agent", new string[] { "api-test-client" }));
                 call.Headers.Should().ContainEquivalentOf(new KeyValuePair<string, IEnumerable<string>>("expectedHeader1", new string[] { "expectedValue1" }));
                 call.Headers.Should().ContainEquivalentOf(new KeyValuePair<string, IEnumerable<string>>("expectedHeader2", new string[] { "expectedValue2" }));
             }
