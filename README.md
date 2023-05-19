@@ -171,6 +171,7 @@ Refer to the [Unleash context](#unleash-context) section for more information ab
 
 Currently supported events:
 - [Impression data events](https://docs.getunleash.io/advanced/impression-data#impression-event-data)
+- Error events
 
 ```csharp
 
@@ -181,10 +182,11 @@ var settings = new UnleashSettings()
 
 var unleash = new DefaultUnleash(settings);
 
-// Set up handling of impression events
+// Set up handling of impression and error events
 unleash.ConfigureEvents(cfg =>
 {
     cfg.ImpressionEvent = evt => { Console.WriteLine($"{evt.FeatureName}: {evt.Enabled}"); };
+    cfg.ErrorEvent = evt => { /* Handling code here */ Console.WriteLine($"{evt.ErrorType} occured."); };
 });
 
 ```
