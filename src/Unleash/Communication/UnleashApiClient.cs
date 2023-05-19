@@ -55,7 +55,7 @@ namespace Unleash.Communication
                     {
                         var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
-                        eventConfig.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
+                        eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
 
                         return new FetchTogglesResult
                         {
@@ -144,7 +144,7 @@ namespace Unleash.Communication
 
                     var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{resourceUri}' in '{nameof(UnleashApiClient)}': " + error);
-                    eventConfig.RaiseError(new ErrorEvent() { Resource = resourceUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
+                    eventConfig?.RaiseError(new ErrorEvent() { Resource = resourceUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
 
                     return false;
                 }

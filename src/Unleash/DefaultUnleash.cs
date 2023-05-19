@@ -287,7 +287,7 @@ namespace Unleash
             catch (Exception ex)
             {
                 Logger.Error($"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
-                EventConfig.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.ImpressionEvent });
+                EventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.ImpressionEvent });
             }
         }
 
