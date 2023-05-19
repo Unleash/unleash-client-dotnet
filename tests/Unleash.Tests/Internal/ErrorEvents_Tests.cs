@@ -168,6 +168,35 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
+        public void CachedFilesLoader_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var serializer = A.Fake<IJsonSerializer>();
+
+            var exceptionMessage = "Writing failed";
+            var filesystem = A.Fake<IFileSystem>();
+            A.CallTo(() => filesystem.WriteAllText(A<string>._, A<string>._))
+                .Throws(() => new IOException(exceptionMessage));
+
+            var toggleBootstrapProvider = A.Fake<IToggleBootstrapProvider>();
+
+            var filecache = new CachedFilesLoader(serializer, filesystem, toggleBootstrapProvider, callbackConfig, "toggle.txt", "etag.txt");
+
+            // Act
+            filecache.EnsureExistsAndLoad();
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+
+        }
+
+        [Test]
         public void DefaultUnleash_ImpressionEvent_Callback_Exception_Raises_ErrorEvent()
         {
             // Arrange

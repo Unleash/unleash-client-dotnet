@@ -52,7 +52,7 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -102,7 +102,7 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -125,7 +125,7 @@ namespace Unleash.Tests.Internal
             var bootstrapToggles = GetTestToggles();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, false);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -146,7 +146,7 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -168,7 +168,7 @@ namespace Unleash.Tests.Internal
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(null);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, true);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -190,7 +190,7 @@ namespace Unleash.Tests.Internal
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(new ToggleCollection());
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, true);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -213,7 +213,7 @@ namespace Unleash.Tests.Internal
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, toggleFileName, etagFileName, false);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
