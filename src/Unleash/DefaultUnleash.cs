@@ -79,7 +79,7 @@ namespace Unleash
         /// <inheritdoc />
         public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
 
-        private EventCallbackConfig EventConfig { get; set; }
+        private EventCallbackConfig EventConfig { get; } = new EventCallbackConfig();
 
         /// <inheritdoc />
         public bool IsEnabled(string toggleName)
@@ -254,9 +254,7 @@ namespace Unleash
 
             try
             {
-                var evtConfig = new EventCallbackConfig();
-                callback(evtConfig);
-                EventConfig = evtConfig;
+                callback(EventConfig);
             }
             catch (Exception ex)
             {
@@ -287,7 +285,6 @@ namespace Unleash
             catch (Exception ex)
             {
                 Logger.Error($"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
-                EventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.ImpressionEvent });
             }
         }
 
