@@ -22,14 +22,20 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IUnleash>(c => new DefaultUnleash(new UnleashSettings()
+            var unleash = new DefaultUnleash(new UnleashSettings()
             {
-                UnleashApi = new Uri("http://web:4242"),
+                UnleashApi = new Uri("http://localhost:4242/api"),
                 AppName = "variant-sample",
                 InstanceTag = "instance 1",
                 SendMetricsInterval = TimeSpan.FromSeconds(10),
                 FetchTogglesInterval = TimeSpan.FromSeconds(10),
-            }));
+            });
+            unleash.ConfigureEvents(evtCfg =>
+            {
+                evtCfg.ImpressionEvent = evt => { Console.WriteLine(evt.FeatureName); };
+                evtCfg.ErrorEvent = evt => { Console.WriteLine(evt.ErrorType + "-" + evt.Error?.Message); };
+            });
+            services.AddSingleton<IUnleash>(c => unleash);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

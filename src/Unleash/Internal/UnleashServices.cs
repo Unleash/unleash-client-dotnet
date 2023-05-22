@@ -25,7 +25,7 @@ namespace Unleash
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
 
-        public UnleashServices(UnleashSettings settings, Dictionary<string, IStrategy> strategyMap)
+        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
         {
             var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
 
@@ -36,7 +36,7 @@ namespace Unleash
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, settings.ToggleBootstrapProvider, backupFile, etagBackupFile, settings.BootstrapOverride);
+            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
             ToggleCollection = new ThreadSafeToggleCollection
@@ -63,7 +63,7 @@ namespace Unleash
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
-                }, settings.ProjectId);
+                }, eventConfig, settings.ProjectId);
             }
             else
             {
@@ -77,9 +77,10 @@ namespace Unleash
 
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
                 apiClient, 
-                ToggleCollection, 
+                ToggleCollection,
                 settings.JsonSerializer, 
-                fileSystem, 
+                fileSystem,
+                eventConfig,
                 backupFile, 
                 etagBackupFile)
             {

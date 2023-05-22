@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Metrics;
@@ -18,17 +19,20 @@ namespace Unleash.Communication
         private readonly HttpClient httpClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
+        private readonly EventCallbackConfig eventConfig;
         private readonly string projectId;
 
         public UnleashApiClient(
             HttpClient httpClient, 
             IJsonSerializer jsonSerializer, 
             UnleashApiClientRequestHeaders clientRequestHeaders,
+            EventCallbackConfig eventConfig,
             string projectId = null)
         {
             this.httpClient = httpClient;
             this.jsonSerializer = jsonSerializer;
             this.clientRequestHeaders = clientRequestHeaders;
+            this.eventConfig = eventConfig;
             this.projectId = projectId;
         }
 
@@ -51,6 +55,7 @@ namespace Unleash.Communication
                     {
                         var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
+                        eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
 
                         return new FetchTogglesResult
                         {
@@ -139,6 +144,7 @@ namespace Unleash.Communication
 
                     var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{resourceUri}' in '{nameof(UnleashApiClient)}': " + error);
+                    eventConfig?.RaiseError(new ErrorEvent() { Resource = resourceUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
 
                     return false;
                 }

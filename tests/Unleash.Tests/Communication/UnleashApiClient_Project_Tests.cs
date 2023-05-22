@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Unleash.Communication;
+using Unleash.Events;
+using Unleash.Internal;
 using Unleash.Serialization;
 using Unleash.Tests.Mock;
 
@@ -36,7 +38,7 @@ namespace Unleash.Tests.Communication
                 Timeout = TimeSpan.FromSeconds(5)
             };
 
-            return new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, project);
+            return new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig(), project);
         }
 
         [Test]
