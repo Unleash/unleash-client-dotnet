@@ -78,7 +78,7 @@ namespace Unleash.Scheduling
             } 
             catch (IOException ex)
             {
-                Logger.WarnException($"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
+                Logger.WarnException($"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
 
