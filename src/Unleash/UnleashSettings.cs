@@ -152,7 +152,7 @@ namespace Unleash
         {
             var hostName = Dns.GetHostName();
 
-            return $"{hostName}-generated-{Math.Round(new Random().NextDouble() * 1000000.0D)}";
+            return $"{hostName}-generated-{Guid.NewGuid()}";
         }
 
         /// <summary>
