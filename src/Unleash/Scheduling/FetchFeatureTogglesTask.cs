@@ -90,7 +90,7 @@ namespace Unleash.Scheduling
             }
             catch (IOException ex)
             {
-                Logger.WarnException($"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
+                Logger.WarnException($"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
         }
