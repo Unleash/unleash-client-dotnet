@@ -33,7 +33,7 @@ namespace Unleash.Tests.Communication
             {
                 BaseAddress = new Uri("http://example.com")
             };
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders);
+            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, null);
             return client;
         }
 
