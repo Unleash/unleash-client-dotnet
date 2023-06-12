@@ -51,5 +51,27 @@ namespace Unleash.Tests.Utilities
             // Assert
             result.Should().Equals(fileContent);
         }
+
+        [Test]
+        public void Returns_File_Content_When_Configured_Through_Settings_And_File_Exists()
+        {
+            // Arrange
+            var settings = new UnleashSettings()
+            {
+                JsonSerializer = new JsonNetSerializer(),
+            };
+            var toggleFileName = AppDataFile("unleash-repo-v1.json");
+            settings.UseBootstrapFileProvider(toggleFileName);
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            settings.FileSystem = fileSystem;
+
+            var fileContent = fileSystem.ReadAllText(toggleFileName);
+
+            // Act
+            var result = settings.ToggleBootstrapProvider.Read();
+
+            // Assert
+            result.Should().Equals(fileContent);
+        }
     }
 }

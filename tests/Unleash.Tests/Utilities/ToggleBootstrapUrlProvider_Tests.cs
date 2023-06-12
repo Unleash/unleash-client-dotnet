@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,39 @@ namespace Unleash.Tests.Utilities
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
+
+            // Assert
+            responseContent.Features.Should().BeEmpty();
+            messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
+            messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
+        }
+
+        [Test]
+        public void Gets_The_File_Content_When_Configured_Through_Settings()
+        {
+            // Arrange
+            var path = "http://localhost/path/to/file";
+            var content = "{}";
+            var messageHandlerMock = new ConfigurableMessageHandlerMock();
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent(content, Encoding.UTF8, "application/json")
+            };
+            messageHandlerMock.Configure(path, returnMessage);
+            var client = new HttpClient(messageHandlerMock);
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(client);
+
+
+            var settings = new UnleashSettings()
+            {
+                JsonSerializer = new JsonNetSerializer(),
+                HttpClientFactory = fakeHttpClientFactory
+            };
+            settings.UseBootstrapUrlProvider(path, false);
+
+            // Act
+            var responseContent = settings.ToggleBootstrapProvider.Read();
 
             // Assert
             responseContent.Features.Should().BeEmpty();
