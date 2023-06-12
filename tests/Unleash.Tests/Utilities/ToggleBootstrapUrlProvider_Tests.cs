@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,43 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer());
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() });
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
+
+            // Assert
+            responseContent.Features.Should().BeEmpty();
+            messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
+            messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
+        }
+
+        [Test]
+        public void Gets_The_File_Content_When_Configured_Through_Settings()
+        {
+            // Arrange
+            var path = "http://localhost/path/to/file";
+            var content = "{}";
+            var messageHandlerMock = new ConfigurableMessageHandlerMock();
+            var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent(content, Encoding.UTF8, "application/json")
+            };
+            messageHandlerMock.Configure(path, returnMessage);
+            var client = new HttpClient(messageHandlerMock);
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(client);
+
+
+            var settings = new UnleashSettings()
+            {
+                JsonSerializer = new JsonNetSerializer(),
+                HttpClientFactory = fakeHttpClientFactory
+            };
+            settings.UseBootstrapUrlProvider(path, false);
+
+            // Act
+            var responseContent = settings.ToggleBootstrapProvider.Read();
 
             // Assert
             responseContent.Features.Should().BeEmpty();
@@ -49,7 +83,7 @@ namespace Unleash.Tests.Utilities
             var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound) { Content = new StringContent("") };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings());
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
@@ -69,7 +103,7 @@ namespace Unleash.Tests.Utilities
             var returnMessage = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound) { Content = new StringContent("") };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, null, true);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings(), true);
 
             // Act, Assert
             Assert.Throws<FetchingToggleBootstrapUrlFailedException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
@@ -92,7 +126,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer(), false, customHeaders);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() }, false, customHeaders);
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
@@ -118,7 +152,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer());
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings());
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
@@ -142,7 +176,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new JsonNetSerializer(), true);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings(), true);
 
             // Act, Assert
             Assert.Throws<UnleashException>(() => { var responseContent = bootstrapUrlProvider.Read(); });

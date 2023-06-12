@@ -27,7 +27,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1-missing.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem, new JsonNetSerializer());
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem, JsonSerializer = new JsonNetSerializer() });
 
             // Act
             var emptyResult = toggleFileProvider.Read();
@@ -42,11 +42,33 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, fileSystem, new JsonNetSerializer());
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem, JsonSerializer = new JsonNetSerializer() });
             var fileContent = fileSystem.ReadAllText(toggleFileName);
 
             // Act
             var result = toggleFileProvider.Read();
+
+            // Assert
+            result.Should().Equals(fileContent);
+        }
+
+        [Test]
+        public void Returns_File_Content_When_Configured_Through_Settings_And_File_Exists()
+        {
+            // Arrange
+            var settings = new UnleashSettings()
+            {
+                JsonSerializer = new JsonNetSerializer(),
+            };
+            var toggleFileName = AppDataFile("unleash-repo-v1.json");
+            settings.UseBootstrapFileProvider(toggleFileName);
+            var fileSystem = new FileSystem(Encoding.UTF8);
+            settings.FileSystem = fileSystem;
+
+            var fileContent = fileSystem.ReadAllText(toggleFileName);
+
+            // Act
+            var result = settings.ToggleBootstrapProvider.Read();
 
             // Assert
             result.Should().Equals(fileContent);

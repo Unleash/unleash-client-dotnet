@@ -9,21 +9,18 @@ namespace Unleash.Utilities
     public class ToggleBootstrapFileProvider : IToggleBootstrapProvider
     {
         private readonly string filePath;
-        private readonly IFileSystem fileSystem;
-        private readonly IJsonSerializer jsonSerializer;
+        private readonly UnleashSettings settings;
 
-
-        internal ToggleBootstrapFileProvider(string filePath, IFileSystem fileSystem, IJsonSerializer jsonSerializer)
+        internal ToggleBootstrapFileProvider(string filePath, UnleashSettings settings)
         {
             this.filePath = filePath;
-            this.fileSystem = fileSystem;
-            this.jsonSerializer = jsonSerializer;
+            this.settings = settings;
         }
 
         public ToggleCollection Read()
         {
-            using (var togglesStream = fileSystem.FileOpenRead(filePath))
-                return jsonSerializer.Deserialize<ToggleCollection>(togglesStream);
+            using (var togglesStream = settings.FileSystem.FileOpenRead(filePath))
+                return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesStream);
         }
     }
 }
