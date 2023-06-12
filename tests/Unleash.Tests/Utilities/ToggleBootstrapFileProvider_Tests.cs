@@ -27,7 +27,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1-missing.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem });
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem, JsonSerializer = new JsonNetSerializer() });
 
             // Act
             var emptyResult = toggleFileProvider.Read();
@@ -42,7 +42,7 @@ namespace Unleash.Tests.Utilities
             // Arrange
             var fileSystem = new FileSystem(Encoding.UTF8);
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
-            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem });
+            var toggleFileProvider = new ToggleBootstrapFileProvider(toggleFileName, new UnleashSettings() { FileSystem = fileSystem, JsonSerializer = new JsonNetSerializer() });
             var fileContent = fileSystem.ReadAllText(toggleFileName);
 
             // Act

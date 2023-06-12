@@ -29,7 +29,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings());
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() });
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
@@ -92,7 +92,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings(), false, customHeaders);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() }, false, customHeaders);
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
