@@ -27,8 +27,7 @@ namespace Unleash.Metrics
 
         public void Register(string variantName)
         {
-            var current = variants.GetOrAdd(variantName, s => new long());
-            Interlocked.Increment(ref current);
+            variants.AddOrUpdate(variantName, 1, (k, v) => Interlocked.Increment(ref v));
         }
 
         /// <summary>
