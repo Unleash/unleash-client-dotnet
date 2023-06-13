@@ -110,5 +110,39 @@ namespace Unleash.Tests.Metrics
                 .Select(x => x.Yes + x.No)
                 .Sum();
         }
+
+        [Test]
+        public void CountVariants()
+        {
+            var metricsBucket = new ThreadSafeMetricsBucket();
+
+            var options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 50,
+            };
+
+            var totalTasks = 1000000;
+            var numFeatureToggles = 50;
+
+            Parallel.For(0, totalTasks, options, state =>
+            {
+
+                var i = (state % numFeatureToggles).ToString();
+                var variant = DateTime.Now.Ticks % 2 == 0 ? "A" : "B";
+
+                metricsBucket.RegisterCount(i, variant);
+            });
+
+            using (metricsBucket.StopCollectingMetrics(out var bucket))
+            {
+                bucket.Toggles.Count.Should().Be(numFeatureToggles);
+
+                var totalVariantCount = bucket.Toggles.Values.SelectMany
+                    (toggle => toggle.Variants.Select(variant => variant.Value))
+                    .Sum();
+
+                totalVariantCount.Should().Be(totalTasks);
+            }
+        }
     }
 }
