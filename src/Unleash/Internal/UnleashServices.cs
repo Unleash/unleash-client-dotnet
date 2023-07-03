@@ -27,7 +27,10 @@ namespace Unleash
 
         public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
         {
-            var fileSystem = settings.FileSystem ?? new FileSystem(settings.Encoding);
+            if (settings.FileSystem == null)
+            {
+                settings.FileSystem = new FileSystem(settings.Encoding);
+            }
 
             var backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
@@ -36,7 +39,7 @@ namespace Unleash
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            var loader = new CachedFilesLoader(settings.JsonSerializer, fileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
+            var loader = new CachedFilesLoader(settings.JsonSerializer, settings.FileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
             ToggleCollection = new ThreadSafeToggleCollection
@@ -79,7 +82,7 @@ namespace Unleash
                 apiClient, 
                 ToggleCollection,
                 settings.JsonSerializer, 
-                fileSystem,
+                settings.FileSystem,
                 eventConfig,
                 backupFile, 
                 etagBackupFile)

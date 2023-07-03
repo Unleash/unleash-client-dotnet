@@ -17,16 +17,16 @@ namespace Unleash.Utilities
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly HttpClient client;
-        private readonly IJsonSerializer jsonSerializer;
+        private readonly UnleashSettings settings;
         private readonly string path;
         private readonly bool throwOnFail;
         private readonly Dictionary<string, string> customHeaders;
 
-        public ToggleBootstrapUrlProvider(string path, HttpClient client, IJsonSerializer jsonSerializer, bool throwOnFail = false, Dictionary<string, string> customHeaders = null)
+        public ToggleBootstrapUrlProvider(string path, HttpClient client, UnleashSettings settings, bool throwOnFail = false, Dictionary<string, string> customHeaders = null)
         {
             this.path = path;
             this.client = client;
-            this.jsonSerializer = jsonSerializer;
+            this.settings = settings;
             this.throwOnFail = throwOnFail;
             this.customHeaders = customHeaders;
         }
@@ -64,7 +64,7 @@ namespace Unleash.Utilities
                     try
                     {
                         var togglesResponseStream = await response.Content.ReadAsStreamAsync();
-                        return jsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
+                        return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
                     }
                     catch (Exception ex)
                     {
