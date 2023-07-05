@@ -28,11 +28,37 @@ namespace Unleash.Tests.Specifications
 
     internal class TestFactory
     {
-        public static TestCaseData[] Tests { get; private set; } 
+        public static TestCaseData[] Tests { get; private set; }
+
 
         static TestFactory()
         {
-            var specificationsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..", "..", "Integration", "Data");
+            var specificationsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Integration", "Data");
+
+            using (var client = new HttpClient())
+            {
+                var csTestsVersion = "v4.1.0";
+                var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/{csTestsVersion}/specifications/";
+                var indexResponse = client.GetStringAsync(indexPath + "index.json").Result;
+                var indexFilePath = Path.Combine(specificationsPath, "index.json");
+                if (File.Exists(indexFilePath))
+                {
+                    File.Delete(indexFilePath);
+                }
+                File.WriteAllText(indexFilePath, indexResponse);
+                var testDefinitionFiles = ParseJsonFile<string[]>(Path.Combine(specificationsPath, "index.json"));
+                foreach (var definitionFile in testDefinitionFiles)
+                {
+                    var definitionFilePath = Path.Combine(specificationsPath, definitionFile);
+                    var fileResponse = client.GetStringAsync(indexPath + definitionFile).Result;
+                    if (File.Exists(definitionFilePath))
+                    {
+                        File.Delete(definitionFilePath);
+                    }
+                    System.IO.File.WriteAllText(definitionFilePath, fileResponse);
+                }
+
+            }
 
             var testDefinitions = ParseJsonFile<string[]>(Path.Combine(specificationsPath, "index.json"))
                 .Select(specificationsFile => ParseJsonFile<TestDefinition>(Path.Combine(specificationsPath, specificationsFile)))
