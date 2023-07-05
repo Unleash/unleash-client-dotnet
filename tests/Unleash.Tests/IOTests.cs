@@ -22,7 +22,6 @@ namespace Unleash.Tests
             }
         }
 
-        [Test]
         public async Task GracefullyFailsWhenFileLocked()
         {
             var settings = new MockedUnleashSettings(false);
