@@ -349,6 +349,67 @@ Dim unleash = New DefaultUnleash(unleashSettings)
                 
 ```
 
+## Logging
+
+By default Unleash-client uses LibLog to integrate with the currently configured logger for your application.
+The supported loggers are:
+- Serilog
+- NLog
+- Log4Net
+- EntLib
+- Loupe
+
+### Custom logger integration
+To plug in your own logger you can implement the `ILogProvider` interface, and register it with Unleash:
+
+```csharp
+Unleash.Logging.LogProvider.SetCurrentLogProvider(new CustomLogProvider());
+var settings = new UnleashSettings()
+//...
+```
+
+ The `GetLogger` method is responsible for returning a delegate to be used for logging, and your logging integration should be placed inside that delegate:
+
+```csharp
+using System;
+using Unleash.Logging;
+
+namespace Unleash.Demo.CustomLogging
+{
+    public class CustomLogProvider : ILogProvider
+    {
+        public Logger GetLogger(string name)
+        {
+            return (logLevel, messageFunc, exception, formatParameters) =>
+            {
+                // Plug in your logging code here
+
+                return true;
+            };
+        }
+
+        public IDisposable OpenMappedContext(string key, object value, bool destructure = false)
+        {
+            return new EmptyIDisposable();
+        }
+
+        public IDisposable OpenNestedContext(string message)
+        {
+            return new EmptyIDisposable();
+        }
+    }
+
+    public class EmptyIDisposable : IDisposable
+    {
+        public void Dispose()
+        {
+        }
+    }
+}
+```
+
+
+
 ## Local backup
 By default unleash-client fetches the feature toggles from unleash-server every 20s, and stores the result in temporary .json file which is located in `System.IO.Path.GetTempPath()` directory. This means that if the unleash-server becomes unavailable, the unleash-client will still be able to toggle the features based on the values stored in .json file. As a result of this, the second argument of `IsEnabled` will be returned in two cases:
 
