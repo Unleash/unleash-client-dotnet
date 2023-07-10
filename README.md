@@ -376,12 +376,8 @@ using Unleash.Logging;
 
 namespace Unleash.Demo.CustomLogging
 {
-	public class CustomLogProvider : ILogProvider
+    public class CustomLogProvider : ILogProvider
     {
-		public CustomLogProvider()
-		{
-		}
-
         public Logger GetLogger(string name)
         {
             return (logLevel, messageFunc, exception, formatParameters) =>
