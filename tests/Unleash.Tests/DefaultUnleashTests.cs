@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using Unleash.Internal;
 using Unleash.Scheduling;
 using Unleash.Strategies;
