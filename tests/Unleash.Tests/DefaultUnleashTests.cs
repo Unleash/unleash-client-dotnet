@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Linq;
 using Unleash.Internal;
 using Unleash.Scheduling;
 using Unleash.Strategies;
