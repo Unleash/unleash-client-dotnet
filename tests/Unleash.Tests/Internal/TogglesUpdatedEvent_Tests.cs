@@ -18,14 +18,14 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             TogglesUpdatedEvent callbackEvent = null;
-            var callbackConfig = new EventCallbackConfig()
+            var callbackConfig = new EventCallbackConfig
             {
                 TogglesUpdatedEvent = evt => { callbackEvent = evt; }
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = new DynamicNewtonsoftJsonSerializer();
@@ -47,14 +47,14 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             TogglesUpdatedEvent callbackEvent = null;
-            var callbackConfig = new EventCallbackConfig()
+            var callbackConfig = new EventCallbackConfig
             {
                 TogglesUpdatedEvent = evt => { callbackEvent = evt; }
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = false, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, ToggleCollection = new ToggleCollection(), Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = new DynamicNewtonsoftJsonSerializer();

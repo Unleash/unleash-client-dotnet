@@ -64,7 +64,7 @@ namespace Unleash.Scheduling
             }
             else
             {
-                eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent() { UpdatedOn = DateTime.UtcNow });
+                eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
             }
 
             if (string.IsNullOrEmpty(result.Etag))
