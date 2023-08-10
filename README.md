@@ -170,9 +170,9 @@ Refer to the [Unleash context](#unleash-context) section for more information ab
 ## Handling events
 
 Currently supported events:
-- [Impression data events](https://docs.getunleash.io/advanced/impression-data#impression-event-data)
-- Error events
-- Toggles updated event
+-  [Impression data events](https://docs.getunleash.io/advanced/impression-data#impression-event-data)
+-  Error events
+-  Toggles updated event
 
 ```csharp
 
