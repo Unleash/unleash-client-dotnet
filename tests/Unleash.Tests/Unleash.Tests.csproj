@@ -84,6 +84,7 @@
     <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
     <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
     <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
+    <Compile Include="Internal\TogglesUpdatedEvent_Tests.cs" />
     <Compile Include="Internal\ErrorEvents_Tests.cs" />
     <Compile Include="Internal\ImpressionData_Tests.cs" />
     <Compile Include="IOTests.cs" />
