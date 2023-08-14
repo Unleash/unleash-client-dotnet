@@ -59,7 +59,13 @@ namespace Unleash.Scheduling
             }
 
             if (!result.HasChanged)
+            {
                 return;
+            }
+            else
+            {
+                eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
+            }
 
             if (string.IsNullOrEmpty(result.Etag))
                 return;
