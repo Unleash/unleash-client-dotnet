@@ -1,5 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Communication;
+using Unleash.Logging;
 using Unleash.Strategies;
 
 namespace Unleash.ClientFactory
@@ -7,6 +10,8 @@ namespace Unleash.ClientFactory
     /// <inheritdoc />
     public class UnleashClientFactory : IUnleashClientFactory
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashApiClient));
+
         private static readonly TaskFactory TaskFactory = 
             new TaskFactory(CancellationToken.None,
                           TaskCreationOptions.None,
@@ -24,12 +29,18 @@ namespace Unleash.ClientFactory
             {
                 settings.ScheduleFeatureToggleFetchImmediatly = false;
                 var unleash = new DefaultUnleash(settings, strategies);
-                TaskFactory
-                    .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
-                    .Unwrap()
-                    .GetAwaiter()
-                    .GetResult();
-                
+                try
+                {
+                    TaskFactory
+                        .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
+                        .Unwrap()
+                        .GetAwaiter()
+                        .GetResult();
+                }
+                catch (Exception error)
+                {
+                    Logger.ErrorException($"UNLEASH: Error while fetching toggles during synchronous initialization in '{nameof(UnleashClientFactory)}.{nameof(CreateClient)}': ", error);
+                }
                 return unleash;
             }
             return new DefaultUnleash(settings, strategies);
