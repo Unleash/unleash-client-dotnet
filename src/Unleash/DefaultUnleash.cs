@@ -39,7 +39,7 @@ namespace Unleash
         internal readonly UnleashServices services;
 
         ///// <summary>
-        ///// Initializes a new instance of Unleash client with a set of default strategies. 
+        ///// Initializes a new instance of Unleash client with a set of default strategies.
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
         ///// <param name="strategies">Additional custom strategies.</param>
@@ -106,6 +106,7 @@ namespace Unleash
         private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
             var featureToggle = GetToggle(toggleName);
+            var enhancedContext = context.ApplyStaticFields(settings);
 
             bool enabled = false;
             if (featureToggle == null)
@@ -123,13 +124,12 @@ namespace Unleash
             }
             else
             {
-                var enhancedContext = context.ApplyStaticFields(settings);
                 enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints)));
             }
 
             RegisterCount(toggleName, enabled);
 
-            if (featureToggle?.ImpressionData ?? false) EmitImpressionEvent("isEnabled", context, enabled, featureToggle.Name);
+            if (featureToggle?.ImpressionData ?? false) EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
 
             return enabled;
         }
@@ -152,8 +152,9 @@ namespace Unleash
             var variant = enabled ? VariantUtils.SelectVariant(toggle, context, defaultValue) : defaultValue;
 
             RegisterVariant(toggleName, variant);
+            var enhancedContext = context.ApplyStaticFields(settings);
 
-            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", context, enabled, toggle.Name, variant.Name);
+            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", enhancedContext, enabled, toggle.Name, variant.Name);
 
             return variant;
         }
@@ -220,8 +221,8 @@ namespace Unleash
 
         private IStrategy GetStrategyOrUnknown(string strategy)
         {
-            return strategyMap.ContainsKey(strategy) 
-                ? strategyMap[strategy] 
+            return strategyMap.ContainsKey(strategy)
+                ? strategyMap[strategy]
                 : UnknownStrategy;
         }
 
@@ -290,7 +291,7 @@ namespace Unleash
 
         public void Dispose()
         {
-            services?.Dispose(); 
+            services?.Dispose();
         }
     }
 }
