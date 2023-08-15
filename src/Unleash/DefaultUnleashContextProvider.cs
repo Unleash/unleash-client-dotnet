@@ -8,9 +8,6 @@ namespace Unleash
         {
             Context = context ?? new UnleashContext
             {
-                UserId = string.Empty,
-                SessionId = string.Empty,
-                RemoteAddress = string.Empty,
                 Properties = new Dictionary<string, string>(0),
             };
         }
