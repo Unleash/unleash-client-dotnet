@@ -115,7 +115,7 @@ namespace Unleash.Tests.Internal
             callbackEvent.ErrorType.Should().Be(ErrorType.Client);
             thrownException.Should().NotBeNull();
             thrownException.GetType().Name.Should().Be("UnleashException");
-            thrownException.Message.Name.Should().Be("Exception while fetching from API");
+            thrownException.Message.Should().Be("Exception while fetching from API");
         }
 
         [Test]
