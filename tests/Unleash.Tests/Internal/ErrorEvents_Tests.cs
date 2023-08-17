@@ -84,6 +84,7 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             ErrorEvent callbackEvent = null;
+            Exception thrownException = null;
             var callbackConfig = new EventCallbackConfig()
             {
                 ErrorEvent = evt => { callbackEvent = evt; }
@@ -100,12 +101,19 @@ namespace Unleash.Tests.Internal
             var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
-            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
-
+            try
+            {
+                Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
+            }
+            catch (Exception ex)
+            {
+                thrownException = ex;
+            }
             // Assert
             callbackEvent.Should().NotBeNull();
             callbackEvent.Error.Should().NotBeNull();
             callbackEvent.ErrorType.Should().Be(ErrorType.Client);
+            thrownException.Should().NotBeNull();
         }
 
         [Test]

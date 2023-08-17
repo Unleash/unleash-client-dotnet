@@ -49,6 +49,7 @@ namespace Unleash.Tests.Internal
             result.Should().BeTrue();
             callbackEvent.Should().NotBeNull();
             callbackEvent.Enabled.Should().BeTrue();
+            callbackEvent.Context.AppName.Should().Be(appname);
             callbackEvent.Variant.Should().BeNull();
         }
 
@@ -164,6 +165,7 @@ namespace Unleash.Tests.Internal
             callbackEvent.Should().NotBeNull();
             callbackEvent.Enabled.Should().BeTrue();
             callbackEvent.Variant.Should().Be("blue");
+            callbackEvent.Context.AppName.Should().Be(appname);
         }
 
         [Test]

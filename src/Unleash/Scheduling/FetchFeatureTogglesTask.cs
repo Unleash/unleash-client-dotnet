@@ -55,7 +55,7 @@ namespace Unleash.Scheduling
             {
                 Logger.ErrorException($"UNLEASH: Unhandled exception when fetching toggles.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, Error = ex });
-                return;
+                throw new UnleashException("Exception while fetching from API", ex);
             }
 
             if (!result.HasChanged)
