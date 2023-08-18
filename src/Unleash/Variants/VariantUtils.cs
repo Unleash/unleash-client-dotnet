@@ -8,9 +8,9 @@ namespace Unleash.Variants
 {
     internal class VariantUtils
     {
-        public static Variant SelectVariant(FeatureToggle featureToggle, UnleashContext context, Variant defaultVariant)
+        public static Variant SelectVariant(FeatureToggle featureToggle, UnleashContext context, Variant defaultVariant, List<VariantDefinition> strategyVariants = null)
         {
-            var variantDefinitions = featureToggle.Variants;
+            var variantDefinitions = strategyVariants ?? featureToggle.Variants;
             var totalWeight = variantDefinitions.Sum(v => v.Weight);
 
             if (totalWeight == 0) {

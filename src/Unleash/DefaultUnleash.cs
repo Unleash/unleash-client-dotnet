@@ -100,13 +100,14 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, context, defaultSetting);
+            return CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
         }
 
-        private bool CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
+        private FeatureEvaluationResult CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
             var featureToggle = GetToggle(toggleName);
             var enhancedContext = context.ApplyStaticFields(settings);
+            List<VariantDefinition> strategyVariants = null;
 
             bool enabled = false;
             if (featureToggle == null)
@@ -124,14 +125,16 @@ namespace Unleash
             }
             else
             {
-                enabled = featureToggle.Strategies.Any(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints)));
+                var strategy = featureToggle.Strategies.FirstOrDefault(s => GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints)));
+                strategyVariants = strategy?.Variants;
+                enabled = strategy != null;
             }
 
             RegisterCount(toggleName, enabled);
 
             if (featureToggle?.ImpressionData ?? false) EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
 
-            return enabled;
+            return new FeatureEvaluationResult { Enabled = enabled, StrategyVariants = strategyVariants };
         }
 
         public Variant GetVariant(string toggleName)
@@ -148,13 +151,13 @@ namespace Unleash
         {
             var toggle = GetToggle(toggleName);
 
-            var enabled = CheckIsEnabled(toggleName, context, false);
-            var variant = enabled ? VariantUtils.SelectVariant(toggle, context, defaultValue) : defaultValue;
+            var evaluationResult = CheckIsEnabled(toggleName, context, false);
+            var variant = evaluationResult.Enabled ? VariantUtils.SelectVariant(toggle, context, defaultValue, evaluationResult.StrategyVariants) : defaultValue;
 
             RegisterVariant(toggleName, variant);
             var enhancedContext = context.ApplyStaticFields(settings);
 
-            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", enhancedContext, enabled, toggle.Name, variant.Name);
+            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, variant.Name);
 
             return variant;
         }
