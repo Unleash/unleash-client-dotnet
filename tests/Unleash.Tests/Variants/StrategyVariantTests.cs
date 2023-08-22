@@ -21,29 +21,33 @@ namespace Unleash.Tests.Variants
 		{
             // Arrange
             var appname = "test";
-            var toggles = new List<FeatureToggle>()
+            var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
                     "item",
                     "release",
                     true,
                     false,
-                    new List<ActivationStrategy>() {
+                    new List<ActivationStrategy>
+                    {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>() {
+                            new Dictionary<string, string>
+                            {
                                 { "rollout", "100" },
                                 { "groupId", "grp" }
                             },
-                            new List<Constraint>()
+                            new List<Constraint>
                                 { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
                             null,
-                            new List<VariantDefinition>() {
+                            new List<VariantDefinition>
+                            {
                                 new VariantDefinition("Red", 50, new Payload("text", "red")),
                                 new VariantDefinition("Blue", 50, new Payload("text", "blue"))
                         }
                     ) },
-                    new List<VariantDefinition>() {
+                    new List<VariantDefinition>
+                    {
                         new VariantDefinition("Green", 50, new Payload("text", "green")),
                         new VariantDefinition("Black", 50, new Payload("text", "black"))
                     })
@@ -65,26 +69,29 @@ namespace Unleash.Tests.Variants
         {
             // Arrange
             var appname = "test";
-            var toggles = new List<FeatureToggle>()
+            var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
                     "item",
                     "release",
                     true,
                     false,
-                    new List<ActivationStrategy>() {
+                    new List<ActivationStrategy>
+                    {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>() {
+                            new Dictionary<string, string>
+                            {
                                 { "rollout", "100" },
                                 { "groupId", "grp" }
                             },
-                            new List<Constraint>()
+                            new List<Constraint>
                                 { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
                             null,
                             null
                     )},
-                    new List<VariantDefinition>() {
+                    new List<VariantDefinition>
+                    {
                         new VariantDefinition("Green", 50, new Payload("text", "green")),
                         new VariantDefinition("Black", 50, new Payload("text", "black"))
                     })
@@ -106,21 +113,23 @@ namespace Unleash.Tests.Variants
         {
             // Arrange
             var appname = "test";
-            var toggles = new List<FeatureToggle>()
+            var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
                     "item",
                     "release",
                     true,
                     false,
-                    new List<ActivationStrategy>() {
+                    new List<ActivationStrategy>
+                    {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>() {
+                            new Dictionary<string, string>
+                            {
                                 { "percentage", "100" },
                                 { "groupId", "grp" }
                             },
-                            new List<Constraint>()
+                            new List<Constraint>
                                 { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
                             null,
                             null
@@ -145,36 +154,41 @@ namespace Unleash.Tests.Variants
         {
             // Arrange
             var appname = "test";
-            var toggles = new List<FeatureToggle>()
+            var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
                     "item",
                     "release",
                     true,
                     false,
-                    new List<ActivationStrategy>() {
+                    new List<ActivationStrategy>
+                    {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>() {
+                            new Dictionary<string, string>
+                            {
                                 { "rollout", "100" },
                                 { "groupId", "grp1" }
                             }
                         ),
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>() {
+                            new Dictionary<string, string>
+                            {
                                 { "rollout", "100" },
                                 { "groupId", "grp2" }
                             },
-                            new List<Constraint>()
+                            new List<Constraint>
                                 { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
                             null,
-                            new List<VariantDefinition>() {
+                            new List<VariantDefinition>
+                            {
                                 new VariantDefinition("Red", 50, new Payload("text", "red")),
                                 new VariantDefinition("Blue", 50, new Payload("text", "blue"))
                         }
                     ) },
-                    new List<VariantDefinition>() {
+                    new List<VariantDefinition>
+                    {
                         new VariantDefinition("Green", 50, new Payload("text", "green")),
                         new VariantDefinition("Black", 50, new Payload("text", "black"))
                     })
@@ -193,10 +207,10 @@ namespace Unleash.Tests.Variants
 
         public static IUnleash CreateUnleash(string name, ToggleCollection state)
         {
-            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>;
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
-            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
+            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>;
             var fakeFileSystem = new MockFileSystem();
             var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
 
