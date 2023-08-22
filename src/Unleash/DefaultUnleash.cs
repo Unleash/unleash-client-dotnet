@@ -138,9 +138,9 @@ namespace Unleash
             {
                 if (strategy != null)
                 {
-                    string groupId = null;
-                    strategy.Parameters.TryGetValue("groupId", out groupId);
-                    variant = VariantUtils.SelectVariant(groupId ?? featureToggle.Name, context, strategy.Variants);
+                    strategy.Parameters.TryGetValue("groupId", out string groupId);
+                    groupId = groupId ?? featureToggle.Name;
+                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants);
                 }
 
                 if (variant == null && defaultVariant != null)
