@@ -134,16 +134,23 @@ namespace Unleash
                 enabled = strategy != null;
             }
 
-            if (strategy != null)
+            if (enabled)
             {
-                string groupId = null;
-                strategy.Parameters.TryGetValue("groupId", out groupId);
-                variant = enabled ? VariantUtils.SelectVariant(groupId, context, strategy.Variants) : null;
-            }
+                if (strategy != null)
+                {
+                    string groupId = null;
+                    strategy.Parameters.TryGetValue("groupId", out groupId);
+                    variant = VariantUtils.SelectVariant(groupId ?? featureToggle.Name, context, strategy.Variants);
+                }
 
-            if (variant == null && defaultVariant != null)
+                if (variant == null && defaultVariant != null)
+                {
+                    variant = VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
+                }
+            }
+            else
             {
-                variant = enabled ? VariantUtils.SelectVariant(featureToggle, context, defaultVariant) : defaultVariant;
+                variant = defaultVariant;
             }
 
             RegisterCount(toggleName, enabled);
