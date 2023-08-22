@@ -14,7 +14,7 @@ namespace Unleash.Internal
         public ActivationStrategy(string name, Dictionary<string, string> parameters, List<Constraint> constraints = null, List<string> segments = null, List<VariantDefinition> variants = null)
         {
             Name = name;
-            Parameters = parameters;
+            Parameters = parameters ?? new Dictionary<string, string>();
             Constraints = constraints ?? new List<Constraint>();
             Segments = segments ?? new List<string>();
             Variants = variants ?? new List<VariantDefinition>();
