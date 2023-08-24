@@ -6,6 +6,7 @@ namespace Unleash
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Remoting.Contexts;
     using System.Threading;
     using Unleash.Events;
     using Unleash.Variants;
@@ -103,27 +104,42 @@ namespace Unleash
             return CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
         }
 
-        private FeatureEvaluationResult CheckIsEnabled(string toggleName, UnleashContext context, bool defaultSetting, Variant defaultVariant = null)
+        private FeatureEvaluationResult CheckIsEnabled(
+            string toggleName,
+            UnleashContext context,
+            bool defaultSetting,
+            Variant defaultVariant = null)
         {
             var featureToggle = GetToggle(toggleName);
             var enhancedContext = context.ApplyStaticFields(settings);
-            ActivationStrategy strategy = null;
-            Variant variant = null;
+            var enabled = DetermineIsEnabledAndStrategy(featureToggle, enhancedContext, defaultSetting, out var strategy);
+            var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
 
-            bool enabled = false;
+            RegisterCount(toggleName, enabled);
+
+            if (featureToggle?.ImpressionData ?? false)
+                EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
+
+            return new FeatureEvaluationResult { Enabled = enabled, Variant = variant };
+        }
+
+        private bool DetermineIsEnabledAndStrategy(
+            FeatureToggle featureToggle,
+            UnleashContext enhancedContext,
+            bool defaultSetting,
+            out ActivationStrategy strategy)
+        {
+            strategy = null;
             if (featureToggle == null)
-            {
-                enabled = defaultSetting;
-            }
-            else if(!featureToggle.Enabled)
-            {
+                return defaultSetting;
+
+            else if (!featureToggle.Enabled)
                 // Overall false
-                enabled = false;
-            }
+                return false;
+
             else if (featureToggle.Strategies.Count == 0)
-            {
-                enabled = true;
-            }
+                return true;
+
             else
             {
                 strategy = featureToggle.Strategies
@@ -131,33 +147,30 @@ namespace Unleash
                         GetStrategyOrUnknown(s.Name)
                         .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
                     );
-                enabled = strategy != null;
-            }
 
+                return strategy != null;
+            }
+        }
+
+        private Variant DetermineVariant(bool enabled,
+            FeatureToggle featureToggle,
+            ActivationStrategy strategy,
+            UnleashContext context,
+            Variant defaultVariant)
+        {
             if (enabled)
             {
                 if (strategy != null)
                 {
                     strategy.Parameters.TryGetValue("groupId", out string groupId);
                     groupId = groupId ?? featureToggle.Name;
-                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants);
+                    return VariantUtils.SelectVariant(groupId, context, strategy.Variants);
                 }
 
-                if (variant == null && defaultVariant != null)
-                {
-                    variant = VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
-                }
+                return VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
             }
             else
-            {
-                variant = defaultVariant;
-            }
-
-            RegisterCount(toggleName, enabled);
-
-            if (featureToggle?.ImpressionData ?? false) EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
-
-            return new FeatureEvaluationResult { Enabled = enabled, Variant = variant };
+                return defaultVariant;
         }
 
         public Variant GetVariant(string toggleName)
@@ -180,7 +193,8 @@ namespace Unleash
 
             var enhancedContext = context.ApplyStaticFields(settings);
 
-            if (toggle?.ImpressionData ?? false) EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
+            if (toggle?.ImpressionData ?? false)
+                EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
 
             return evaluationResult.Variant;
         }

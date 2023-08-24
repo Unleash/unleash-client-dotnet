@@ -41,7 +41,7 @@ namespace Unleash.Variants
             return null;
         }
 
-        public static Variant SelectVariant(FeatureToggle feature, UnleashContext context, Variant defaultVariant)
+        public static Variant SelectVariant(FeatureToggle feature, UnleashContext context, Variant defaultVariant = null)
         {
             if (feature == null)
             {
