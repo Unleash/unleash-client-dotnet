@@ -117,7 +117,9 @@ namespace Unleash
             RegisterCount(toggleName, enabled);
 
             if (featureToggle?.ImpressionData ?? false)
+            {
                 EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
+            }
 
             return new FeatureEvaluationResult { Enabled = enabled, Variant = variant };
         }
@@ -130,15 +132,20 @@ namespace Unleash
         {
             strategy = null;
             if (featureToggle == null)
+            {
                 return defaultSetting;
+            }
 
             else if (!featureToggle.Enabled)
+            {
                 // Overall false
                 return false;
+            }
 
             else if (featureToggle.Strategies.Count == 0)
+            {
                 return true;
-
+            }
             else
             {
                 strategy = featureToggle.Strategies
@@ -171,7 +178,9 @@ namespace Unleash
                 return variant ?? VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
             }
             else
+            {
                 return defaultVariant;
+            }
         }
 
         public Variant GetVariant(string toggleName)
@@ -195,7 +204,9 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
 
             if (toggle?.ImpressionData ?? false)
+            {
                 EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
+            }
 
             return evaluationResult.Variant;
         }
