@@ -17,10 +17,10 @@ namespace Unleash.Tests.Variants
 {
     public class StrategyVariantTests
     {
-        const defaultToggleName = "item";
-        const defaultToggleType = "release";
-        const isEnabled = true;
-        const impressionDataDisabled = false,
+        const string defaultToggleName = "item";
+        const string defaultToggleType = "release";
+        const bool isEnabled = true;
+        const bool impressionDataDisabled = false;
 
         [Test]
         public void Picks_Strategy_Variant()
@@ -43,11 +43,11 @@ namespace Unleash.Tests.Variants
                             VariantsForStrategy()
                     ) },
                     VariantsForFeatureToggle()
-                };
+                )};
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = CreateUnleash(state);
 
             // Act
             var variant = unleash.GetVariant("item");
@@ -77,7 +77,7 @@ namespace Unleash.Tests.Variants
                             null
                     )},
                     VariantsForFeatureToggle()
-                };
+                )};
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
@@ -116,7 +116,7 @@ namespace Unleash.Tests.Variants
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = CreateUnleash(state);
 
             // Act
             var variant = unleash.GetVariant("item");
@@ -150,11 +150,11 @@ namespace Unleash.Tests.Variants
                             VariantsForStrategy()
                     ) },
                     VariantsForFeatureToggle()
-                };
+                )};
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = CreateUnleash(state);
 
             // Act
             var variant = unleash.GetVariant("item");
@@ -170,7 +170,7 @@ namespace Unleash.Tests.Variants
                 { "rollout", "100" },
                 { "groupId", groupName }
             };
-        };
+        }
 
         private static Dictionary<string, string> ParametersWith100RolloutOnly()
         {
@@ -178,7 +178,7 @@ namespace Unleash.Tests.Variants
             {
                 { "rollout", "100" }
             };
-        };
+        }
 
         public static List<VariantDefinition> VariantsForStrategy()
         {
@@ -206,10 +206,10 @@ namespace Unleash.Tests.Variants
         public static IUnleash CreateUnleash(ToggleCollection state)
         {
             var name = "test";
-            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>;
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
-            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>;
+            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
             var fakeFileSystem = new MockFileSystem();
             var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
 

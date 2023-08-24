@@ -159,14 +159,16 @@ namespace Unleash
         {
             if (enabled)
             {
+                Variant variant = null;
+
                 if (strategy != null)
                 {
                     strategy.Parameters.TryGetValue("groupId", out string groupId);
                     groupId = groupId ?? featureToggle.Name;
-                    return VariantUtils.SelectVariant(groupId, context, strategy.Variants);
+                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants);
                 }
 
-                return VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
+                return variant ?? VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
             }
             else
                 return defaultVariant;
