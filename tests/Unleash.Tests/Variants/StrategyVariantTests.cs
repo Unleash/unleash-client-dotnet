@@ -11,46 +11,38 @@ using Unleash.Scheduling;
 
 using Unleash.Tests.Mock;
 using Unleash.Variants;
+using System.Collections.Generic;
 
 namespace Unleash.Tests.Variants
 {
-	public class StrategyVariantTests
-	{
-		[Test]
-		public void Picks_Strategy_Variant()
-		{
+    public class StrategyVariantTests
+    {
+        const defaultToggleName = "item";
+        const defaultToggleType = "release";
+        const isEnabled = true;
+        const impressionDataDisabled = false,
+
+        [Test]
+        public void Picks_Strategy_Variant()
+        {
             // Arrange
-            var appname = "test";
             var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
-                    "item",
-                    "release",
-                    true,
-                    false,
+                    defaultToggleName,
+                    defaultToggleType,
+                    isEnabled,
+                    impressionDataDisabled,
                     new List<ActivationStrategy>
                     {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>
-                            {
-                                { "rollout", "100" },
-                                { "groupId", "grp" }
-                            },
-                            new List<Constraint>
-                                { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
+                            ParametersWith100RolloutAndGroupId("grp"),
+                            new List<Constraint> { DefaultConstraint() },
                             null,
-                            new List<VariantDefinition>
-                            {
-                                new VariantDefinition("Red", 50, new Payload("text", "red")),
-                                new VariantDefinition("Blue", 50, new Payload("text", "blue"))
-                        }
+                            VariantsForStrategy()
                     ) },
-                    new List<VariantDefinition>
-                    {
-                        new VariantDefinition("Green", 50, new Payload("text", "green")),
-                        new VariantDefinition("Black", 50, new Payload("text", "black"))
-                    })
+                    VariantsForFeatureToggle()
                 };
 
             var state = new ToggleCollection(toggles);
@@ -68,38 +60,28 @@ namespace Unleash.Tests.Variants
         public void Picks_Toggle_Variant_When_No_Strategy_Variants()
         {
             // Arrange
-            var appname = "test";
             var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
-                    "item",
-                    "release",
-                    true,
-                    false,
+                    defaultToggleName,
+                    defaultToggleType,
+                    isEnabled,
+                    impressionDataDisabled,
                     new List<ActivationStrategy>
                     {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>
-                            {
-                                { "rollout", "100" },
-                                { "groupId", "grp" }
-                            },
-                            new List<Constraint>
-                                { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
+                            ParametersWith100RolloutAndGroupId("grp"),
+                            new List<Constraint> { DefaultConstraint() },
                             null,
                             null
                     )},
-                    new List<VariantDefinition>
-                    {
-                        new VariantDefinition("Green", 50, new Payload("text", "green")),
-                        new VariantDefinition("Black", 50, new Payload("text", "black"))
-                    })
+                    VariantsForFeatureToggle()
                 };
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = CreateUnleash(state);
 
             // Act
             var variant = unleash.GetVariant("item");
@@ -112,25 +94,19 @@ namespace Unleash.Tests.Variants
         public void Returns_Default_Variant_When_No_Variants()
         {
             // Arrange
-            var appname = "test";
             var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
-                    "item",
-                    "release",
-                    true,
-                    false,
+                    defaultToggleName,
+                    defaultToggleType,
+                    isEnabled,
+                    impressionDataDisabled,
                     new List<ActivationStrategy>
                     {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>
-                            {
-                                { "percentage", "100" },
-                                { "groupId", "grp" }
-                            },
-                            new List<Constraint>
-                                { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
+                            ParametersWith100RolloutAndGroupId("grp"),
+                            new List<Constraint> { DefaultConstraint() },
                             null,
                             null
                         )
@@ -153,45 +129,27 @@ namespace Unleash.Tests.Variants
         public void Picks_Feature_Variant_When_First_Strategy_Has_No_Variants()
         {
             // Arrange
-            var appname = "test";
             var toggles = new List<FeatureToggle>
             {
                 new FeatureToggle(
-                    "item",
-                    "release",
-                    true,
-                    false,
+                    defaultToggleName,
+                    defaultToggleType,
+                    isEnabled,
+                    impressionDataDisabled,
                     new List<ActivationStrategy>
                     {
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>
-                            {
-                                { "rollout", "100" },
-                                { "groupId", "grp1" }
-                            }
+                            ParametersWith100RolloutAndGroupId("grp")
                         ),
                         new ActivationStrategy(
                             "flexibleRollout",
-                            new Dictionary<string, string>
-                            {
-                                { "rollout", "100" },
-                                { "groupId", "grp2" }
-                            },
-                            new List<Constraint>
-                                { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") },
+                            ParametersWith100RolloutAndGroupId("grp2"),
+                            new List<Constraint> { DefaultConstraint() },
                             null,
-                            new List<VariantDefinition>
-                            {
-                                new VariantDefinition("Red", 50, new Payload("text", "red")),
-                                new VariantDefinition("Blue", 50, new Payload("text", "blue"))
-                        }
+                            VariantsForStrategy()
                     ) },
-                    new List<VariantDefinition>
-                    {
-                        new VariantDefinition("Green", 50, new Payload("text", "green")),
-                        new VariantDefinition("Black", 50, new Payload("text", "black"))
-                    })
+                    VariantsForFeatureToggle()
                 };
 
             var state = new ToggleCollection(toggles);
@@ -205,8 +163,49 @@ namespace Unleash.Tests.Variants
             new[] { "Green", "Black" }.Should().Contain(variant.Name);
         }
 
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        private static Dictionary<string, string> ParametersWith100RolloutAndGroupId(string groupName)
         {
+            return new Dictionary<string, string>
+            {
+                { "rollout", "100" },
+                { "groupId", groupName }
+            };
+        };
+
+        private static Dictionary<string, string> ParametersWith100RolloutOnly()
+        {
+            return new Dictionary<string, string>
+            {
+                { "rollout", "100" }
+            };
+        };
+
+        public static List<VariantDefinition> VariantsForStrategy()
+        {
+            return new List<VariantDefinition>
+            {
+                new VariantDefinition("Red", 50, new Payload("text", "red")),
+                new VariantDefinition("Blue", 50, new Payload("text", "blue"))
+            };
+        }
+
+        public static List<VariantDefinition> VariantsForFeatureToggle()
+        {
+            return new List<VariantDefinition>
+            {
+                new VariantDefinition("Green", 50, new Payload("text", "green")),
+                new VariantDefinition("Black", 50, new Payload("text", "black"))
+            };
+        }
+
+        public static Constraint DefaultConstraint()
+        {
+            return new Constraint("item-id", Operator.NUM_EQ, false, false, "1");
+        }
+
+        public static IUnleash CreateUnleash(ToggleCollection state)
+        {
+            var name = "test";
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>;
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
