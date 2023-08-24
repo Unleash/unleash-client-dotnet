@@ -159,6 +159,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Variants\StrategyVariantTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Strategy\ApplicationHostnameStrategyTest.cs" />

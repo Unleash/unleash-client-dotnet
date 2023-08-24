@@ -8,13 +8,12 @@ namespace Unleash.Variants
 {
     internal class VariantUtils
     {
-        public static Variant SelectVariant(FeatureToggle featureToggle, UnleashContext context, Variant defaultVariant)
+        public static Variant SelectVariant(string groupId, UnleashContext context, List<VariantDefinition> variantDefinitions)
         {
-            var variantDefinitions = featureToggle.Variants;
             var totalWeight = variantDefinitions.Sum(v => v.Weight);
 
             if (totalWeight == 0) {
-                return defaultVariant;
+                return null;
             }
 
             var variantOverride = GetOverride(variantDefinitions, context);
@@ -24,7 +23,7 @@ namespace Unleash.Variants
             }
 
             var stickiness = variantDefinitions[0].Stickiness ?? "default";
-            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), featureToggle.Name, totalWeight);
+            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, totalWeight);
 
             var counter = 0;
             foreach (var variantDefinition in variantDefinitions)
@@ -39,7 +38,18 @@ namespace Unleash.Variants
                 }
             }
 
-            return defaultVariant;
+            return null;
+        }
+
+        public static Variant SelectVariant(FeatureToggle feature, UnleashContext context, Variant defaultVariant = null)
+        {
+            if (feature == null)
+            {
+                return defaultVariant;
+            }
+
+            return SelectVariant(feature.Name, context, feature.Variants) ?? defaultVariant;
+
         }
 
         private static VariantDefinition GetOverride(List<VariantDefinition> variants, UnleashContext context)

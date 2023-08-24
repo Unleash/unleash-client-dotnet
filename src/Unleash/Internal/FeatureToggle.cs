@@ -11,7 +11,7 @@ namespace Unleash.Internal
             Type = type;
             Enabled = enabled;
             ImpressionData = impressionData;
-            Strategies = strategies;
+            Strategies = strategies ?? new List<ActivationStrategy>();
             Variants = variants ?? new List<VariantDefinition>();
         }
 
