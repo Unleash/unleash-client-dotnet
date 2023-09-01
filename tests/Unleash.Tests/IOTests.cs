@@ -17,11 +17,11 @@ namespace Unleash.Tests
             var file = (string)data;
             using (var fs = File.Open(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
             {
-                fs.Lock(0, 0);
                 Task.Delay(10000).Wait();
             }
         }
 
+        [Test]
         public async Task GracefullyFailsWhenFileLocked()
         {
             var settings = new MockedUnleashSettings(false);
