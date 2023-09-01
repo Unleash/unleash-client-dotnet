@@ -16,13 +16,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Set up MSBuild in PATH for command
       - name: Setup MSBuild in PATH
         uses: microsoft/setup-msbuild@v1
         
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
@@ -35,3 +35,6 @@ jobs:
         
       - name: Build the solution
         run: msbuild Unleash.sln /p:Configuration=Release
+    
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal
