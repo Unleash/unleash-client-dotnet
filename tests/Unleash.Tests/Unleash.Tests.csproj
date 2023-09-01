@@ -25,56 +25,6 @@
 
   <ItemGroup>
     <None Remove="Integration\Data\README" />
-    <Compile Include="BaseTest.cs" />
-    <Compile Include="Communication\BaseUnleashApiClientTest.cs" />
-    <Compile Include="Communication\UnleashApiClient_Project_Tests.cs" />
-    <Compile Include="Communication\UnleashApiClient_RegisterClient_Tests.cs" />
-    <Compile Include="Communication\UnleashApiClient_SendMetrics_Tests.cs" />
-    <Compile Include="Communication\UnleashHttpClientFactory_RegisterHttpClient_Tests.cs" />
-    <Compile Include="ExampleTests.cs" />
-    <Compile Include="Integration\ClientSpecificationTests.cs" />
-    <Compile Include="Integration\TestCase.cs" />
-    <Compile Include="Integration\TestCaseVariant.cs" />
-    <Compile Include="Integration\TestDefinition.cs" />
-    <Compile Include="Integration\UnleashContextDefinition.cs" />
-    <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
-    <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
-    <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
-    <Compile Include="Internal\TogglesUpdatedEvent_Tests.cs" />
-    <Compile Include="Internal\ErrorEvents_Tests.cs" />
-    <Compile Include="Internal\ImpressionData_Tests.cs" />
-    <Compile Include="IOTests.cs" />
-    <Compile Include="Metrics\MetricsBucketTests.cs" />
-    <Compile Include="Mock\ConfigurableMessageHandlerMock.cs" />
-    <Compile Include="Mock\HttpClientFactoryMock.cs" />
-    <Compile Include="Mock\MockApiClient.cs" />
-    <Compile Include="Mock\MockHttpMessageHandler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Communication\UnleashApiClient_FetchToggles_Tests.cs" />
-    <Compile Include="Serialization\JsonNetSerializer.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="MockedUnleashSettings.cs" />
-    <Compile Include="Mock\MockFileSystem.cs" />
-    <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
-    <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
-    <Compile Include="Strategy\Constraints\ConstraintUtilsTests.cs" />
-    <Compile Include="Strategy\Constraints\DateConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\NumberConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\SemverConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\StringConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
-    <Compile Include="Strategy\StrategyTest.cs" />
-    <Compile Include="Strategy\StrategyUtilsTests.cs" />
-    <Compile Include="Strategy\Segments_Tests.cs" />
-    <Compile Include="Synchronization\SynchronizationTests.cs" />
-    <Compile Include="DefaultUnleashTests.cs" />
-    <Compile Include="UnleashContextTests.cs" />
-    <Compile Include="UnleashSettingsTests.cs" />
-    <Compile Include="Utilities\IPCIDRAddressRange_Tests.cs" />
-    <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
-    <Compile Include="Utilities\ToggleBootstrapUrlProvider_Tests.cs" />
-    <Compile Include="Variants\VariantUtilsTests.cs" />
-    <Compile Include="ClientFactory\SyncStartupUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -115,7 +65,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Variants\StrategyVariantTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
