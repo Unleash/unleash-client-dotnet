@@ -115,9 +115,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <Content Include="Integration\Data\README">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Variants\StrategyVariantTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

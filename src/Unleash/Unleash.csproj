@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <None Include="Internal\ActivationStrategy.cs" />
+    <None Include="Internal\FeatureEvaluationResult.cs" />
     <None Include="DefaultUnleash.cs" />
     <None Include="Internal\FeatureToggle.cs" />
     <None Include="Metrics\ClientMetrics.cs" />
