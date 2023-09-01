@@ -24,9 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Integration\Data\README" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="App_Data\impressiondata-v2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -70,5 +67,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Unleash\Unleash.csproj">
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Integration\Data\README">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

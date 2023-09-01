@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Unleash.Logging;
 using Unleash.Scheduling;
 using Unleash.Strategies.Constraints;
 using Unleash.Tests.Mock;
@@ -30,14 +29,12 @@ namespace Unleash.Tests.Specifications
 
     internal class TestFactory
     {
-        private static readonly ILog Logger = LogProvider.GetLogger(typeof(TestFactory));
         public static TestCaseData[] Tests { get; private set; }
 
 
         static TestFactory()
         {
             var specificationsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Integration", "Data");
-            Logger.Info(specificationsPath.ToString());
 
             using (var client = new HttpClient())
             {
