@@ -34,6 +34,7 @@ namespace Unleash.Tests.Specifications
         static TestFactory()
         {
             var specificationsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Integration", "Data");
+            Console.WriteLine(specificationsPath.ToString());
 
             using (var client = new HttpClient())
             {
