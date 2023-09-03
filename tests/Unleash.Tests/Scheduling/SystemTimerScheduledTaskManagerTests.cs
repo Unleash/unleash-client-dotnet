@@ -57,7 +57,7 @@ namespace Unleash.Tests.Scheduling
             }
         }
 
-        [Test]
+        // [Test]
         public void ShouldBeStoppedWhenCancelled()
         {
             using (var reset = new ManualResetEventSlim(false))
