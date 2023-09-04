@@ -13,7 +13,7 @@ var solutionPath = "./Unleash.sln";
 var unleashProjectFile = "./src/Unleash/Unleash.csproj";
 var buildDir = Directory("./src/Unleash/bin") + Directory(configuration);
 
-var csTestsVersion = "v4.3.1";
+var csTestsVersion = "v4.3.3";
 var clientSpecificationTestsURL = "https://raw.githubusercontent.com/Unleash/client-specification/" + csTestsVersion + "/specifications/";
 
 //
