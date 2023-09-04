@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Unleash.Scheduling;
 using Unleash.Strategies;
 
 namespace Unleash.ClientFactory
@@ -7,7 +9,7 @@ namespace Unleash.ClientFactory
     /// <inheritdoc />
     public class UnleashClientFactory : IUnleashClientFactory
     {
-        private static readonly TaskFactory TaskFactory = 
+        private static readonly TaskFactory TaskFactory =
             new TaskFactory(CancellationToken.None,
                           TaskCreationOptions.None,
                           TaskContinuationOptions.None,
@@ -22,15 +24,30 @@ namespace Unleash.ClientFactory
         {
             if (synchronousInitialization)
             {
-                settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings, strategies);
-                TaskFactory
-                    .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
-                    .Unwrap()
-                    .GetAwaiter()
-                    .GetResult();
-                
-                return unleash;
+                try
+                {
+
+                    settings.ScheduleFeatureToggleFetchImmediatly = false;
+                    var unleash = new DefaultUnleash(settings, strategies);
+                    TaskFactory
+                        .StartNew(() => unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None))
+                        .Unwrap()
+                        .GetAwaiter()
+                        .GetResult();
+
+                    return unleash;
+                }
+                catch (Exception ex)
+                {
+                    // Clean up
+                    if (settings.ScheduledTaskManager?.GetType() == typeof(SystemTimerScheduledTaskManager))
+                    {
+                        settings.ScheduledTaskManager.Dispose();
+                        settings.ScheduledTaskManager = new SystemTimerScheduledTaskManager();
+
+                    }
+                    throw new UnleashException("Unleash: Exception during synchronous initialization. See inner exception for details", ex);
+                }
             }
             return new DefaultUnleash(settings, strategies);
         }
@@ -45,10 +62,24 @@ namespace Unleash.ClientFactory
         {
             if (synchronousInitialization)
             {
-                settings.ScheduleFeatureToggleFetchImmediatly = false;
-                var unleash = new DefaultUnleash(settings, strategies);
-                await unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
-                return unleash;
+                try
+                {
+                    settings.ScheduleFeatureToggleFetchImmediatly = false;
+                    var unleash = new DefaultUnleash(settings, strategies);
+                    await unleash.services.FetchFeatureTogglesTask.ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
+                    return unleash;
+                }
+                catch (Exception ex)
+                {
+                    // Clean up
+                    if (settings.ScheduledTaskManager?.GetType() == typeof(SystemTimerScheduledTaskManager))
+                    {
+                        settings.ScheduledTaskManager.Dispose();
+                        settings.ScheduledTaskManager = new SystemTimerScheduledTaskManager();
+
+                    }
+                    throw new UnleashException("Unleash: Exception during synchronous initialization. See inner exception for details", ex);
+                }
             }
             return new DefaultUnleash(settings, strategies);
         }
