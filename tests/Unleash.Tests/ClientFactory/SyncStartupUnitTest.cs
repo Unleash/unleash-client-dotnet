@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Unleash.ClientFactory;
 using FluentAssertions;
 using System;
+using Unleash;
 
 namespace Unleash.Tests.ClientFactory
 {
@@ -51,7 +52,7 @@ namespace Unleash.Tests.ClientFactory
             A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
                 .Throws<Exception>();
 
-            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
+            Assert.ThrowsAsync<UnleashException>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
         }
 
         [Test(Description = "Immediate initialization: Should bubble up async fetch errors")]
@@ -61,7 +62,7 @@ namespace Unleash.Tests.ClientFactory
             A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
                 .ThrowsAsync(new Exception());
 
-            Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
+            Assert.ThrowsAsync<UnleashException>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
         }
 
         [Test(Description = "Delayed initialization: Should only fetch toggles once")]
