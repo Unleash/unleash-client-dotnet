@@ -5,13 +5,6 @@ name: Experimental
 # Controls when the action will run. 
 on:
   push:
-  workflow_dispatch:
-    inputs:
-        release-version:
-          description: 'Release Version'
-          type: string
-          required: false
-          default: '4.0.0'
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -43,7 +36,7 @@ jobs:
       # Get the versioning build variables in place
       - name: Set versioning build variables
         env:
-          NUGET_VERSION: ${{ inputs.release-version }}
+          NUGET_VERSION: 4.0.0
         run: |
           echo "nuget=${NUGET_VERSION}" >> $GITHUB_ENV
           echo "file=${NUGET_VERSION%-beta*}" >> $GITHUB_ENV
