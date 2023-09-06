@@ -47,4 +47,4 @@ jobs:
         run: msbuild Unleash.sln /p:Configuration=Release /p:Version=${{ env.nuget }} /p:FileVersion=${{ env.file }} /p:AssemblyVersion=${{ env.assembly }}
 
       - name: output files
-        run: find **\Unleash.Client.*.nupkg
+        run: find
