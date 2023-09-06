@@ -4,6 +4,7 @@ name: Experimental
 
 # Controls when the action will run. 
 on:
+  push:
   workflow_dispatch:
     inputs:
         release-version:
