@@ -163,6 +163,46 @@ namespace Unleash.Tests.Variants
             new[] { "Green", "Black" }.Should().Contain(variant.Name);
         }
 
+        [Test]
+        public void Valid_On_Second_Variant()
+        {
+            // Arrange
+            var toggles = new List<FeatureToggle>
+            {
+                new FeatureToggle(
+                    defaultToggleName,
+                    defaultToggleType,
+                    isEnabled,
+                    impressionDataDisabled,
+                    new List<ActivationStrategy>
+                    {
+                        new ActivationStrategy(
+                            "flexibleRollout",
+                            ParametersWith100RolloutAndGroupId("grp"),
+                            new List<Constraint> { new Constraint("item-id", Operator.NUM_EQ, false, false, "5") }
+                        ),
+                        new ActivationStrategy(
+                            "flexibleRollout",
+                            ParametersWith100RolloutAndGroupId("grp2"),
+                            new List<Constraint> { DefaultConstraint() },
+                            null,
+                            VariantsForStrategy()
+                    ) },
+                    VariantsForFeatureToggle()
+                )};
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(state);
+
+            // Act
+            var variant = unleash.GetVariant("item");
+
+            // Assert
+            new[] { "Red", "Blue" }.Should().Contain(variant.Name);
+            variant.IsEnabled.Should().BeTrue();
+        }
+
         private static Dictionary<string, string> ParametersWith100RolloutAndGroupId(string groupName)
         {
             return new Dictionary<string, string>

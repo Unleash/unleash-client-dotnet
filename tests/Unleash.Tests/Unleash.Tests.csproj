@@ -1,125 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props')" />
-  <Import Project="..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FF268018-34C4-45EB-937E-2E0AB25EEEDA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unleash.Tests</RootNamespace>
-    <AssemblyName>Unleash.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="FakeItEasy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FakeItEasy.5.5.0\lib\net45\FakeItEasy.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions, Version=5.9.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
-      <HintPath>..\..\packages\FluentAssertions.5.9.0\lib\net47\FluentAssertions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NuGet.Versioning, Version=6.1.0.106, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NuGet.Versioning.6.1.0\lib\net45\NuGet.Versioning.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
-      <HintPath>..\..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.5.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="FakeItEasy" Version="7.4.0" />
+    <PackageReference Include="FluentAssertions" Version="6.11.0" />
+    <PackageReference Include="NuGet.Versioning" Version="6.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NLog" Version="5.2.0" />
+    <PackageReference Include="NLog.Config" Version="4.7.15" />
+    <PackageReference Include="NLog.Schema" Version="5.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BaseTest.cs" />
-    <Compile Include="Communication\BaseUnleashApiClientTest.cs" />
-    <Compile Include="Communication\UnleashApiClient_Project_Tests.cs" />
-    <Compile Include="Communication\UnleashApiClient_RegisterClient_Tests.cs" />
-    <Compile Include="Communication\UnleashApiClient_SendMetrics_Tests.cs" />
-    <Compile Include="Communication\UnleashHttpClientFactory_RegisterHttpClient_Tests.cs" />
-    <Compile Include="ExampleTests.cs" />
-    <Compile Include="Integration\ClientSpecificationTests.cs" />
-    <Compile Include="Integration\TestCase.cs" />
-    <Compile Include="Integration\TestCaseVariant.cs" />
-    <Compile Include="Integration\TestDefinition.cs" />
-    <Compile Include="Integration\UnleashContextDefinition.cs" />
-    <Compile Include="Internal\CachedFilesLoaderTestBase.cs" />
-    <Compile Include="Internal\CachedFilesLoader_Backup_And_Etag_Tests.cs" />
-    <Compile Include="Internal\CachedFilesLoader_Bootstrap_Tests.cs" />
-    <Compile Include="Internal\TogglesUpdatedEvent_Tests.cs" />
-    <Compile Include="Internal\ErrorEvents_Tests.cs" />
-    <Compile Include="Internal\ImpressionData_Tests.cs" />
-    <Compile Include="IOTests.cs" />
-    <Compile Include="Metrics\MetricsBucketTests.cs" />
-    <Compile Include="Mock\ConfigurableMessageHandlerMock.cs" />
-    <Compile Include="Mock\HttpClientFactoryMock.cs" />
-    <Compile Include="Mock\MockApiClient.cs" />
-    <Compile Include="Mock\MockHttpMessageHandler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Communication\UnleashApiClient_FetchToggles_Tests.cs" />
-    <Compile Include="Serialization\JsonNetSerializer.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="MockedUnleashSettings.cs" />
-    <Compile Include="Mock\MockFileSystem.cs" />
-    <Compile Include="Serialization\DynamicJsonSerializerTests.cs" />
-    <Compile Include="Scheduling\SystemTimerScheduledTaskManagerTests.cs" />
-    <Compile Include="Strategy\Constraints\ConstraintUtilsTests.cs" />
-    <Compile Include="Strategy\Constraints\DateConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\NumberConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\SemverConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\Constraints\StringConstraintOperator_Tests.cs" />
-    <Compile Include="Strategy\FlexibleRolloutStrategyTest.cs" />
-    <Compile Include="Strategy\StrategyTest.cs" />
-    <Compile Include="Strategy\StrategyUtilsTests.cs" />
-    <Compile Include="Strategy\Segments_Tests.cs" />
-    <Compile Include="Synchronization\SynchronizationTests.cs" />
-    <Compile Include="DefaultUnleashTests.cs" />
-    <Compile Include="UnleashContextTests.cs" />
-    <Compile Include="UnleashSettingsTests.cs" />
-    <Compile Include="Utilities\IPCIDRAddressRange_Tests.cs" />
-    <Compile Include="Utilities\ToggleBootstrapFileProvider_Tests.cs" />
-    <Compile Include="Utilities\ToggleBootstrapUrlProvider_Tests.cs" />
-    <Compile Include="Variants\VariantUtilsTests.cs" />
-    <Compile Include="ClientFactory\SyncStartupUnitTest.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <None Include="App.config" />
     <None Include="App_Data\impressiondata-v2.json">
@@ -159,30 +62,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Variants\StrategyVariantTests.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Strategy\ApplicationHostnameStrategyTest.cs" />
-    <Compile Include="Strategy\GradualRolloutRandomStrategyTest.cs" />
-    <Compile Include="Strategy\GradualRolloutSessionIdStrategyTest.cs" />
-    <Compile Include="Strategy\GradualRolloutUserIdStrategyTest.cs" />
-    <Compile Include="Strategy\RemoteAddressStrategyTest.cs" />
-    <Compile Include="Strategy\UserWithIdStrategyTest.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Unleash\Unleash.csproj">
-      <Project>{4cf2127b-8fc8-46fc-8614-3918148463a5}</Project>
-      <Name>Unleash</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit.3.12.0\build\NUnit.props'))" />
-    <Error Condition="!Exists('..\..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props'))" />
-  </Target>
+  <ItemGroup>
+    <None Update="Integration\Data\README">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

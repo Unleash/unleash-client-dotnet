@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <TargetFrameworks>netstandard2.0;net47;net461;net46;net451;net45</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <RootNamespace>Unleash</RootNamespace>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>

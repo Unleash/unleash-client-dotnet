@@ -11,20 +11,20 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Set up MSBuild in PATH for command
       - name: Setup MSBuild in PATH
         uses: microsoft/setup-msbuild@v1
         
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: '6.0.x'
 
       # Get NuGet setup for restoring, packaging and pushing
       - name: Setup NuGet
@@ -35,8 +35,6 @@ jobs:
         
       - name: Build the solution
         run: msbuild Unleash.sln /p:Configuration=Release
-      
-      # '& "$(vswhere -property installationPath)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" tests\Unleash.Tests\bin\Release\Unleash.Tests.dll'
-      - name: Run the tests with cake
-        run: .\build.ps1
-        shell: powershell
+    
+      - name: Run tests
+        run: dotnet test tests/Unleash.Tests/Unleash.Tests.csproj --no-restore --verbosity normal
