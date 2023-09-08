@@ -62,10 +62,6 @@ namespace Unleash.Scheduling
             {
                 return;
             }
-            else
-            {
-                eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
-            }
 
             if (string.IsNullOrEmpty(result.Etag))
                 return;
@@ -74,6 +70,9 @@ namespace Unleash.Scheduling
                 return;
 
             toggleCollection.Instance = result.ToggleCollection;
+
+            // now that the toggle collection has been updated, raise the toggles updated event if configured
+            eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
 
             try
             {
