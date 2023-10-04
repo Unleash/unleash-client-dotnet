@@ -538,3 +538,7 @@ The Unleash team have made a separate project which runs unleash server inside d
 Visual Studio 2017 / Code
 
 Cakebuild
+
+### Other information
+
+- Check out our guide for more information on how to build and scale [feature flag](https://docs.getunleash.io/topics/feature-flags/feature-flag-best-practices) systems
