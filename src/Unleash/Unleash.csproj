@@ -88,6 +88,9 @@
   
   <ItemGroup>
     <Folder Include="ClientFactory\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <PropertyGroup>
@@ -125,6 +128,7 @@
     <PackageProjectUrl>https://github.com/Unleash/unleash-client-dotnet</PackageProjectUrl>
     <IncludeSymbols>True</IncludeSymbols>
     <Company>Unleash</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
