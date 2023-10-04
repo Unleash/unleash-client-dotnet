@@ -111,7 +111,7 @@ namespace Unleash
         {
             var featureToggle = GetToggle(toggleName);
             var enhancedContext = context.ApplyStaticFields(settings);
-            var enabled = DetermineIsEnabledAndStrategy(featureToggle, enhancedContext, defaultSetting, out var strategy);
+            var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
 
             RegisterCount(toggleName, enabled);
@@ -125,6 +125,7 @@ namespace Unleash
         }
 
         private bool DetermineIsEnabledAndStrategy(
+            string toggleName,
             FeatureToggle featureToggle,
             UnleashContext enhancedContext,
             bool defaultSetting,
@@ -133,6 +134,7 @@ namespace Unleash
             strategy = null;
             if (featureToggle == null)
             {
+                Logger.Warn($"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
                 return defaultSetting;
             }
 
