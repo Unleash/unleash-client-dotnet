@@ -414,7 +414,7 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 * When .json file does not exists
 * When the named feature toggle does not exist in .json file
 
-The backup file name will follow this pattern: `{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}`, where InstanceTag is either what you configure on `UnleashSettings` during startup, or a formatted string with a random component following this pattern: `{Dns.GetHostName()}-generated-{Guid.NewGuid()}`.
+The backup file name will follow this pattern: `{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}.{extension}`, where InstanceTag is either what you configure on `UnleashSettings` during startup, or a formatted string with a random component following this pattern: `{Dns.GetHostName()}-generated-{Guid.NewGuid()}`.
 
 You can configure InstanceTag like this:
 
