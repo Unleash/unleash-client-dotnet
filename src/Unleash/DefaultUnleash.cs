@@ -105,7 +105,10 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
+            var enabled = CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
+            RegisterCount(toggleName, enabled);
+
+            return enabled;
         }
 
         private FeatureEvaluationResult CheckIsEnabled(
@@ -118,8 +121,6 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
             var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
-
-            RegisterCount(toggleName, enabled);
 
             if (featureToggle?.ImpressionData ?? false)
             {
@@ -193,10 +194,10 @@ namespace Unleash
                 {
                     return dependency.Variants.Contains(GetVariant(dependency.Feature, context).Name);
                 }
-                return IsEnabled(dependency.Feature, context, false);
+                return CheckIsEnabled(dependency.Feature, context, false).Enabled;
             }
 
-            return !IsEnabled(dependency.Feature, context, false);
+            return !CheckIsEnabled(dependency.Feature, context, false).Enabled;
         }
 
         private Variant DetermineVariant(bool enabled,
@@ -244,6 +245,8 @@ namespace Unleash
             var toggle = GetToggle(toggleName);
 
             var evaluationResult = CheckIsEnabled(toggleName, context, false, defaultValue);
+
+            RegisterCount(toggleName, evaluationResult.Enabled);
 
             RegisterVariant(toggleName, evaluationResult.Variant);
 

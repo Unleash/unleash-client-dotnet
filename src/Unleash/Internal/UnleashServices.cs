@@ -16,7 +16,7 @@ namespace Unleash
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
-        const string supportedSpecVersion = "4.2.0";
+        const string supportedSpecVersion = "4.5.1";
 
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }

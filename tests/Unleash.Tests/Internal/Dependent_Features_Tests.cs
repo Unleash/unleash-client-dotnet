@@ -102,6 +102,70 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
+        public void Depends_On_One_Enabled_Parent_Counts_Metrics_Only_For_Child()
+        {
+            // Arrange
+            var appname = "testapp";
+            var dependencies = new List<Dependency>()
+            {
+                new Dependency("parent-enabled-1"),
+            };
+            var toggles = new List<FeatureToggle>()
+            {
+                ParentEnabledOne(),
+                ParentEnabledTwo(),
+                ChildDependentOn("child-1", dependencies)
+            };
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+
+            // Act
+            var result = unleash.IsEnabled("child-1");
+
+            // Assert
+            unleash.services.MetricsBucket.StopCollectingMetrics(out var bucket);
+            var childMetrics = bucket.Toggles.Single(t => t.Key == "child-1").Value;
+            (childMetrics.No + childMetrics.Yes).Should().Be(1L);
+
+            var parentMetrics = bucket.Toggles.Any(t => t.Key == "parent-enabled-1").Should().BeFalse();
+        }
+
+        [Test]
+        public void Depends_On_One_Enabled_Parent_Fires_Impression_Events_For_Both_Parend_And_Child()
+        {
+            // Arrange
+            var appname = "testapp";
+            var impressionEventCount = 0;
+            var dependencies = new List<Dependency>()
+            {
+                new Dependency("parent-enabled-1"),
+            };
+            var toggles = new List<FeatureToggle>()
+            {
+                ParentEnabledOne(impressionData: true),
+                ParentEnabledTwo(impressionData: true),
+                ChildDependentOn("child-1", dependencies, impressionData: true)
+            };
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+            unleash.ConfigureEvents(cfg =>
+            {
+                cfg.ImpressionEvent = (ev) =>
+                {
+                    impressionEventCount++;
+                };
+            });
+
+            // Act
+            var result = unleash.IsEnabled("child-1");
+
+            // Assert
+            impressionEventCount.Should().Be(2);
+        }
+
+        [Test]
         public void Depends_On_One_Enabled_Parent_With_No_Variants_Expects_Red_Or_Blue_IsEnabled_False()
         {
             // Arrange
@@ -345,19 +409,19 @@ namespace Unleash.Tests.Internal
             result.Should().BeFalse();
         }
 
-        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies) 
+        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies, bool impressionData = false) 
         {
-            return new FeatureToggle(name, "release", true, false, OnlyFlexibleRollout100Pct(), dependencies: dependencies);
+            return new FeatureToggle(name, "release", true, impressionData, OnlyFlexibleRollout100Pct(), dependencies: dependencies);
         }
 
-        public static FeatureToggle ParentNotEnabledOne()
+        public static FeatureToggle ParentNotEnabledOne(bool impressionData = false)
         {
-            return new FeatureToggle("parent-not-enabled-1", "release", true, false, OnlyFlexibleRolloutNone());
+            return new FeatureToggle("parent-not-enabled-1", "release", true, impressionData, OnlyFlexibleRolloutNone());
         }
 
-        public static FeatureToggle ParentEnabledOne()
+        public static FeatureToggle ParentEnabledOne(bool impressionData = false)
         {
-            return new FeatureToggle("parent-enabled-1", "release", true, false, OnlyFlexibleRollout100Pct());
+            return new FeatureToggle("parent-enabled-1", "release", true, impressionData, OnlyFlexibleRollout100Pct());
         }
 
         public static FeatureToggle ParentWithVariantsRedBlueEnabledOne()
@@ -365,9 +429,9 @@ namespace Unleash.Tests.Internal
             return new FeatureToggle("parent-variants-enabled-1", "release", true, false, OnlyFlexibleRollout100PctVariantsRedBlue());
         }
 
-        public static FeatureToggle ParentEnabledTwo()
+        public static FeatureToggle ParentEnabledTwo(bool impressionData = false)
         {
-            return new FeatureToggle("parent-enabled-2", "release", true, false, OnlyFlexibleRollout100Pct());
+            return new FeatureToggle("parent-enabled-2", "release", true, impressionData, OnlyFlexibleRollout100Pct());
         }
 
         public static List<ActivationStrategy> OnlyFlexibleRollout100Pct(List<Constraint>? constraints = null)
@@ -414,7 +478,7 @@ namespace Unleash.Tests.Internal
                 };
         }
 
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        public static DefaultUnleash CreateUnleash(string name, ToggleCollection state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
