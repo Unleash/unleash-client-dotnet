@@ -192,7 +192,8 @@ namespace Unleash
             if (dependency.Enabled) {
                 if (dependency.Variants != null && dependency.Variants.Any())
                 {
-                    return dependency.Variants.Contains(GetVariant(dependency.Feature, context).Name);
+                    var checkResult = CheckIsEnabled(dependency.Feature, context, false, Variant.DISABLED_VARIANT);
+                    return checkResult.Enabled  && dependency.Variants.Contains(checkResult.Variant.Name);
                 }
                 return CheckIsEnabled(dependency.Feature, context, false).Enabled;
             }

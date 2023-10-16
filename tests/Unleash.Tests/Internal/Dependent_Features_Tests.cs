@@ -132,6 +132,70 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
+        public void Depends_On_One_Parent_With_No_Variants_Returns_Own_Variant()
+        {
+            // Arrange
+            var appname = "testapp";
+            var dependencies = new List<Dependency>()
+            {
+                new Dependency("parent-enabled-1"),
+            };
+            var childVariants = new List<VariantDefinition>()
+            {
+                new VariantDefinition("red", 50, new Payload("colour", "Red")),
+                new VariantDefinition("blue", 50, new Payload("colour", "Blue")),
+            };
+
+            var toggles = new List<FeatureToggle>()
+            {
+                ParentEnabledOne(),
+                ParentEnabledTwo(),
+                ChildDependentOn("child-1", dependencies, variants: childVariants)
+            };
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+
+            // Act
+            var result = unleash.GetVariant("child-1");
+
+            // Assert
+            result.Name.Should().BeOneOf("red", "blue");
+        }
+
+        [Test]
+        public void Depends_On_One_Parent_With_Variant_Disabled_Returns_Own_Variant()
+        {
+            // Arrange
+            var appname = "testapp";
+            var dependencies = new List<Dependency>()
+            {
+                new Dependency("parent-enabled-1", variants: new [] { "disabled" }),
+            };
+            var childVariants = new List<VariantDefinition>()
+            {
+                new VariantDefinition("red", 50, new Payload("colour", "Red")),
+                new VariantDefinition("blue", 50, new Payload("colour", "Blue")),
+            };
+
+            var toggles = new List<FeatureToggle>()
+            {
+                ParentEnabledOne(),
+                ParentEnabledTwo(),
+                ChildDependentOn("child-1", dependencies, variants: childVariants)
+            };
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+
+            // Act
+            var result = unleash.GetVariant("child-1");
+
+            // Assert
+            result.Name.Should().BeOneOf("red", "blue");
+        }
+
+        [Test]
         public void Depends_On_One_Enabled_Parent_Fires_Impression_Events_For_Both_Parend_And_Child()
         {
             // Arrange
@@ -215,6 +279,32 @@ namespace Unleash.Tests.Internal
 
             // Assert
             result.Should().BeTrue();
+        }
+
+        [Test]
+        public void Depends_On_One_NotEnabled_Parent_With_No_Variants_Expects_Disabled_IsEnabled_False()
+        {
+            // Arrange
+            var appname = "testapp";
+            var dependencies = new List<Dependency>()
+            {
+                new Dependency("parent-not-enabled-1", variants: new [] { "disabled" }),
+            };
+            var toggles = new List<FeatureToggle>()
+            {
+                ParentNotEnabledOne(),
+                ParentEnabledTwo(),
+                ChildDependentOn("child-1", dependencies)
+            };
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = CreateUnleash(appname, state);
+
+            // Act
+            var result = unleash.IsEnabled("child-1");
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -409,9 +499,9 @@ namespace Unleash.Tests.Internal
             result.Should().BeFalse();
         }
 
-        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies, bool impressionData = false) 
+        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies, bool impressionData = false, List<VariantDefinition>? variants = null) 
         {
-            return new FeatureToggle(name, "release", true, impressionData, OnlyFlexibleRollout100Pct(), dependencies: dependencies);
+            return new FeatureToggle(name, "release", true, impressionData, OnlyFlexibleRollout100Pct(), dependencies: dependencies, variants: variants);
         }
 
         public static FeatureToggle ParentNotEnabledOne(bool impressionData = false)
