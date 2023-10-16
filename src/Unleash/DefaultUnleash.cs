@@ -8,6 +8,7 @@ namespace Unleash
     using System.Linq;
     using System.Threading;
     using Unleash.Events;
+    using Unleash.Utilities;
     using Unleash.Variants;
 
     /// <inheritdoc />
@@ -38,6 +39,8 @@ namespace Unleash
 
         internal readonly UnleashServices services;
 
+        private readonly WarnOnce warnOnce;
+
         ///// <summary>
         ///// Initializes a new instance of Unleash client with a set of default strategies.
         ///// </summary>
@@ -58,6 +61,8 @@ namespace Unleash
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 
             this.settings = settings;
+
+            warnOnce = new WarnOnce(Logger);
 
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
@@ -155,9 +160,43 @@ namespace Unleash
                         GetStrategyOrUnknown(s.Name)
                         .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
                     );
-
-                return strategy != null;
             }
+
+            if (featureToggle.Dependencies.Any() && !ParentDependenciesAreSatisfied(featureToggle, enhancedContext))
+            {
+                return false;
+            }
+
+            return strategy != null;
+        }
+
+        private bool ParentDependenciesAreSatisfied(FeatureToggle featureToggle, UnleashContext context)
+        {
+            return featureToggle.Dependencies.All(d => DependenciesSatisfied(d, context));
+        }
+
+        private bool DependenciesSatisfied(Dependency dependency, UnleashContext context)
+        {
+            var parentToggle = GetToggle(dependency.Feature);
+            if (parentToggle == null)
+            {
+                warnOnce.Warn(dependency.Feature, $"UNLEASH: Parent feature toggle {dependency.Feature} was not found in the cache, the evaluation of this dependency will always be false");
+                return false;
+            }
+
+            if (parentToggle.Dependencies.Any()) {
+                return false;
+            }
+
+            if (dependency.Enabled) {
+                if (dependency.Variants != null && dependency.Variants.Any())
+                {
+                    return dependency.Variants.Contains(GetVariant(dependency.Feature, context).Name);
+                }
+                return IsEnabled(dependency.Feature, context, false);
+            }
+
+            return !IsEnabled(dependency.Feature, context, false);
         }
 
         private Variant DetermineVariant(bool enabled,
@@ -193,6 +232,11 @@ namespace Unleash
         public Variant GetVariant(string toggleName, Variant defaultVariant)
         {
             return GetVariant(toggleName, services.ContextProvider.Context, defaultVariant);
+        }
+
+        public Variant GetVariant(string toggleName, UnleashContext context)
+        {
+            return GetVariant(toggleName, context, Variant.DISABLED_VARIANT);
         }
 
         public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
