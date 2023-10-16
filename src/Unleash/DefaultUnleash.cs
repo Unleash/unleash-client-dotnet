@@ -173,15 +173,15 @@ namespace Unleash
 
         private bool ParentDependenciesAreSatisfied(FeatureToggle featureToggle, UnleashContext context)
         {
-            return featureToggle.Dependencies.All(d => DependenciesSatisfied(d, context));
+            return featureToggle.Dependencies.All(d => DependenciesSatisfied(featureToggle, d, context));
         }
 
-        private bool DependenciesSatisfied(Dependency dependency, UnleashContext context)
+        private bool DependenciesSatisfied(FeatureToggle featureToggle, Dependency dependency, UnleashContext context)
         {
             var parentToggle = GetToggle(dependency.Feature);
             if (parentToggle == null)
             {
-                warnOnce.Warn(dependency.Feature, $"UNLEASH: Parent feature toggle {dependency.Feature} was not found in the cache, the evaluation of this dependency will always be false");
+                warnOnce.Warn(dependency.Feature + featureToggle.Name, $"UNLEASH: Parent feature toggle {dependency.Feature} was not found in the cache, the evaluation of this dependency will always be false");
                 return false;
             }
 
