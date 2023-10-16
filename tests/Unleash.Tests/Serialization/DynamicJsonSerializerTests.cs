@@ -136,5 +136,19 @@ namespace Unleash.Tests.Serialization
             var contains = serialized.IndexOf("\"ImpressionData\":true") >= 0;
             contains.Should().BeTrue();
         }
+
+        [Test]
+        public void Dependent_Feature_Enabled_Defaults_To_True() {
+            // Arrange
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "App_Data", "dependent-features-missing-enabled.json");
+            var originalJson = File.ReadAllText(path);
+
+            // Act
+            var deserialized = JsonConvert.DeserializeObject<ToggleCollection>(originalJson);
+            var toggle = deserialized.Features.First(f => f.Name == "enabled-child");
+            toggle.Should().NotBeNull();
+            toggle.Dependencies.Should().NotBeEmpty();
+            toggle.Dependencies.First().Enabled.Should().BeTrue();
+        }
     }
 }
