@@ -111,6 +111,8 @@ namespace Unleash.Tests.Serialization
 
             // Act
             var deserialized = JsonConvert.DeserializeObject<ToggleCollection>(originalJson);
+
+            // Assert
             var toggle = deserialized.Features.First();
             toggle.Should().NotBeNull();
             toggle.ImpressionData.Should().BeTrue();
@@ -146,6 +148,8 @@ namespace Unleash.Tests.Serialization
             // Act
             var deserialized = JsonConvert.DeserializeObject<ToggleCollection>(originalJson);
             var toggle = deserialized.Features.First(f => f.Name == "enabled-child");
+
+            // Assert
             toggle.Should().NotBeNull();
             toggle.Dependencies.Should().NotBeEmpty();
             toggle.Dependencies.First().Enabled.Should().BeTrue();
