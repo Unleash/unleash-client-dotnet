@@ -4,13 +4,13 @@ using Unleash.Logging;
 
 namespace Unleash.Utilities
 {
-	internal class WarnOnce
-	{
+    internal class WarnOnce
+    {
         private readonly ILog logger;
         private readonly HashSet<string> seen = new HashSet<string>();
 
         public WarnOnce(ILog logger)
-		{
+        {
             this.logger = logger;
         }
 
@@ -24,6 +24,6 @@ namespace Unleash.Utilities
             seen.Add(key);
             logger.Warn(message);
         }
-	}
+    }
 }
 
