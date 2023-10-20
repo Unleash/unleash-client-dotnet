@@ -21,6 +21,8 @@ Read more of the main project at [github.com/unleash/unleash](https://github.com
 ## Features
 Supported Frameworks
 * NET Standard 2.0
+* .Net 4.8
+* .Net 4.7.2
 * .Net 4.7
 * .Net 4.6.1
 * .Net 4.6
