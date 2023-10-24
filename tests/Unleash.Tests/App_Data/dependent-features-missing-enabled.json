@@ -1,0 +1,34 @@
+{
+    "version": 2,
+    "features": [
+      {
+        "name": "enabled-child",
+        "description": "Depends on parent",
+        "enabled": true,
+        "impressionData": false,
+        "strategies": [
+          {
+            "name": "default",
+            "parameters": {}
+          }
+        ],
+        "dependencies": [
+          {
+            "feature": "enabled-parent"
+          }
+        ]
+      },
+      {
+        "name": "enabled-parent",
+        "description": "A parent to depend upon",
+        "enabled": true,
+        "impressionData": false,
+        "strategies": [
+          {
+            "name": "default",
+            "parameters": {}
+          }
+        ]
+      }  
+    ]
+  }

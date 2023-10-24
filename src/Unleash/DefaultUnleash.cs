@@ -8,6 +8,7 @@ namespace Unleash
     using System.Linq;
     using System.Threading;
     using Unleash.Events;
+    using Unleash.Utilities;
     using Unleash.Variants;
 
     /// <inheritdoc />
@@ -38,6 +39,8 @@ namespace Unleash
 
         internal readonly UnleashServices services;
 
+        private readonly WarnOnce warnOnce;
+
         ///// <summary>
         ///// Initializes a new instance of Unleash client with a set of default strategies.
         ///// </summary>
@@ -58,6 +61,8 @@ namespace Unleash
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 
             this.settings = settings;
+
+            warnOnce = new WarnOnce(Logger);
 
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
@@ -100,7 +105,10 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            return CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
+            var enabled = CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
+            RegisterCount(toggleName, enabled);
+
+            return enabled;
         }
 
         private FeatureEvaluationResult CheckIsEnabled(
@@ -113,8 +121,6 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
             var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
-
-            RegisterCount(toggleName, enabled);
 
             if (featureToggle?.ImpressionData ?? false)
             {
@@ -155,9 +161,44 @@ namespace Unleash
                         GetStrategyOrUnknown(s.Name)
                         .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
                     );
-
-                return strategy != null;
             }
+
+            if (featureToggle.Dependencies.Any() && !ParentDependenciesAreSatisfied(featureToggle, enhancedContext))
+            {
+                return false;
+            }
+
+            return strategy != null;
+        }
+
+        private bool ParentDependenciesAreSatisfied(FeatureToggle featureToggle, UnleashContext context)
+        {
+            return featureToggle.Dependencies.All(d => DependenciesSatisfied(featureToggle, d, context));
+        }
+
+        private bool DependenciesSatisfied(FeatureToggle featureToggle, Dependency dependency, UnleashContext context)
+        {
+            var parentToggle = GetToggle(dependency.Feature);
+            if (parentToggle == null)
+            {
+                warnOnce.Warn(dependency.Feature + featureToggle.Name, $"UNLEASH: Parent feature toggle {dependency.Feature} was not found in the cache, the evaluation of this dependency will always be false");
+                return false;
+            }
+
+            if (parentToggle.Dependencies.Any()) {
+                return false;
+            }
+
+            if (dependency.Enabled) {
+                if (dependency.Variants != null && dependency.Variants.Any())
+                {
+                    var checkResult = CheckIsEnabled(dependency.Feature, context, false, Variant.DISABLED_VARIANT);
+                    return checkResult.Enabled  && dependency.Variants.Contains(checkResult.Variant.Name);
+                }
+                return CheckIsEnabled(dependency.Feature, context, false).Enabled;
+            }
+
+            return !CheckIsEnabled(dependency.Feature, context, false).Enabled;
         }
 
         private Variant DetermineVariant(bool enabled,
@@ -195,11 +236,18 @@ namespace Unleash
             return GetVariant(toggleName, services.ContextProvider.Context, defaultVariant);
         }
 
+        public Variant GetVariant(string toggleName, UnleashContext context)
+        {
+            return GetVariant(toggleName, context, Variant.DISABLED_VARIANT);
+        }
+
         public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
         {
             var toggle = GetToggle(toggleName);
 
             var evaluationResult = CheckIsEnabled(toggleName, context, false, defaultValue);
+
+            RegisterCount(toggleName, evaluationResult.Enabled);
 
             RegisterVariant(toggleName, evaluationResult.Variant);
 
