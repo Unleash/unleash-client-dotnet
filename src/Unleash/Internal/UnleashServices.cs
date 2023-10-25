@@ -24,6 +24,7 @@ namespace Unleash
         internal bool IsMetricsDisabled { get; }
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
+        internal UnleashEngine UnleashEngine { get; }
 
         public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
         {
@@ -31,6 +32,7 @@ namespace Unleash
             {
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
+            UnleashEngine = new UnleashEngine();
 
             var backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
@@ -39,7 +41,14 @@ namespace Unleash
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            var loader = new CachedFilesLoader(settings.JsonSerializer, settings.FileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
+            var loader = new CachedFilesLoader(
+                settings.JsonSerializer,
+                settings.FileSystem,
+                settings.ToggleBootstrapProvider,
+                eventConfig,
+                backupFile,
+                etagBackupFile,
+                settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
             ToggleCollection = new ThreadSafeToggleCollection
@@ -66,7 +75,7 @@ namespace Unleash
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
-                }, eventConfig, settings.ProjectId);
+                }, eventConfig, UnleashEngine, settings.ProjectId);
             }
             else
             {
@@ -84,7 +93,8 @@ namespace Unleash
                 settings.JsonSerializer, 
                 settings.FileSystem,
                 eventConfig,
-                backupFile, 
+                UnleashEngine,
+                backupFile,
                 etagBackupFile)
             {
                 ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
@@ -131,6 +141,7 @@ namespace Unleash
                 cancellationTokenSource.Cancel();
             }
 
+            UnleashEngine?.Dispose();
             scheduledTaskManager?.Dispose();
             ToggleCollection?.Dispose();
         }

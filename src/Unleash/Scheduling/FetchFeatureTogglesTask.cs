@@ -19,6 +19,7 @@ namespace Unleash.Scheduling
 
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
+        private readonly UnleashEngine engine;
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly ThreadSafeToggleCollection toggleCollection;
@@ -32,6 +33,7 @@ namespace Unleash.Scheduling
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
+            UnleashEngine engine,
             string toggleFile,
             string etagFile)
         {
@@ -40,6 +42,7 @@ namespace Unleash.Scheduling
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
+            this.engine = engine;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }

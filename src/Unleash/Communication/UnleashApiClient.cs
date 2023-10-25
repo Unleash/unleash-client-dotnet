@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Events;
@@ -20,6 +21,7 @@ namespace Unleash.Communication
         private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
         private readonly EventCallbackConfig eventConfig;
+        private readonly UnleashEngine engine;
         private readonly string projectId;
 
         public UnleashApiClient(
@@ -27,12 +29,14 @@ namespace Unleash.Communication
             IJsonSerializer jsonSerializer, 
             UnleashApiClientRequestHeaders clientRequestHeaders,
             EventCallbackConfig eventConfig,
+            UnleashEngine engine,
             string projectId = null)
         {
             this.httpClient = httpClient;
             this.jsonSerializer = jsonSerializer;
             this.clientRequestHeaders = clientRequestHeaders;
             this.eventConfig = eventConfig;
+            this.engine = engine;
             this.projectId = projectId;
         }
 
@@ -75,7 +79,15 @@ namespace Unleash.Communication
                         };
                     }
 
-                    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                    var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+                    if (engine != null)
+                    {
+                        engine.TakeState(content);
+                    }
+
+                    //var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                     var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
 
                     if (toggleCollection == null)

@@ -7,7 +7,6 @@ namespace Unleash
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Unleash.Events;
     using Unleash.Utilities;
     using Unleash.Variants;
 
@@ -105,10 +104,18 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var enabled = CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
-            RegisterCount(toggleName, enabled);
+            var ctx = new Context()
+            {
+                AppName = context.AppName,
+                CurrentTime = context.CurrentTime?.ToString(),
+                Environment = context.Environment,
+                Properties = context.Properties,
+                RemoteAddress = context.RemoteAddress,
+                SessionId = context.SessionId,
+                UserId = context.UserId
+            };
 
-            return enabled;
+            return services.UnleashEngine.IsEnabled(toggleName, ctx);
         }
 
         private FeatureEvaluationResult CheckIsEnabled(
@@ -243,22 +250,20 @@ namespace Unleash
 
         public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
         {
-            var toggle = GetToggle(toggleName);
-
-            var evaluationResult = CheckIsEnabled(toggleName, context, false, defaultValue);
-
-            RegisterCount(toggleName, evaluationResult.Enabled);
-
-            RegisterVariant(toggleName, evaluationResult.Variant);
-
-            var enhancedContext = context.ApplyStaticFields(settings);
-
-            if (toggle?.ImpressionData ?? false)
+            var ctx = new Context()
             {
-                EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
-            }
+                AppName = context.AppName,
+                CurrentTime = context.CurrentTime?.ToString(),
+                Environment = context.Environment,
+                Properties = context.Properties,
+                RemoteAddress = context.RemoteAddress,
+                SessionId = context.SessionId,
+                UserId = context.UserId
+            };
 
-            return evaluationResult.Variant;
+            var variant = services.UnleashEngine.GetVariant(toggleName, ctx);
+
+            return variant;
         }
 
         public IEnumerable<VariantDefinition> GetVariants(string toggleName)
@@ -281,22 +286,6 @@ namespace Unleash
                 .ToggleCollection
                 .Instance
                 .GetToggleByName(toggleName);
-        }
-
-        private void RegisterCount(string toggleName, bool enabled)
-        {
-            if (services.IsMetricsDisabled)
-                return;
-
-            services.MetricsBucket.RegisterCount(toggleName, enabled);
-        }
-
-        private void RegisterVariant(string toggleName, Variant variant)
-        {
-            if (services.IsMetricsDisabled)
-                return;
-
-            services.MetricsBucket.RegisterCount(toggleName, variant.Name);
         }
 
         private static IStrategy[] SelectStrategies(IStrategy[] strategies, bool overrideDefaultStrategies)
