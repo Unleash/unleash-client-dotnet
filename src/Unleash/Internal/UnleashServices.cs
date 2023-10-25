@@ -86,11 +86,8 @@ namespace Unleash
 
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
                 apiClient, 
-                ToggleCollection,
-                settings.JsonSerializer, 
                 settings.FileSystem,
                 eventConfig,
-                UnleashEngine,
                 backupFile,
                 etagBackupFile)
             {

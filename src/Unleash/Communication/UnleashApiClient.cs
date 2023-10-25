@@ -80,17 +80,8 @@ namespace Unleash.Communication
                     }
 
                     var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                    var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
 
-                    if (engine != null)
-                    {
-                        engine.TakeState(content);
-                    }
-
-                    //var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
-
-                    if (toggleCollection == null)
+                    if (content == null)
                     {
                         return new FetchTogglesResult
                         {
@@ -98,12 +89,18 @@ namespace Unleash.Communication
                         };
                     }
 
+                    if (engine != null)
+                    {
+                        engine.TakeState(content);
+                    }
+
+
                     // Success
                     return new FetchTogglesResult
                     {
                         HasChanged = true,
                         Etag = newEtag,
-                        ToggleCollection = toggleCollection
+                        ToggleCollection = content
                     };
                 }
             }

@@ -19,30 +19,21 @@ namespace Unleash.Scheduling
 
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
-        private readonly UnleashEngine engine;
         private readonly IUnleashApiClient apiClient;
-        private readonly IJsonSerializer jsonSerializer;
-        private readonly ThreadSafeToggleCollection toggleCollection;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
             IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection,
-            IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
-            UnleashEngine engine,
             string toggleFile,
             string etagFile)
         {
             this.apiClient = apiClient;
-            this.toggleCollection = toggleCollection;
-            this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
-            this.engine = engine;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
@@ -72,17 +63,12 @@ namespace Unleash.Scheduling
             if (result.Etag == Etag)
                 return;
 
-            toggleCollection.Instance = result.ToggleCollection;
-
             // now that the toggle collection has been updated, raise the toggles updated event if configured
             eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
 
             try
             {
-                using (var fs = fileSystem.FileOpenCreate(toggleFile))
-                {
-                    jsonSerializer.Serialize(fs, result.ToggleCollection);
-                }
+                fileSystem.WriteAllText(toggleFile, result.ToggleCollection);
             } 
             catch (IOException ex)
             {
