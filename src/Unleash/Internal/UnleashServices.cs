@@ -22,7 +22,6 @@ namespace Unleash
         internal IUnleashContextProvider ContextProvider { get; }
         internal ThreadSafeToggleCollection ToggleCollection { get; }
         internal bool IsMetricsDisabled { get; }
-        internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
         internal UnleashEngine UnleashEngine { get; }
 
@@ -55,8 +54,6 @@ namespace Unleash
             {
                 Instance = cachedFilesResult.InitialToggleCollection ?? new ToggleCollection()
             };
-
-            MetricsBucket = new ThreadSafeMetricsBucket();
 
             IUnleashApiClient apiClient;
             if (settings.UnleashApiClient == null)
@@ -122,8 +119,8 @@ namespace Unleash
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
                     apiClient, 
-                    settings, 
-                    MetricsBucket)
+                    settings,
+                    UnleashEngine)
                 {
                     Interval = settings.SendMetricsInterval.Value
                 };
@@ -142,6 +139,7 @@ namespace Unleash
             }
 
             UnleashEngine?.Dispose();
+
             scheduledTaskManager?.Dispose();
             ToggleCollection?.Dispose();
         }

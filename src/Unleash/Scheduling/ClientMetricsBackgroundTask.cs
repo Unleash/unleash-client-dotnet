@@ -14,22 +14,24 @@ namespace Unleash.Scheduling
 
         private readonly IUnleashApiClient apiClient;
         private readonly UnleashSettings settings;
-        private readonly ThreadSafeMetricsBucket metricsBucket;
+        private readonly UnleashEngine engine;
 
         public ClientMetricsBackgroundTask(
             IUnleashApiClient apiClient, 
             UnleashSettings settings,
-            ThreadSafeMetricsBucket metricsBucket)
+            UnleashEngine engine)
         {
             this.apiClient = apiClient;
             this.settings = settings;
-            this.metricsBucket = metricsBucket;
+            this.engine = engine;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             if (settings.SendMetricsInterval == null)
                 return;
+
+            var metricsBucket = engine.GetMetrics();
 
             var result = await apiClient.SendMetrics(metricsBucket, cancellationToken).ConfigureAwait(false);
 

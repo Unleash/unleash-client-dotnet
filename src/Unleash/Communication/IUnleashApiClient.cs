@@ -8,6 +8,6 @@ namespace Unleash.Communication
     {
         Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken);
         Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken);
-        Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken);
+        Task<bool> SendMetrics(MetricsBucket metrics, CancellationToken cancellationToken);
     }
 }
