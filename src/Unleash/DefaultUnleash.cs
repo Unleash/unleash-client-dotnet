@@ -20,7 +20,7 @@ namespace Unleash
 
         private static int InitializedInstanceCount = 0;
 
-        private const int WarnOnInstanceCount = 10;
+        private const int ErrorOnInstanceCount = 10;
 
         private static readonly IStrategy[] DefaultStrategies = {
             new DefaultStrategy(),
@@ -74,10 +74,10 @@ namespace Unleash
 
             Logger.Info($"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
 
-            if (currentInstanceNo >= WarnOnInstanceCount)
+            if (currentInstanceNo >= ErrorOnInstanceCount)
             {
-                Logger.Warn($"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
-                Logger.Warn("Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
+                Logger.Error($"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
+                Logger.Error("Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
             }
         }
 
