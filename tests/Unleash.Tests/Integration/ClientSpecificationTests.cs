@@ -127,7 +127,7 @@ namespace Unleash.Tests.Specifications
 
                 // Assert
                 Assert.AreEqual(testCase.ExpectedResult.Name, result.Name, testCase.Description);
-                Assert.AreEqual(testCase.ExpectedResult.IsEnabled, result.IsEnabled, testCase.Description);
+                Assert.AreEqual(testCase.ExpectedResult.Enabled, result.Enabled, testCase.Description);
                 Assert.AreEqual(testCase.ExpectedResult.Payload, result.Payload, testCase.Description);
             };  
         }

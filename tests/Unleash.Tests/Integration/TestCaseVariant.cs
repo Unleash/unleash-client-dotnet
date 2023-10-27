@@ -11,7 +11,7 @@ namespace Unleash.Tests.Specifications
         public string ToggleName { get; set; }
         public Variant ExpectedResult {
             set => _expectedResult = value;
-            get => _expectedResult?.Name.Equals("disabled") == true ? Variant.DISABLED_VARIANT : _expectedResult;
+            get => _expectedResult?.Name.Equals("disabled") == true ? new Variant { Name = "disabled" } : _expectedResult;
         }
     }
 }

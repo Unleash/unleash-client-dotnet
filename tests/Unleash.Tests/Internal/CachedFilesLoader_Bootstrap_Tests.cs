@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -13,9 +14,9 @@ namespace Unleash.Tests.Internal
 {
     public class CachedFilesLoader_Bootstrap_Tests : CachedFilesLoaderTestBase
     {
-        private static ToggleCollection GetTestToggles()
+        private static string GetTestToggles()
         {
-            return new ToggleCollection(new List<FeatureToggle>
+            return JsonConvert.SerializeObject(new ToggleCollection(new List<FeatureToggle>
             {
                 new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
                 {
@@ -36,7 +37,7 @@ namespace Unleash.Tests.Internal
                         {"userIds", "userB" }
                     })
                 })
-            });
+            }));
         }
 
         [Test]
@@ -61,7 +62,8 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappenedOnceExactly();
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            Assert.Fail();
         }
 
         [Test]
@@ -72,7 +74,7 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-missing.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            ToggleCollection bootstrapToggles = null;
+            string bootstrapToggles = null;
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
@@ -111,7 +113,8 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappened();
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            Assert.Fail();
         }
 
         [Test]
@@ -134,7 +137,8 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .MustNotHaveHappened();
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]
@@ -153,7 +157,8 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]
@@ -175,7 +180,8 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]
@@ -189,7 +195,7 @@ namespace Unleash.Tests.Internal
             var settings = new UnleashSettings();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
-                .Returns(new ToggleCollection());
+                .Returns("");
             var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
 
             // Act
@@ -197,7 +203,8 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]
@@ -220,7 +227,8 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(2);
+            Assert.Fail();
         }
     }
 }

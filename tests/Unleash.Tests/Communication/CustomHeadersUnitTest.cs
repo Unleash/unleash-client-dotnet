@@ -33,7 +33,7 @@ namespace Unleash.Tests.Communication
             {
                 BaseAddress = new Uri("http://example.com")
             };
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, null);
+            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, null, null);
             return client;
         }
 
@@ -100,7 +100,7 @@ namespace Unleash.Tests.Communication
             var etag = "";
             await api.FetchToggles(etag, CancellationToken.None);
             await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
-            await api.SendMetrics(new Unleash.Metrics.ThreadSafeMetricsBucket(), CancellationToken.None);
+            await api.SendMetrics(new MetricsBucket(), CancellationToken.None);
 
             messageHandler.calls.Count.Should().Be(3);
             foreach (var call in messageHandler.calls)
@@ -130,7 +130,7 @@ namespace Unleash.Tests.Communication
             var etag = "";
             await api.FetchToggles(etag, CancellationToken.None);
             await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
-            await api.SendMetrics(new Unleash.Metrics.ThreadSafeMetricsBucket(), CancellationToken.None);
+            await api.SendMetrics(new MetricsBucket(), CancellationToken.None);
 
             messageHandler.calls.Count.Should().Be(3);
             foreach (var call in messageHandler.calls)

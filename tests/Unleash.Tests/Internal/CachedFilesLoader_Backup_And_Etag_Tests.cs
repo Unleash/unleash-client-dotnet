@@ -25,7 +25,8 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]
@@ -46,7 +47,8 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be(string.Empty);
             fileSystem.FileExists(etagFileName).Should().BeTrue();
             fileSystem.ReadAllText(etagFileName).Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            //ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            Assert.Fail();
         }
 
         [Test]

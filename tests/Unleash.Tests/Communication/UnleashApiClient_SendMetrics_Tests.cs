@@ -12,9 +12,12 @@ namespace Unleash.Tests.Communication
         [Ignore("Requires a valid accesstoken")]
         public async Task SendMetrics_Success()
         {
-            var metricsBucket = new ThreadSafeMetricsBucket();
-            metricsBucket.RegisterCount("Demo123", true);
-            metricsBucket.RegisterCount("Demo123", false);
+            var metricsBucket = new MetricsBucket() {
+                Toggles = new Dictionary<string, FeatureCount>()
+                {
+                    { "Demo123", new FeatureCount() { Yes = 1, No = 1 } }
+                }
+            };
             
             var result = await api.SendMetrics(metricsBucket, CancellationToken.None);
             result.Should().Be(true);

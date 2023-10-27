@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = "{}", Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = new DynamicNewtonsoftJsonSerializer();
@@ -35,7 +36,7 @@ namespace Unleash.Tests.Internal
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -56,15 +57,11 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, ToggleCollection = new ToggleCollection(), Etag = "one" }));
-
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, ToggleCollection = null, Etag = "one" }));
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -79,6 +76,8 @@ namespace Unleash.Tests.Internal
             // Arrange
             var fetchResultToggleCollection = new ToggleCollection();
             fetchResultToggleCollection.Features.Add(new FeatureToggle("toggle-1", "operational", true, false, new List<ActivationStrategy>())); // after toggles are fetched, the toggle is enabled
+            var fetchResult = JsonConvert.SerializeObject(fetchResultToggleCollection);
+
 
             var toggleCollection = new ThreadSafeToggleCollection();
             toggleCollection.Instance = new ToggleCollection();
@@ -93,14 +92,11 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = fetchResultToggleCollection, Etag = "one" }));
-
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = fetchResult, Etag = "one" }));
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, toggleCollection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));

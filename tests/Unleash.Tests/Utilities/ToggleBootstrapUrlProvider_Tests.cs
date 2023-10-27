@@ -36,9 +36,10 @@ namespace Unleash.Tests.Utilities
             var responseContent = bootstrapUrlProvider.Read();
 
             // Assert
-            responseContent.Features.Should().BeEmpty();
+            //responseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
+            Assert.Fail();
         }
 
         [Test]
@@ -69,9 +70,10 @@ namespace Unleash.Tests.Utilities
             var responseContent = settings.ToggleBootstrapProvider.Read();
 
             // Assert
-            responseContent.Features.Should().BeEmpty();
+            //responseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
+            Assert.Fail();
         }
 
         [Test]
@@ -133,10 +135,11 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             var configuredHeader = customHeaders.First();
-            responseContent.Features.Should().BeEmpty();
+            //responseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
             messageHandlerMock.SentMessages.First().Headers.Any(kvp => kvp.Key == configuredHeader.Key && kvp.Value.First() == configuredHeader.Value).Should().BeTrue();
+            Assert.Fail();
         }
 
         [Test]
@@ -179,7 +182,8 @@ namespace Unleash.Tests.Utilities
             var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings(), true);
 
             // Act, Assert
-            Assert.Throws<UnleashException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
+            //Assert.Throws<UnleashException>(() => { var responseContent = bootstrapUrlProvider.Read(); });
+            Assert.Fail();
         }
     }
 }

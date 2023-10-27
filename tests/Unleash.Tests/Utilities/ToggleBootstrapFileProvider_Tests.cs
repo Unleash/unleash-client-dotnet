@@ -49,8 +49,9 @@ namespace Unleash.Tests.Utilities
             var result = toggleFileProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            //result.Features.Count().Should().Be(3);
+            //result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            Assert.Fail();
         }
 
         [Test]
@@ -72,8 +73,9 @@ namespace Unleash.Tests.Utilities
             var result = settings.ToggleBootstrapProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            //result.Features.Count().Should().Be(3);
+            //result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            Assert.Fail();
         }
     }
 }

@@ -124,7 +124,7 @@ namespace Unleash.Tests.Internal
             var result = unleash.IsEnabled("child-1");
 
             // Assert
-            unleash.services.MetricsBucket.StopCollectingMetrics(out var bucket);
+            var bucket = unleash.services.UnleashEngine.GetMetrics();
             var childMetrics = bucket.Toggles.Single(t => t.Key == "child-1").Value;
             childMetrics.No.Should().Be(0L);
             childMetrics.Yes.Should().Be(1L);
@@ -143,8 +143,8 @@ namespace Unleash.Tests.Internal
             };
             var childVariants = new List<VariantDefinition>()
             {
-                new VariantDefinition("red", 50, new Payload("colour", "Red")),
-                new VariantDefinition("blue", 50, new Payload("colour", "Blue")),
+                new VariantDefinition("red", 50, new Payload { PayloadType = "colour", Value = "Red" }),
+                new VariantDefinition("blue", 50, new Payload { PayloadType = "colour", Value = "Blue" }),
             };
 
             var toggles = new List<FeatureToggle>()
@@ -175,8 +175,8 @@ namespace Unleash.Tests.Internal
             };
             var childVariants = new List<VariantDefinition>()
             {
-                new VariantDefinition("red", 50, new Payload("colour", "Red")),
-                new VariantDefinition("blue", 50, new Payload("colour", "Blue")),
+                new VariantDefinition("red", 50, new Payload { PayloadType = "text", Value = "Red" }),
+                new VariantDefinition("blue", 50, new Payload { PayloadType = "text", Value = "Blue" }),
             };
 
             var toggles = new List<FeatureToggle>()
@@ -549,8 +549,8 @@ namespace Unleash.Tests.Internal
                         constraints ?? new List<Constraint>() { },
                         variants: new List<VariantDefinition>()
                         {
-                            new VariantDefinition("red", 50, new Payload("colour", "Red")),
-                            new VariantDefinition("blue", 50, new Payload("colour", "Blue")),
+                            new VariantDefinition("red", 50, new Payload { PayloadType = "text", Value = "Red" }),
+                            new VariantDefinition("blue", 50, new Payload { PayloadType = "text", Value = "Blue" }),
                         }
                     )
                 };

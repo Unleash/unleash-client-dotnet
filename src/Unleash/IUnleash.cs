@@ -48,7 +48,7 @@ namespace Unleash
         /// Get a weighted variant from a feature that is available.
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
-        /// <returns>A weighted variant or Variant.DISABLED_VARIANT if feature is not available</returns>
+        /// <returns>A weighted variant or new Variant { Name = "disabled" } if feature is not available</returns>
         Variant GetVariant(string toggleName);
 
         /// <summary>

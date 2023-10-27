@@ -26,17 +26,17 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
-            variant.Should().BeSameAs(Variant.DISABLED_VARIANT);
+            variant.Should().BeSameAs(new Variant { Name = "disabled" });
         }
 
         [Test]
         public void ShouldReturnVariant1()
         {
             // Arrange
-            var v1 = new VariantDefinition("a", 33, new Payload("string", "asd"), new Collection<VariantOverride>());
+            var v1 = new VariantDefinition("a", 33, new Payload { PayloadType = "string", Value = "asd" }, new Collection<VariantOverride>());
             var v2 = new VariantDefinition("b", 33);
             var v3 = new VariantDefinition("c", 34);
 
@@ -57,19 +57,19 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v1.Name);
             variant.Payload.Should().BeSameAs(v1.Payload);
-            variant.IsEnabled.Should().BeTrue();
+            variant.Enabled.Should().BeTrue();
         }
 
         [Test]
         public void ShouldReturnVariant2()
         {
             // Arrange
-            var v1 = new VariantDefinition("a", 33, new Payload("string", "asd"), new Collection<VariantOverride>());
+            var v1 = new VariantDefinition("a", 33, new Payload { PayloadType = "string", Value = "asd" }, new Collection<VariantOverride>());
             var v2 = new VariantDefinition("b", 33);
             var v3 = new VariantDefinition("c", 34);
 
@@ -90,7 +90,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v2.Name);
@@ -121,7 +121,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v3.Name);
@@ -153,7 +153,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v2.Name);
@@ -163,10 +163,10 @@ namespace Unleash.Tests.Variants
         public void ShouldReturnVariantOverrideOnRemoteAdress()
         {
             // Arrange
-            var v1 = new VariantDefinition("a", 33, new Payload("string", "asd"), new Collection<VariantOverride>());
+            var v1 = new VariantDefinition("a", 33, new Payload { PayloadType = "string", Value = "asd" }, new Collection<VariantOverride>());
             var v2 = new VariantDefinition("b", 33, null, new Collection<VariantOverride>());
             var variantOverride = new VariantOverride("remoteAddress", "11.11.11.11");
-            var v3 = new VariantDefinition("c", 34, new Payload("string", "blob"), new Collection<VariantOverride> { variantOverride });
+            var v3 = new VariantDefinition("c", 34, new Payload { PayloadType = "string", Value = "blob" }, new Collection<VariantOverride> { variantOverride });
 
             var toggle = new FeatureToggle(
                     "test.variants",
@@ -185,12 +185,12 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v3.Name);
             variant.Payload.Should().BeSameAs(v3.Payload);
-            variant.IsEnabled.Should().BeTrue();
+            variant.Enabled.Should().BeTrue();
         }
 
         [Test]
@@ -219,7 +219,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v2.Name);
@@ -254,7 +254,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(v2.Name);
@@ -266,7 +266,7 @@ namespace Unleash.Tests.Variants
             // Arrange
             var sessionId = "122221";
 
-            var val1Payload = new Payload("string", "val1");
+            var val1Payload = new Payload { PayloadType = "string", Value = "val1" };
             var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
             var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
             var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
@@ -288,7 +288,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(blue.Name);
@@ -300,7 +300,7 @@ namespace Unleash.Tests.Variants
             // Arrange
             var sessionId = "122221";
 
-            var val1Payload = new Payload("string", "val1");
+            var val1Payload = new Payload { PayloadType = "string", Value = "val1" };
             var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
             var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
             var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
@@ -322,7 +322,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(blue.Name);
@@ -334,7 +334,7 @@ namespace Unleash.Tests.Variants
             // Arrange
             var sessionId = "122221";
 
-            var val1Payload = new Payload("string", "val1");
+            var val1Payload = new Payload { PayloadType = "string", Value = "val1" };
             var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
             var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
             var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
@@ -356,7 +356,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(red.Name);
@@ -368,7 +368,7 @@ namespace Unleash.Tests.Variants
             // Arrange
             var sessionId = "122221";
 
-            var val1Payload = new Payload("string", "val1");
+            var val1Payload = new Payload { PayloadType = "string", Value = "val1" };
             var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
             var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
             var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
@@ -390,7 +390,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(green.Name);
@@ -402,7 +402,7 @@ namespace Unleash.Tests.Variants
             // Arrange
             var sessionId = "122221";
 
-            var val1Payload = new Payload("string", "val1");
+            var val1Payload = new Payload { PayloadType = "string", Value = "val1" };
             var blue = new VariantDefinition("blue", 25, val1Payload, null, "customField");
             var red = new VariantDefinition("red", 25, val1Payload, null, "customField");
             var green = new VariantDefinition("green", 25, val1Payload, null, "customField");
@@ -424,7 +424,7 @@ namespace Unleash.Tests.Variants
             };
 
             // Act
-            var variant = VariantUtils.SelectVariant(toggle, context, Variant.DISABLED_VARIANT);
+            var variant = VariantUtils.SelectVariant(toggle, context, new Variant { Name = "disabled" });
 
             // Assert
             variant.Name.Should().Be(yellow.Name);

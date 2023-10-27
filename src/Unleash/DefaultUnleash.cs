@@ -7,15 +7,12 @@ namespace Unleash
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Unleash.Utilities;
     using Unleash.Variants;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(DefaultUnleash));
-
-        private static readonly UnknownStrategy UnknownStrategy = new UnknownStrategy();
 
         private static int InitializedInstanceCount = 0;
 
@@ -38,8 +35,6 @@ namespace Unleash
 
         internal readonly UnleashServices services;
 
-        private readonly WarnOnce warnOnce;
-
         ///// <summary>
         ///// Initializes a new instance of Unleash client with a set of default strategies.
         ///// </summary>
@@ -60,8 +55,6 @@ namespace Unleash
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 
             this.settings = settings;
-
-            warnOnce = new WarnOnce(Logger);
 
             var settingsValidator = new UnleashSettingsValidator();
             settingsValidator.Validate(settings);
@@ -115,127 +108,15 @@ namespace Unleash
                 UserId = context.UserId
             };
 
-            return services.UnleashEngine.IsEnabled(toggleName, ctx);
-        }
-
-        private FeatureEvaluationResult CheckIsEnabled(
-            string toggleName,
-            UnleashContext context,
-            bool defaultSetting,
-            Variant defaultVariant = null)
-        {
-            var featureToggle = GetToggle(toggleName);
-            var enhancedContext = context.ApplyStaticFields(settings);
-            var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
-            var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
-
-            if (featureToggle?.ImpressionData ?? false)
-            {
-                EmitImpressionEvent("isEnabled", enhancedContext, enabled, featureToggle.Name);
-            }
-
-            return new FeatureEvaluationResult { Enabled = enabled, Variant = variant };
-        }
-
-        private bool DetermineIsEnabledAndStrategy(
-            string toggleName,
-            FeatureToggle featureToggle,
-            UnleashContext enhancedContext,
-            bool defaultSetting,
-            out ActivationStrategy strategy)
-        {
-            strategy = null;
-            if (featureToggle == null)
-            {
-                Logger.Warn($"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
-                return defaultSetting;
-            }
-
-            else if (!featureToggle.Enabled)
-            {
-                // Overall false
-                return false;
-            }
-
-            else if (featureToggle.Strategies.Count == 0)
-            {
-                return true;
-            }
-            else
-            {
-                strategy = featureToggle.Strategies
-                    .FirstOrDefault(s =>
-                        GetStrategyOrUnknown(s.Name)
-                        .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
-                    );
-            }
-
-            if (featureToggle.Dependencies.Any() && !ParentDependenciesAreSatisfied(featureToggle, enhancedContext))
-            {
-                return false;
-            }
-
-            return strategy != null;
-        }
-
-        private bool ParentDependenciesAreSatisfied(FeatureToggle featureToggle, UnleashContext context)
-        {
-            return featureToggle.Dependencies.All(d => DependenciesSatisfied(featureToggle, d, context));
-        }
-
-        private bool DependenciesSatisfied(FeatureToggle featureToggle, Dependency dependency, UnleashContext context)
-        {
-            var parentToggle = GetToggle(dependency.Feature);
-            if (parentToggle == null)
-            {
-                warnOnce.Warn(dependency.Feature + featureToggle.Name, $"UNLEASH: Parent feature toggle {dependency.Feature} was not found in the cache, the evaluation of this dependency will always be false");
-                return false;
-            }
-
-            if (parentToggle.Dependencies.Any()) {
-                return false;
-            }
-
-            if (dependency.Enabled) {
-                if (dependency.Variants != null && dependency.Variants.Any())
-                {
-                    var checkResult = CheckIsEnabled(dependency.Feature, context, false, Variant.DISABLED_VARIANT);
-                    return checkResult.Enabled  && dependency.Variants.Contains(checkResult.Variant.Name);
-                }
-                return CheckIsEnabled(dependency.Feature, context, false).Enabled;
-            }
-
-            return !CheckIsEnabled(dependency.Feature, context, false).Enabled;
-        }
-
-        private Variant DetermineVariant(bool enabled,
-            FeatureToggle featureToggle,
-            ActivationStrategy strategy,
-            UnleashContext context,
-            Variant defaultVariant)
-        {
-            if (enabled)
-            {
-                Variant variant = null;
-
-                if (strategy != null)
-                {
-                    strategy.Parameters.TryGetValue("groupId", out string groupId);
-                    groupId = groupId ?? featureToggle.Name;
-                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants);
-                }
-
-                return variant ?? VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
-            }
-            else
-            {
-                return defaultVariant;
-            }
+            var enabled = services.UnleashEngine.IsEnabled(toggleName, ctx) ?? defaultSetting;
+            services.UnleashEngine.CountFeature(toggleName, enabled);
+            EmitImpressionEvent("isEnabled", context, enabled, toggleName);
+            return enabled;
         }
 
         public Variant GetVariant(string toggleName)
         {
-            return GetVariant(toggleName, services.ContextProvider.Context, Variant.DISABLED_VARIANT);
+            return GetVariant(toggleName, services.ContextProvider.Context, new Variant { Enabled = false, Name = "disabled" });
         }
 
         public Variant GetVariant(string toggleName, Variant defaultVariant)
@@ -245,11 +126,13 @@ namespace Unleash
 
         public Variant GetVariant(string toggleName, UnleashContext context)
         {
-            return GetVariant(toggleName, context, Variant.DISABLED_VARIANT);
+            return GetVariant(toggleName, context, new Variant { Enabled = false, Name = "disabled" });
         }
 
         public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
         {
+            context.ApplyStaticFields(settings);
+
             var ctx = new Context()
             {
                 AppName = context.AppName,
@@ -260,9 +143,10 @@ namespace Unleash
                 SessionId = context.SessionId,
                 UserId = context.UserId
             };
-
-            var variant = services.UnleashEngine.GetVariant(toggleName, ctx);
-
+            
+            var variant = services.UnleashEngine.GetVariant(toggleName, ctx) ?? defaultValue;
+            services.UnleashEngine.CountVariant(toggleName, variant.Name);
+            EmitImpressionEvent("getVariant", context, variant.Enabled, toggleName, variant.Name);
             return variant;
         }
 
@@ -308,32 +192,6 @@ namespace Unleash
                 map.Add(strategy.Name, strategy);
 
             return map;
-        }
-
-        private IStrategy GetStrategyOrUnknown(string strategy)
-        {
-            return strategyMap.ContainsKey(strategy)
-                ? strategyMap[strategy]
-                : UnknownStrategy;
-        }
-
-        private IEnumerable<Constraint> ResolveConstraints(ActivationStrategy activationStrategy)
-        {
-            foreach (var segmentId in activationStrategy.Segments)
-            {
-                var segment = services.ToggleCollection.Instance.GetSegmentById(segmentId);
-                if (segment != null)
-                {
-                    foreach (var constraint in segment.Constraints)
-                    {
-                        yield return constraint;
-                    }
-                }
-                else
-                {
-                    yield return null;
-                }
-            }
         }
 
         public void ConfigureEvents(Action<EventCallbackConfig> callback)

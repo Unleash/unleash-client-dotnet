@@ -17,10 +17,9 @@ namespace Unleash.Utilities
             this.settings = settings;
         }
 
-        public ToggleCollection Read()
+        public string Read()
         {
-            using (var togglesStream = settings.FileSystem.FileOpenRead(filePath))
-                return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesStream);
+            return settings.FileSystem.ReadAllText(filePath);
         }
     }
 }

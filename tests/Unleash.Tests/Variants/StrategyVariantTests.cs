@@ -200,7 +200,7 @@ namespace Unleash.Tests.Variants
 
             // Assert
             new[] { "Red", "Blue" }.Should().Contain(variant.Name);
-            variant.IsEnabled.Should().BeTrue();
+            variant.Enabled.Should().BeTrue();
         }
 
         private static Dictionary<string, string> ParametersWith100RolloutAndGroupId(string groupName)
@@ -224,8 +224,8 @@ namespace Unleash.Tests.Variants
         {
             return new List<VariantDefinition>
             {
-                new VariantDefinition("Red", 50, new Payload("text", "red")),
-                new VariantDefinition("Blue", 50, new Payload("text", "blue"))
+                new VariantDefinition("Red", 50, new Payload { PayloadType = "text", Value = "red" }),
+                new VariantDefinition("Blue", 50, new Payload { PayloadType = "text", Value = "blue" })
             };
         }
 
@@ -233,8 +233,8 @@ namespace Unleash.Tests.Variants
         {
             return new List<VariantDefinition>
             {
-                new VariantDefinition("Green", 50, new Payload("text", "green")),
-                new VariantDefinition("Black", 50, new Payload("text", "black"))
+                new VariantDefinition("Green", 50, new Payload { PayloadType = "text", Value = "green" }),
+                new VariantDefinition("Black", 50, new Payload { PayloadType = "text", Value = "black" })
             };
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Metrics;
@@ -42,7 +43,7 @@ namespace Unleash.Tests.Mock
                 {
                     HasChanged = true,
                     Etag = "etag",
-                    ToggleCollection = Toggles
+                    ToggleCollection = JsonConvert.SerializeObject(Toggles)
                 };
             });
         }
@@ -52,7 +53,7 @@ namespace Unleash.Tests.Mock
             return Task.FromResult(true);
         }
 
-        public Task<bool> SendMetrics(ThreadSafeMetricsBucket metricsBucket, CancellationToken cancellationToken)
+        public Task<bool> SendMetrics(MetricsBucket metricsBucket, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }

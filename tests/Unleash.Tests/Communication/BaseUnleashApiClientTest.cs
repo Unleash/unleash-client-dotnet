@@ -34,7 +34,7 @@ namespace Unleash.Tests.Communication
             };
 
             var httpClient = httpClientFactory.Create(apiUri);
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig());
+            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig(), null);
             return client;
         }
 

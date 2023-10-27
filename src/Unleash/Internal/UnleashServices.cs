@@ -50,10 +50,10 @@ namespace Unleash
                 settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
-            ToggleCollection = new ThreadSafeToggleCollection
+            if (!string.IsNullOrEmpty(cachedFilesResult.InitialToggleCollection))
             {
-                Instance = cachedFilesResult.InitialToggleCollection ?? new ToggleCollection()
-            };
+                UnleashEngine.TakeState(cachedFilesResult.InitialToggleCollection);
+            }
 
             IUnleashApiClient apiClient;
             if (settings.UnleashApiClient == null)

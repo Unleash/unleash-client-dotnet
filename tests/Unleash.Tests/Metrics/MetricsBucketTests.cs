@@ -13,6 +13,8 @@ namespace Unleash.Tests.Metrics
         [Test]
         public void SingleBucket_No_WriteOperations()
         {
+            Assert.Fail();
+            /*
             var metricsBucket = new ThreadSafeMetricsBucket();
 
             var options = new ParallelOptions
@@ -143,6 +145,7 @@ namespace Unleash.Tests.Metrics
 
                 totalVariantCount.Should().Be(totalTasks);
             }
+            */
         }
     }
 }

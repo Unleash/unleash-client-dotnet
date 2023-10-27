@@ -84,10 +84,7 @@ namespace Unleash.Internal
             {
                 try
                 {
-                    using (var fileStream = fileSystem.FileOpenRead(toggleFile))
-                    {
-                        result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
-                    }
+                    result.InitialToggleCollection = fileSystem.ReadAllText(toggleFile);
                 }
                 catch (IOException ex)
                 {
@@ -101,10 +98,10 @@ namespace Unleash.Internal
                 result.InitialETag = string.Empty;
             }
 
-            if ((result.InitialToggleCollection == null || result.InitialToggleCollection.Features?.Count == 0 || bootstrapOverride) && toggleBootstrapProvider != null)
+            if ((string.IsNullOrEmpty(result.InitialToggleCollection) || bootstrapOverride) && toggleBootstrapProvider != null)
             {
                 var bootstrapCollection = toggleBootstrapProvider.Read();
-                if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
+                if (!string.IsNullOrEmpty(bootstrapCollection))
                     result.InitialToggleCollection = bootstrapCollection;
             }
 
@@ -114,7 +111,7 @@ namespace Unleash.Internal
         internal class CachedFilesResult
         {
             public string InitialETag { get; set; }
-            public ToggleCollection InitialToggleCollection { get; set; }
+            public string InitialToggleCollection { get; set; }
         }
     }
 }

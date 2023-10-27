@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -61,7 +61,6 @@
 
   <ItemGroup>
     <None Include="Internal\ActivationStrategy.cs" />
-    <None Include="Internal\FeatureEvaluationResult.cs" />
     <None Include="DefaultUnleash.cs" />
     <None Include="Internal\FeatureToggle.cs" />
     <None Include="Metrics\ClientMetrics.cs" />
@@ -103,6 +102,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\yggdrasil\dotnet-engine\UnleashEngine\UnleashEngine.csproj" />
+  </ItemGroup>
   <PropertyGroup>
     <Version Condition="'$(Version)' == ''">1.0.0</Version>
   </PropertyGroup>

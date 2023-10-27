@@ -140,7 +140,7 @@ namespace Unleash.Tests.Internal
             ImpressionEvent callbackEvent = null;
             var appname = "testapp";
             var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var payload = new Payload("string", "val1");
+            var payload = new Payload { PayloadType = "string", Value = "val1" };
             var variant = new VariantDefinition("blue", 100, payload);
             var toggles = new List<FeatureToggle>()
             {
@@ -174,7 +174,7 @@ namespace Unleash.Tests.Internal
             // Arrange
             var appname = "testapp";
             var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var payload = new Payload("string", "val1");
+            var payload = new Payload { PayloadType = "string", Value = "val1" };
             var toggles = new List<FeatureToggle>()
             {
                 new FeatureToggle("yup", "release", true, true, new List<ActivationStrategy>() { strategy })

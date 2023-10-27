@@ -31,12 +31,12 @@ namespace Unleash.Utilities
             this.customHeaders = customHeaders;
         }
 
-        public ToggleCollection Read()
+        public string Read()
         {
             return Task.Run(() => FetchFile()).GetAwaiter().GetResult();
         }
 
-        private async Task<ToggleCollection> FetchFile()
+        private async Task<string> FetchFile()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, path))
             {
@@ -63,15 +63,14 @@ namespace Unleash.Utilities
 
                     try
                     {
-                        var togglesResponseStream = await response.Content.ReadAsStreamAsync();
-                        return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
+                        return await response.Content.ReadAsStringAsync();
                     }
                     catch (Exception ex)
                     {
-                        Logger.Trace($"UNLEASH: Exception in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}' during reading and deserializing ToggleCollection from stream: " + ex.Message);
+                        Logger.Trace($"UNLEASH: Exception in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}' during reading ToggleCollection from url: " + ex.Message);
 
                         if (throwOnFail)
-                            throw new UnleashException("Exception during reading and deserializing ToggleCollection from stream", ex);
+                            throw new UnleashException("Exception reading from url", ex);
 
                         return null;
                     }

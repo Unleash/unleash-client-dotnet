@@ -38,7 +38,7 @@ namespace Unleash.Tests.Internal
             {
                 ErrorEvent = evt => { callbackEvent = evt; }
             };
-            var unleashClient = new UnleashApiClient(httpClient, new DynamicNewtonsoftJsonSerializer(), new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
+            var unleashClient = new UnleashApiClient(httpClient, new DynamicNewtonsoftJsonSerializer(), new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig, null);
             var cancellationTokenSource = new CancellationTokenSource();
 
             // Act
@@ -67,7 +67,7 @@ namespace Unleash.Tests.Internal
 
             var deserializer = new DynamicNewtonsoftJsonSerializer();
             deserializer.TryLoad();
-            var unleashClient = new UnleashApiClient(httpClient, deserializer, new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
+            var unleashClient = new UnleashApiClient(httpClient, deserializer, new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig, null);
             var cancellationTokenSource = new CancellationTokenSource();
 
             // Act
@@ -98,7 +98,7 @@ namespace Unleash.Tests.Internal
             var serializer = new DynamicNewtonsoftJsonSerializer();
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             try
@@ -129,7 +129,7 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = null, Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = A.Fake<IJsonSerializer>();
@@ -138,7 +138,7 @@ namespace Unleash.Tests.Internal
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -163,7 +163,7 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = null, Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = A.Fake<IJsonSerializer>();
@@ -173,7 +173,7 @@ namespace Unleash.Tests.Internal
                 .Throws(() => new IOException(exceptionMessage));
 
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
