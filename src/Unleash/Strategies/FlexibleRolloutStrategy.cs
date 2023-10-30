@@ -42,7 +42,7 @@ namespace Unleash.Strategies
 
             if (!string.IsNullOrEmpty(stickinessId))
             {
-                var normalizedUserId = StrategyUtils.GetNormalizedNumber(stickinessId, groupId);
+                var normalizedUserId = StrategyUtils.GetNormalizedNumber(stickinessId, groupId, 0);
                 return percentage > 0 && normalizedUserId <= percentage;
             }
             else

@@ -99,7 +99,7 @@ namespace Unleash.Tests.Strategy
         {
             var userId = "1574576830";
             var groupId = "";
-            var minimumPercentage = StrategyUtils.GetNormalizedNumber(userId, groupId);
+            var minimumPercentage = StrategyUtils.GetNormalizedNumber(userId, groupId, 0);
 
             var context = UnleashContext.New().UserId(userId).Build();
             var gradualRolloutStrategy = new GradualRolloutUserIdStrategy();

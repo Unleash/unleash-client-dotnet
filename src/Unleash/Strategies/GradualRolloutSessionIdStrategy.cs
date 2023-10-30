@@ -35,7 +35,7 @@ namespace Unleash.Strategies
             var percentage = StrategyUtils.GetPercentage(percentageString);
             var groupId = parameters[GroupId] ?? string.Empty;
 
-            var normalizedSessionId = StrategyUtils.GetNormalizedNumber(sessionId, groupId);
+            var normalizedSessionId = StrategyUtils.GetNormalizedNumber(sessionId, groupId, 0);
 
             return percentage > 0 && normalizedSessionId <= percentage;
         }

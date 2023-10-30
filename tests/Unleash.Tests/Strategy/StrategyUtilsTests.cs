@@ -39,19 +39,19 @@ namespace Unleash.Tests.Strategy
         public void GetNormalizedNumber_Variants()
         {
             // Normal cases
-            StrategyUtils.GetNormalizedNumber("user1", "group1").Should().BeInRange(0, 100);
+            StrategyUtils.GetNormalizedNumber("user1", "group1", 0).Should().BeInRange(0, 100);
 
             // Strange inputs
-            StrategyUtils.GetNormalizedNumber(null, null).Should().BeInRange(0, 100);
-            StrategyUtils.GetNormalizedNumber("", "").Should().BeInRange(0, 100);
-            StrategyUtils.GetNormalizedNumber("#%&/(", "§~:<>&nbsp;").Should().BeInRange(0, 100);
+            StrategyUtils.GetNormalizedNumber(null, null, 0).Should().BeInRange(0, 100);
+            StrategyUtils.GetNormalizedNumber("", "", 0).Should().BeInRange(0, 100);
+            StrategyUtils.GetNormalizedNumber("#%&/(", "§~:<>&nbsp;", 0).Should().BeInRange(0, 100);
         }
 
         [Test]
         public void GetNormalizedNumber_Is_Compatible_With_Java_And_Go_Implementations()
         {
-            Assert.AreEqual(73, StrategyUtils.GetNormalizedNumber("123", "gr1"));
-            Assert.AreEqual(25, StrategyUtils.GetNormalizedNumber("999", "groupX"));
+            Assert.AreEqual(73, StrategyUtils.GetNormalizedNumber("123", "gr1", 0));
+            Assert.AreEqual(25, StrategyUtils.GetNormalizedNumber("999", "groupX", 0));
         }
     }
 }

@@ -12,14 +12,14 @@ namespace Unleash.Strategies
         /// <summary>
         /// Takes to string inputs concat them, produce a hashCode and return a normalized value between 0 and 100;
         /// </summary>
-        public static int GetNormalizedNumber(string identifier, string groupId, int normalizer = 100)
+        public static int GetNormalizedNumber(string identifier, string groupId, uint randomSeed, int normalizer = 100)
         {
             const int one = 1;
             const string separator = ":";
 
             byte[] bytes = Encoding.UTF8.GetBytes(string.Concat(groupId, separator, identifier));
 
-            using (var algorithm = MurmurHash.Create32())
+            using (var algorithm = MurmurHash.Create32(randomSeed))
             {
                 var hash = algorithm.ComputeHash(bytes);
                 var value = BitConverter.ToUInt32(hash, 0);

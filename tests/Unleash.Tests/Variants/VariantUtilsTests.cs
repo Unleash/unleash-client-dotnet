@@ -83,7 +83,7 @@ namespace Unleash.Tests.Variants
 
             var context = new UnleashContext
             {
-                UserId = "163",
+                UserId = "15",
                 SessionId = "sessionId",
                 RemoteAddress = "remoteAddress",
                 Properties = new Dictionary<string, string>()
@@ -114,7 +114,7 @@ namespace Unleash.Tests.Variants
 
             var context = new UnleashContext
             {
-                UserId = "40",
+                UserId = "43",
                 SessionId = "sessionId",
                 RemoteAddress = "remoteAddress",
                 Properties = new Dictionary<string, string>()
@@ -261,7 +261,7 @@ namespace Unleash.Tests.Variants
         }
 
         [Test]
-        public void Custom_Stickiness_CustomField_528_Yields_Blue()
+        public void Custom_Stickiness_CustomField_419_Yields_Blue()
         {
             // Arrange
             var sessionId = "122221";
@@ -284,7 +284,7 @@ namespace Unleash.Tests.Variants
                 UserId = "11",
                 SessionId = sessionId,
                 RemoteAddress = "remoteAddress",
-                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "528" } }
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "419" } }
             };
 
             // Act
@@ -295,7 +295,7 @@ namespace Unleash.Tests.Variants
         }
 
         [Test]
-        public void Custom_Stickiness_CustomField_16_Yields_Blue()
+        public void Custom_Stickiness_CustomField_21_Yields_Blue()
         {
             // Arrange
             var sessionId = "122221";
@@ -318,7 +318,7 @@ namespace Unleash.Tests.Variants
                 UserId = "13",
                 SessionId = sessionId,
                 RemoteAddress = "remoteAddress",
-                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "16" } }
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "21" } }
             };
 
             // Act
@@ -329,7 +329,7 @@ namespace Unleash.Tests.Variants
         }
 
         [Test]
-        public void Custom_Stickiness_CustomField_198_Yields_Red()
+        public void Custom_Stickiness_CustomField_60_Yields_Red()
         {
             // Arrange
             var sessionId = "122221";
@@ -352,7 +352,7 @@ namespace Unleash.Tests.Variants
                 UserId = "13",
                 SessionId = sessionId,
                 RemoteAddress = "remoteAddress",
-                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "198" } }
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "60" } }
             };
 
             // Act
@@ -397,7 +397,7 @@ namespace Unleash.Tests.Variants
         }
 
         [Test]
-        public void Custom_Stickiness_CustomField_112_Yields_Yellow()
+        public void Custom_Stickiness_CustomField_13_Yields_Yellow()
         {
             // Arrange
             var sessionId = "122221";
@@ -420,7 +420,7 @@ namespace Unleash.Tests.Variants
                 UserId = "13",
                 SessionId = sessionId,
                 RemoteAddress = "remoteAddress",
-                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "112" } }
+                Properties = new Dictionary<string, string> { { "env", "prod" }, { "customField", "13" } }
             };
 
             // Act
