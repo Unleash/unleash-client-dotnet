@@ -100,7 +100,7 @@ namespace Unleash.Tests.Strategy
         {
             string sessionId = "1574576830";
             string groupId = "";
-            int minimumPercentage = StrategyUtils.GetNormalizedNumber(sessionId, groupId);
+            int minimumPercentage = StrategyUtils.GetNormalizedNumber(sessionId, groupId, 0);
 
             var context = UnleashContext.New().SessionId(sessionId).Build();
 

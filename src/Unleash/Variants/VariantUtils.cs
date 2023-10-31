@@ -8,6 +8,8 @@ namespace Unleash.Variants
 {
     internal class VariantUtils
     {
+        public static readonly uint VARIANT_NORMALIZATION_SEED = 86028157;
+
         public static Variant SelectVariant(string groupId, UnleashContext context, List<VariantDefinition> variantDefinitions)
         {
             var totalWeight = variantDefinitions.Sum(v => v.Weight);
@@ -23,7 +25,7 @@ namespace Unleash.Variants
             }
 
             var stickiness = variantDefinitions[0].Stickiness ?? "default";
-            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, totalWeight);
+            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED, totalWeight);
 
             var counter = 0;
             foreach (var variantDefinition in variantDefinitions)
