@@ -26,7 +26,7 @@ namespace Unleash.Tests.Mock
 
         public string ReadAllText(string path)
         {
-            return "mock";
+            return "{}";
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Unleash.Tests
         public async Task Setup()
         {
             var factory = new UnleashClientFactory();
-            unleash = await factory.CreateClientAsync(new MockedUnleashSettings(), true);
+            unleash = await factory.CreateClientAsync(new MockedUnleashSettings(false), true);
         }
 
         [Test]

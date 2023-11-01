@@ -1,16 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Metrics;
 using Unleash.Variants;
+using System.Text.Json;
 
 namespace Unleash.Tests.Mock
 {
     internal class MockApiClient : IUnleashApiClient
     {
+        private static readonly JsonSerializerOptions options = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        public MockApiClient()
+        {
+        }
+
         private static readonly ToggleCollection Toggles = new ToggleCollection(new List<FeatureToggle>
         {
             new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
@@ -43,7 +52,7 @@ namespace Unleash.Tests.Mock
                 {
                     HasChanged = true,
                     Etag = "etag",
-                    ToggleCollection = JsonConvert.SerializeObject(Toggles)
+                    ToggleCollection = JsonSerializer.Serialize(Toggles, options)
                 };
             });
         }

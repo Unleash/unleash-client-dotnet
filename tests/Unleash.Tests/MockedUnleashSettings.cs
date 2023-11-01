@@ -11,7 +11,6 @@ namespace Unleash.Tests
         public MockedUnleashSettings(bool mockFileSystem = true)
         {
             AppName = "test";
-            InstanceTag = "test instance 1";
             UnleashApi = new Uri("http://localhost:4242/");
 
             UnleashApiClient = new MockApiClient();
