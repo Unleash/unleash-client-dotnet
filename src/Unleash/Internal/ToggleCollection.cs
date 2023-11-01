@@ -12,11 +12,11 @@ namespace Unleash.Internal
 
     public class ToggleCollection
     {
-        public int Version = 1;
+        public int Version { get; set; } = 2;
 
         private readonly Dictionary<string, FeatureToggle> togglesCache;
 
-        private readonly Dictionary<string, Segment> segmentsCache;
+        private readonly Dictionary<int, Segment> segmentsCache;
 
         public ToggleCollection(ICollection<FeatureToggle> features = null, ICollection<Segment> segments = null)
         {
@@ -24,7 +24,7 @@ namespace Unleash.Internal
             Segments = segments ?? new List<Segment>(0);
 
             togglesCache = new Dictionary<string, FeatureToggle>(Features.Count);
-            segmentsCache = new Dictionary<string, Segment>(Segments.Count);
+            segmentsCache = new Dictionary<int, Segment>(Segments.Count);
 
             foreach (var featureToggle in Features) {
                 togglesCache.Add(featureToggle.Name, featureToggle);
@@ -47,7 +47,7 @@ namespace Unleash.Internal
                 : null;
         }
 
-        public Segment GetSegmentById(string id)
+        public Segment GetSegmentById(int id)
         {
             return segmentsCache.TryGetValue(id, out var value)
                 ? value
