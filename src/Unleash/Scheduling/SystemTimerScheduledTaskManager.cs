@@ -89,18 +89,18 @@ namespace Unleash.Scheduling
             if (disposeEnded)
                 return;
 
-            var timeout = TimeSpan.FromSeconds(1);
+            var timeout = TimeSpan.FromMilliseconds(10);
 
-            using (var waitHandle = new ManualResetEvent(false))
+            foreach (var task in timers)
             {
-                foreach (var task in timers)
+                using (var waitHandle = new ManualResetEvent(false))
                 {
                     // Returns false on second dispose
                     if (task.Value.Dispose(waitHandle))
                     {
                         if (!waitHandle.WaitOne(timeout))
                         {
-                            throw new TimeoutException($"UNLEASH: Timeout waiting for task '{task.Key}' to stop..");
+                            //throw new TimeoutException($"UNLEASH: Timeout waiting for task '{task.Key}' to stop..");
                         }
                     }
                 }

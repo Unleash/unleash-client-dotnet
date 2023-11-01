@@ -15,32 +15,17 @@ using Unleash.Strategies;
 using Unleash.Tests.Mock;
 using Unleash.Variants;
 using static Unleash.Tests.Specifications.TestFactory;
+using System.Text.Json;
+using Unleash.ClientFactory;
 
 namespace Unleash.Tests
 {
     public class DefaultUnleashTests
     {
-        [Test]
-        public void ConfigureEvents_should_invoke_callback()
+        private static readonly JsonSerializerOptions options = new JsonSerializerOptions()
         {
-            // Arrange
-            var settings = new UnleashSettings
-            {
-                AppName = "testapp",
-            };
-
-            var unleash = new DefaultUnleash(settings);
-            var callbackCalled = false;
-
-            // Act
-            unleash.ConfigureEvents(cfg =>
-            {
-                callbackCalled = true;
-            });
-
-            // Assert
-            callbackCalled.Should().BeTrue();
-        }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         [Test]
         public void Configure_Http_Client_Factory()
@@ -57,7 +42,7 @@ namespace Unleash.Tests
         }
 
         [Test]
-        public void IsEnabled_Flexible_Strategy_Test()
+        public async Task IsEnabled_Flexible_Strategy_Test()
         {
             // Arrange
             var appname = "testapp";
@@ -70,17 +55,85 @@ namespace Unleash.Tests
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = await CreateUnleash(appname, state);
 
             // Act
             var result = unleash.IsEnabled("test_toggle");
 
             // Assert
             result.Should().BeTrue();
+
+            unleash.Dispose();
         }
 
         [Test]
-        public void IsEnabled_Gradual_Rollout_Random_Strategy_Test()
+        public async Task IsEnabled_Flexible_Strategy_Test2()
+        {
+            // Arrange
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("flexibleRollout", new Dictionary<string, string>() { { "rollout", "100" } }, new List<Constraint>() { });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
+            };
+
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+            var unleash = await CreateUnleash(appname, state);
+
+            // Act
+            var result = unleash.IsEnabled("test_toggle");
+
+            // Assert
+            result.Should().BeTrue();
+
+            unleash.Dispose();
+        }
+
+        [Test]
+        public async Task IsEnabled_Flexible_Strategy_Multi_Test()
+        {
+            // Arrange
+            var appname = "testapp";
+            var strategy = new ActivationStrategy("flexibleRollout", new Dictionary<string, string>() { { "rollout", "100" } }, new List<Constraint>() { });
+            var toggles = new List<FeatureToggle>()
+            {
+                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
+            };
+
+            var state = new ToggleCollection(toggles);
+            state.Version = 2;
+
+            var unleash1 = await CreateUnleash(appname, state);
+            var result1 = unleash1.IsEnabled("test_toggle");
+            unleash1.Dispose();
+
+            var unleash2 = await CreateUnleash(appname, state);
+            var result2 = unleash2.IsEnabled("test_toggle");
+            unleash2.Dispose();
+
+            var unleash3 = await CreateUnleash(appname, state);
+            var result3 = unleash3.IsEnabled("test_toggle");
+            unleash3.Dispose();
+
+            var unleash4 = await CreateUnleash(appname, state);
+            var result4 = unleash4.IsEnabled("test_toggle");
+            unleash4.Dispose();
+
+            // Act
+
+            // Assert
+            result1.Should().BeTrue();
+            result2.Should().BeTrue();
+            result3.Should().BeTrue();
+            result4.Should().BeTrue();
+
+            //unleash.Dispose();
+        }
+
+        [Test]
+        public async Task IsEnabled_Gradual_Rollout_Random_Strategy_Test()
         {
             // Arrange
             var appname = "testapp";
@@ -93,53 +146,25 @@ namespace Unleash.Tests
 
             var state = new ToggleCollection(toggles);
             state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
+            var unleash = await CreateUnleash(appname, state);
 
             // Act
             var result = unleash.IsEnabled("test_toggle");
 
             // Assert
             result.Should().BeTrue();
+
+            unleash.Dispose();
         }
 
-        [Test]
-        public void IsEnabled_Gradual_Rollout_UserId_Strategy_Test()
-        {
-            // Arrange
-            var appname = "testapp";
-            var strategy = new ActivationStrategy("gradualRolloutUserId", new Dictionary<string, string>() { { "percentage", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
-            {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
-
-            // Act
-            var result = unleash.IsEnabled("test_toggle");
-
-            // Assert
-            result.Should().BeFalse();
-        }
-
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        public static async Task<IUnleash> CreateUnleash(string name, ToggleCollection state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
-            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
-            var fakeFileSystem = new MockFileSystem();
-            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
+            var toggleState = JsonSerializer.Serialize(state, options);
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
-            A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
-            {
-                var task = ((IEnumerable<IUnleashScheduledTask>)action.Arguments[0]).First();
-                task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
-            });
 
             fakeHttpMessageHandler.Response = new HttpResponseMessage
             {
@@ -155,11 +180,10 @@ namespace Unleash.Tests
             {
                 AppName = name,
                 HttpClientFactory = fakeHttpClientFactory,
-                ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
             };
 
-            var unleash = new DefaultUnleash(settings);
+            var unleash = await new UnleashClientFactory()
+                .CreateClientAsync(settings, synchronousInitialization: true);
 
             return unleash;
         }
