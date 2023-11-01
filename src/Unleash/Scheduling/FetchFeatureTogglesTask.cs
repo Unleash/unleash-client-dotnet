@@ -8,6 +8,7 @@ using Unleash.Serialization;
 using Unleash.Logging;
 using Unleash.Events;
 using System.Net.Http;
+using System.Reflection.Metadata;
 
 namespace Unleash.Scheduling
 {
@@ -19,6 +20,7 @@ namespace Unleash.Scheduling
 
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
+        private readonly UnleashEngine engine;
         private readonly IUnleashApiClient apiClient;
 
         // In-memory reference of toggles/etags
@@ -28,12 +30,14 @@ namespace Unleash.Scheduling
             IUnleashApiClient apiClient,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
+            UnleashEngine engine,
             string toggleFile,
             string etagFile)
         {
             this.apiClient = apiClient;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
+            this.engine = engine;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
@@ -62,6 +66,12 @@ namespace Unleash.Scheduling
 
             if (result.Etag == Etag)
                 return;
+
+
+            if (!string.IsNullOrEmpty(result.ToggleCollection) && engine != null)
+            {
+                engine.TakeState(result.ToggleCollection);
+            }
 
             // now that the toggle collection has been updated, raise the toggles updated event if configured
             eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });

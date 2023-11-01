@@ -21,7 +21,6 @@ namespace Unleash.Communication
         private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
         private readonly EventCallbackConfig eventConfig;
-        private readonly UnleashEngine engine;
         private readonly string projectId;
 
         public UnleashApiClient(
@@ -29,14 +28,12 @@ namespace Unleash.Communication
             IJsonSerializer jsonSerializer, 
             UnleashApiClientRequestHeaders clientRequestHeaders,
             EventCallbackConfig eventConfig,
-            UnleashEngine engine,
             string projectId = null)
         {
             this.httpClient = httpClient;
             this.jsonSerializer = jsonSerializer;
             this.clientRequestHeaders = clientRequestHeaders;
             this.eventConfig = eventConfig;
-            this.engine = engine;
             this.projectId = projectId;
         }
 
@@ -88,12 +85,6 @@ namespace Unleash.Communication
                             HasChanged = false
                         };
                     }
-
-                    if (engine != null)
-                    {
-                        engine.TakeState(content);
-                    }
-
 
                     // Success
                     return new FetchTogglesResult

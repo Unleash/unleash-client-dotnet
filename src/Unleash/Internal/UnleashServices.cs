@@ -72,7 +72,7 @@ namespace Unleash
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
-                }, eventConfig, UnleashEngine, settings.ProjectId);
+                }, eventConfig, settings.ProjectId);
             }
             else
             {
@@ -88,6 +88,7 @@ namespace Unleash
                 apiClient, 
                 settings.FileSystem,
                 eventConfig,
+                UnleashEngine,
                 backupFile,
                 etagBackupFile)
             {
