@@ -121,6 +121,9 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
             var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
+            if (variant != null) {
+                variant.FeatureEnabled = enabled;
+            }
 
             if (featureToggle?.ImpressionData ?? false)
             {
