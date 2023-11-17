@@ -24,7 +24,7 @@ namespace Unleash.Tests.Strategy.Segments
         {
             // Arrange
             var appname = "masstest";
-            var segmentIds = new List<string>() { "1", "2" };
+            var segmentIds = new List<int>() { 1, 2 };
             var toggles = new List<FeatureToggle>()
             {
                 new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), null, segmentIds) })
@@ -49,7 +49,7 @@ namespace Unleash.Tests.Strategy.Segments
         {
             // Arrange
             var appname = "masstest";
-            var segmentIds = new List<string>() { "1" };
+            var segmentIds = new List<int>() { 1 };
             var toggles = new List<FeatureToggle>()
             {
                 new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "15") }, segmentIds) })
@@ -74,7 +74,7 @@ namespace Unleash.Tests.Strategy.Segments
         {
             // Arrange
             var appname = "masstest";
-            var segmentIds = new List<string>() { "1" };
+            var segmentIds = new List<int>() { 1 };
             var toggles = new List<FeatureToggle>()
             {
                 new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") }, segmentIds) })
