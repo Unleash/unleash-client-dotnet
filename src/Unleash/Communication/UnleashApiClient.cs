@@ -64,37 +64,42 @@ namespace Unleash.Communication
                         };
                     }
 
-                    var newEtag = response.Headers.ETag?.Tag;
-                    if (newEtag == etag)
-                    { 
-                        return new FetchTogglesResult
-                        {
-                            HasChanged = false,
-                            Etag = newEtag,
-                            ToggleCollection = null,
-                        };
-                    }
-
-                    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
-
-                    if (toggleCollection == null)
-                    {
-                        return new FetchTogglesResult
-                        {
-                            HasChanged = false
-                        };
-                    }
-
-                    // Success
-                    return new FetchTogglesResult
-                    {
-                        HasChanged = true,
-                        Etag = newEtag,
-                        ToggleCollection = toggleCollection
-                    };
+                    return await HandleSuccessResponse(response, etag);
                 }
             }
+        }
+
+        private async Task<FetchTogglesResult> HandleSuccessResponse(HttpResponseMessage response, string etag)
+        {
+            var newEtag = response.Headers.ETag?.Tag;
+            if (newEtag == etag)
+            { 
+                return new FetchTogglesResult
+                {
+                    HasChanged = false,
+                    Etag = newEtag,
+                    ToggleCollection = null,
+                };
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
+
+            if (toggleCollection == null)
+            {
+                return new FetchTogglesResult
+                {
+                    HasChanged = false
+                };
+            }
+
+            // Success
+            return new FetchTogglesResult
+            {
+                HasChanged = true,
+                Etag = newEtag,
+                ToggleCollection = toggleCollection
+            };
         }
 
         public async Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken)
