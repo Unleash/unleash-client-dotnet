@@ -51,22 +51,28 @@ namespace Unleash.Communication
 
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
-                    if (!response.IsSuccessStatusCode)
+                    if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.NotModified)
                     {
-                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
-                        eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
-
-                        return new FetchTogglesResult
                         {
-                            HasChanged = false,
-                            Etag = null,
-                        };
+                        return await HandleErrorResponse(response);
                     }
 
                     return await HandleSuccessResponse(response, etag);
                 }
             }
+        }
+
+        private async Task<FetchTogglesResult> HandleErrorResponse(HttpResponseMessage response)
+        {
+            var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
+            eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
+
+            return new FetchTogglesResult
+            {
+                HasChanged = false,
+                Etag = null,
+            };
         }
 
         private async Task<FetchTogglesResult> HandleSuccessResponse(HttpResponseMessage response, string etag)
