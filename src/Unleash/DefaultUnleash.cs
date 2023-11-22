@@ -156,11 +156,12 @@ namespace Unleash
             }
             else
             {
-                strategy = featureToggle.Strategies
-                    .FirstOrDefault(s =>
-                        GetStrategyOrUnknown(s.Name)
-                        .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
-                    );
+                strategy = featureToggle.Strategies.FirstOrDefault(s =>
+                {
+                    var uniqueConstraints = new HashSet<Constraint>(ResolveConstraints(s));
+                    uniqueConstraints.UnionWith(s.Constraints);
+                    return GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, uniqueConstraints);
+                });
             }
 
             if (featureToggle.Dependencies.Any() && !ParentDependenciesAreSatisfied(featureToggle, enhancedContext))
