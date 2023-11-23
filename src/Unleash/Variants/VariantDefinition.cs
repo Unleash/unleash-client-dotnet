@@ -25,7 +25,7 @@ namespace Unleash.Variants
 
         public Variant ToVariant()
         {
-            return new Variant(Name, Payload, true);
+            return new Variant(Name, Payload, true, true);
         }
     }
 }

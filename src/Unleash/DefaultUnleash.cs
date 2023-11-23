@@ -121,6 +121,9 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
             var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
+            if (variant != null) {
+                variant.FeatureEnabled = enabled;
+            }
 
             if (featureToggle?.ImpressionData ?? false)
             {
@@ -156,11 +159,12 @@ namespace Unleash
             }
             else
             {
-                strategy = featureToggle.Strategies
-                    .FirstOrDefault(s =>
-                        GetStrategyOrUnknown(s.Name)
-                        .IsEnabled(s.Parameters, enhancedContext, ResolveConstraints(s).Union(s.Constraints))
-                    );
+                strategy = featureToggle.Strategies.FirstOrDefault(s =>
+                {
+                    var uniqueConstraints = new HashSet<Constraint>(ResolveConstraints(s));
+                    uniqueConstraints.UnionWith(s.Constraints);
+                    return GetStrategyOrUnknown(s.Name).IsEnabled(s.Parameters, enhancedContext, uniqueConstraints);
+                });
             }
 
             if (featureToggle.Dependencies.Any() && !ParentDependenciesAreSatisfied(featureToggle, enhancedContext))
