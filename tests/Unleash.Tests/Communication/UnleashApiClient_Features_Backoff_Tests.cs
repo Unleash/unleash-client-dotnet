@@ -128,6 +128,7 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
                 TooManyRequests,
                 TooManyRequests,
                 TooManyRequests,
+                InternalServerError,
                 Ok,
                 Ok
             }
@@ -135,7 +136,7 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
 
         var client = GetClient(messageHandler);
 
-        // Act
+        // Wind up call count to 10
         for (var i = 0; i < 55; i++)
         {
             var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
@@ -143,6 +144,23 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
                 .GetResult();
         }
 
+        messageHandler.CallCount.Should().Be(10);
+        
+        // Get the 11th bad response
+        for (var i = 0; i < 11; i++)
+        {
+            var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        messageHandler.CallCount.Should().Be(11);
+
+        var resultAfter = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
+            .GetAwaiter()
+            .GetResult();
+
+        // Make 10 attempts for the 11th bad response, these should be skipped
         for (var i = 0; i < 10; i++)
         {
             var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
@@ -150,15 +168,8 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
                 .GetResult();
         }
 
-        messageHandler.CallCount.Should().Be(10);
-
-        var resultAfter = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
-            .GetAwaiter()
-            .GetResult();
-
-        // Assert
-        // Calls on the 11th retry
-        messageHandler.CallCount.Should().Be(11);
+        // Calls API on the 11th attempt
+        messageHandler.CallCount.Should().Be(12);
 
         for (var i = 0; i < 9; i++)
         {
@@ -168,14 +179,14 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
         }
 
         // Shouldn't have changed
-        messageHandler.CallCount.Should().Be(11);
+        messageHandler.CallCount.Should().Be(12);
 
         var resultAfter2 = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
 
         // Should have made 1 additional attempt as part of decrease
-        messageHandler.CallCount.Should().Be(12);
+        messageHandler.CallCount.Should().Be(13);
    }
 
     [Test]
