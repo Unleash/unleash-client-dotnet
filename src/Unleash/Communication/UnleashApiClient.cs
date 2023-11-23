@@ -24,10 +24,10 @@ namespace Unleash.Communication
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
         private readonly EventCallbackConfig eventConfig;
         private readonly string projectId;
-        private int featureClientToSkip = 0;
-        private int featureClientSkipped = 0;
-        private int metricsClientToSkip = 0;
-        private int metricsClientSkipped = 0;
+        private int featureRequestsToSkip = 0;
+        private int featureRequestsSkipped = 0;
+        private int metricsRequestsToSkip = 0;
+        private int metricsRequestsSkipped = 0;
         private readonly int[] backoffResponses = 
             new int[]
                 {
@@ -60,9 +60,9 @@ namespace Unleash.Communication
 
         public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
         {
-            if (featureClientToSkip > featureClientSkipped)
+            if (featureRequestsToSkip > featureRequestsSkipped)
             {
-                featureClientSkipped++;
+                featureRequestsSkipped++;
                 return new FetchTogglesResult
                 {
                     HasChanged = false,
@@ -70,7 +70,7 @@ namespace Unleash.Communication
                 };
             }
 
-            featureClientSkipped = 0;
+            featureRequestsSkipped = 0;
 
             string resourceUri = "client/features";
             if (!string.IsNullOrWhiteSpace(this.projectId))
@@ -119,13 +119,13 @@ namespace Unleash.Communication
         }
         private void Backoff(HttpResponseMessage response)
         {
-            featureClientToSkip = Math.Min(10, featureClientToSkip + 1);
+            featureRequestsToSkip = Math.Min(10, featureRequestsToSkip + 1);
             Logger.Warn($"UNLEASH: Backing off due to {response.StatusCode} from server in '{nameof(FetchToggles)}'.");
         }
 
         private void ConfigurationError(HttpResponseMessage response, string requestUri)
         {
-            featureClientToSkip = 10;
+            featureRequestsToSkip = 10;
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -143,7 +143,7 @@ namespace Unleash.Communication
 
         private async Task<FetchTogglesResult> HandleSuccessResponse(HttpResponseMessage response, string etag)
         {
-            featureClientToSkip = Math.Max(0, featureClientToSkip - 1);
+            featureRequestsToSkip = Math.Max(0, featureRequestsToSkip - 1);
 
             var newEtag = response.Headers.ETag?.Tag;
             if (newEtag == etag)
@@ -208,13 +208,13 @@ namespace Unleash.Communication
 
         public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
         {
-            if (metricsClientToSkip > metricsClientSkipped)
+            if (metricsRequestsToSkip > metricsRequestsSkipped)
             {
-                metricsClientSkipped++;
+                metricsRequestsSkipped++;
                 return false;
             }
 
-            metricsClientSkipped = 0;
+            metricsRequestsSkipped = 0;
 
             const string requestUri = "client/metrics";
 
@@ -257,12 +257,12 @@ namespace Unleash.Communication
         {
             if (backoffResponses.Contains((int)response.StatusCode))
             {
-                metricsClientToSkip = Math.Min(10, metricsClientToSkip + 1);
+                metricsRequestsToSkip = Math.Min(10, metricsRequestsToSkip + 1);
             }
 
             if (configurationErrorResponses.Contains((int)response.StatusCode))
             {
-                metricsClientToSkip = 10;
+                metricsRequestsToSkip = 10;
             }
 
             var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -272,7 +272,7 @@ namespace Unleash.Communication
 
         private void HandleMetricsSuccessResponse(HttpResponseMessage response)
         {
-            metricsClientToSkip = Math.Max(0, metricsClientToSkip - 1);
+            metricsRequestsToSkip = Math.Max(0, metricsRequestsToSkip - 1);
         }
 
         private static void SetRequestHeaders(HttpRequestMessage requestMessage, UnleashApiClientRequestHeaders headers)
