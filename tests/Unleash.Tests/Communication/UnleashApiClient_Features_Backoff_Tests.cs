@@ -160,7 +160,6 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
         // Calls on the 11th retry
         messageHandler.CallCount.Should().Be(11);
 
-        // Another loop of 9
         for (var i = 0; i < 9; i++)
         {
             var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
