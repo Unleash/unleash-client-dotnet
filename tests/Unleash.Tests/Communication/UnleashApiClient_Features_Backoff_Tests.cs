@@ -187,11 +187,11 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
             new List<HttpResponseMessage>
             {
                 TooManyRequests,
+                InternalServerError,
+                GatewayTimeout,
                 TooManyRequests,
-                TooManyRequests,
-                TooManyRequests,
-                TooManyRequests,
-                TooManyRequests,
+                ServiceUnavailable,
+                BadGateway,
                 TooManyRequests,
                 TooManyRequests,
                 TooManyRequests,

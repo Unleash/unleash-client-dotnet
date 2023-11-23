@@ -86,10 +86,10 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
                 TooManyRequests,
                 InternalServerError,
                 InternalServerError,
-                TooManyRequests,
-                TooManyRequests,
-                TooManyRequests,
-                TooManyRequests,
+                GatewayTimeout,
+                BadGateway,
+                ServiceUnavailable,
+                Forbidden,
                 Unauthorized,
                 Ok
             }
