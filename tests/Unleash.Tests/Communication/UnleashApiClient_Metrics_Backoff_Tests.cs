@@ -8,7 +8,7 @@ using Unleash.Serialization;
 public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
 {
     [Test]
-    public void Should_not_skip_first_call()
+    public void Should_Not_Skip_First_Call()
     {
         // Arrange
         var messageHandler = new CountingConfigurableHttpMessageHandler
