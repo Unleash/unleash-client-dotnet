@@ -2,10 +2,9 @@ namespace Unleash
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
-    /// A context which the feature request should be validated againt. Usually scoped to a web request through an implementation of IUnleashContextProvider.
+    /// A context which the feature request should be validated against. Usually scoped to a web request through an implementation of IUnleashContextProvider.
     /// </summary>
     public class UnleashContext
     {
@@ -15,19 +14,35 @@ namespace Unleash
         public string SessionId { get; set; }
         public string RemoteAddress { get; set; }
         public DateTimeOffset? CurrentTime { get; set; }
-        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Properties { get; set; }
+
+        public UnleashContext()
+        {
+            Properties = new Dictionary<string, string>();
+        }
+
+        public UnleashContext(string appName, string environment, string userId, string sessionId, string remoteAddress, DateTimeOffset? currentTime, Dictionary<string, string> properties)
+        {
+            AppName = appName;
+            Environment = environment;
+            UserId = userId;
+            SessionId = sessionId;
+            RemoteAddress = remoteAddress;
+            CurrentTime = currentTime;
+            Properties = properties;
+        }
 
         public string GetByName(string contextName)
         {
             switch (contextName)
             {
-                case "environment": 
+                case "environment":
                     return Environment;
-                case "appName": 
+                case "appName":
                     return AppName;
-                case "userId": 
+                case "userId":
                     return UserId;
-                case "sessionId": 
+                case "sessionId":
                     return SessionId;
                 case "remoteAddress":
                     return RemoteAddress;
@@ -40,19 +55,10 @@ namespace Unleash
 
         public UnleashContext ApplyStaticFields(UnleashSettings settings)
         {
-            var builder = new Builder(this);
+            var environment = string.IsNullOrEmpty(Environment) ? settings.Environment : Environment;
+            var appName = string.IsNullOrEmpty(AppName) ? settings.AppName : AppName;
 
-            if (string.IsNullOrEmpty(Environment))
-            {
-                builder.Environment(settings.Environment);
-            }
-
-            if (string.IsNullOrEmpty(AppName))
-            {
-                builder.AppName(settings.AppName);
-            }
-
-            return builder.Build();
+            return new UnleashContext(appName, environment, UserId, SessionId, RemoteAddress, CurrentTime, new Dictionary<string, string>(Properties));
         }
 
         internal static Builder New()
@@ -68,11 +74,11 @@ namespace Unleash
             private string sessionId;
             private string remoteAddress;
             private DateTimeOffset? currentTime;
-            private readonly Dictionary<string, string> properties = new Dictionary<string, string>();
+            private readonly Dictionary<string, string> properties;
 
             public Builder()
             {
-
+                properties = new Dictionary<string, string>();
             }
 
             public Builder(UnleashContext context)
@@ -83,7 +89,7 @@ namespace Unleash
                 sessionId = context.SessionId;
                 remoteAddress = context.RemoteAddress;
                 currentTime = context.CurrentTime;
-                properties = context.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                properties = new Dictionary<string, string>(context.Properties);
             }
 
             public Builder AppName(string appName)
@@ -135,18 +141,7 @@ namespace Unleash
             }
 
             public UnleashContext Build()
-            {
-                return new UnleashContext()
-                {
-                    AppName = appName,
-                    Environment = environment,
-                    UserId = userId,
-                    SessionId = sessionId,
-                    RemoteAddress = remoteAddress,
-                    Properties = properties,
-                    CurrentTime = currentTime
-                };
-            }
+                => new UnleashContext(appName, environment, userId, sessionId, remoteAddress, currentTime, properties);
         }
     }
 }
