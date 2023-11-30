@@ -140,6 +140,11 @@ namespace Unleash
         /// </summary>
         internal bool ScheduleFeatureToggleFetchImmediatly { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets if the unleash client should use Yggdrasil as feature flag engine.
+        /// </summary>
+        public bool UseYggdrasil { get; set; }
+
         private static string GetSdkVersion()
         {
             var assemblyName = Assembly.GetExecutingAssembly().GetName();

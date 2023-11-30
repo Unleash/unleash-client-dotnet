@@ -1,4 +1,5 @@
 ﻿using Unleash.Variants;
+using YggdrasilVariant = Yggdrasil.Variant;
 
 namespace Unleash.Internal
 {
@@ -18,5 +19,13 @@ namespace Unleash.Internal
         public Payload Payload { get; }
         public bool IsEnabled { get; }
         public bool FeatureEnabled { get; internal set; }
+
+        public static Variant FromEngineVariant(YggdrasilVariant variant)
+        {
+            if (variant == null)
+                return DISABLED_VARIANT;
+
+            return new Variant(variant.Name, new Payload(variant.Payload.PayloadType, variant.Payload.Value), variant.Enabled, variant.FeatureEnabled);
+        }
     }
 }

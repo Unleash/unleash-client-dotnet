@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Events;
@@ -12,6 +14,7 @@ using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Metrics;
 using Unleash.Serialization;
+using EngineBucket = Yggdrasil.MetricsBucket;
 
 namespace Unleash.Communication
 {
@@ -90,7 +93,7 @@ namespace Unleash.Communication
                         return await HandleErrorResponse(response, resourceUri);
                     }
 
-                    return await HandleSuccessResponse(response, etag);
+                    return await HandleSuccessResponse(response, etag, cancellationToken);
                 }
             }
         }
@@ -141,7 +144,7 @@ namespace Unleash.Communication
             }
         }
 
-        private async Task<FetchTogglesResult> HandleSuccessResponse(HttpResponseMessage response, string etag)
+        private async Task<FetchTogglesResult> HandleSuccessResponse(HttpResponseMessage response, string etag, CancellationToken cancellationToken)
         {
             featureRequestsToSkip = Math.Max(0, featureRequestsToSkip - 1);
 
@@ -156,7 +159,17 @@ namespace Unleash.Communication
                 };
             }
 
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            if (string.IsNullOrEmpty(content))
+            {
+                return new FetchTogglesResult
+                {
+                    HasChanged = false
+                };
+            }
+
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
             var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
 
             if (toggleCollection == null)
@@ -172,7 +185,8 @@ namespace Unleash.Communication
             {
                 HasChanged = true,
                 Etag = newEtag,
-                ToggleCollection = toggleCollection
+                ToggleCollection = toggleCollection,
+                ResponseContent = content
             };
         }
 
@@ -201,6 +215,42 @@ namespace Unleash.Communication
                     Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
                     eventConfig?.RaiseError(new ErrorEvent() { Resource = requestUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
 
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> SendEngineMetrics(EngineBucket metrics, CancellationToken cancellationToken)
+        {
+            const string requestUri = "client/metrics";
+
+            var memoryStream = new MemoryStream();
+
+            jsonSerializer.Serialize(memoryStream, new
+            {
+                AppName = clientRequestHeaders.AppName,
+                InstanceId = clientRequestHeaders.InstanceTag,
+                Bucket = metrics
+            });
+
+            const int bufferSize = 1024 * 4;
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
+            {
+                request.Content = new StreamContent(memoryStream, bufferSize);
+                request.Content.Headers.AddContentTypeJson();
+
+                SetRequestHeaders(request, clientRequestHeaders);
+
+                using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                {
+                    if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotModified)
+                    {
+                        HandleMetricsSuccessResponse(response);
+                        return true;
+                    }
+
+                    await HandleMetricsErrorResponse(response, requestUri);
                     return false;
                 }
             }

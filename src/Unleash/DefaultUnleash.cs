@@ -57,6 +57,17 @@ namespace Unleash
         ///// <param name="overrideDefaultStrategies">When true, it overrides the default strategies.</param>
         ///// <param name="strategies">Custom strategies.</param>
         public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, params IStrategy[] strategies)
+            : this(settings, overrideDefaultStrategies, strategies, yggdrasilStrategies: null)
+        { }
+
+        ///// <summary>
+        ///// Initializes a new instance of Unleash client.
+        ///// </summary>
+        ///// <param name="config">Unleash settings</param>
+        ///// <param name="overrideDefaultStrategies">When true, it overrides the default strategies.</param>
+        ///// <param name="strategies">Custom strategies.</param>
+        ///// <param name="yggdrasilStrategies">Yggdrasil custom strategies.</param>
+        public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, IStrategy[] strategies, params Yggdrasil.IStrategy[] yggdrasilStrategies)
         {
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 
@@ -70,7 +81,7 @@ namespace Unleash
             strategies = SelectStrategies(strategies, overrideDefaultStrategies);
             strategyMap = BuildStrategyMap(strategies);
 
-            services = new UnleashServices(settings, EventConfig, strategyMap);
+            services = new UnleashServices(settings, EventConfig, strategyMap, yggdrasilStrategies?.ToList());
 
             Logger.Info($"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
 
@@ -105,10 +116,23 @@ namespace Unleash
 
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
-            var enabled = CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
-            RegisterCount(toggleName, enabled);
+            if (settings.UseYggdrasil)
+            {
+                var enabled = services.YggdrasilEngine.IsEnabled(toggleName, context) ?? defaultSetting;
+                services.YggdrasilEngine.CountFeature(toggleName, enabled);
+                if (services.YggdrasilEngine.ShouldEmitImpressionEvent(toggleName))
+                {
+                    EmitImpressionEvent("isEnabled", context, enabled, toggleName);
+                }
 
-            return enabled;
+                return enabled;
+            }
+            else
+            {
+                var enabled = CheckIsEnabled(toggleName, context, defaultSetting).Enabled;
+                RegisterCount(toggleName, enabled);
+                return enabled;
+            }
         }
 
         private FeatureEvaluationResult CheckIsEnabled(
@@ -247,22 +271,37 @@ namespace Unleash
 
         public Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue)
         {
-            var toggle = GetToggle(toggleName);
-
-            var evaluationResult = CheckIsEnabled(toggleName, context, false, defaultValue);
-
-            RegisterCount(toggleName, evaluationResult.Enabled);
-
-            RegisterVariant(toggleName, evaluationResult.Variant);
-
-            var enhancedContext = context.ApplyStaticFields(settings);
-
-            if (toggle?.ImpressionData ?? false)
+            if (settings.UseYggdrasil)
             {
-                EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
-            }
+                var engineVariant = services.YggdrasilEngine.GetVariant(toggleName, context);
+                var variant = engineVariant != null ? Variant.FromEngineVariant(engineVariant) : defaultValue;
+                services.YggdrasilEngine.CountVariant(toggleName, variant.Name);
+                context.ApplyStaticFields(settings);
+                if (services.YggdrasilEngine.ShouldEmitImpressionEvent(toggleName))
+                {
+                    EmitImpressionEvent("getVariant", context, variant.IsEnabled, toggleName, variant.Name);
+                }
 
-            return evaluationResult.Variant;
+                return variant;
+            }
+            else {
+                var toggle = GetToggle(toggleName);
+
+                var evaluationResult = CheckIsEnabled(toggleName, context, false, defaultValue);
+
+                RegisterCount(toggleName, evaluationResult.Enabled);
+
+                RegisterVariant(toggleName, evaluationResult.Variant);
+
+                var enhancedContext = context.ApplyStaticFields(settings);
+
+                if (toggle?.ImpressionData ?? false)
+                {
+                    EmitImpressionEvent("getVariant", enhancedContext, evaluationResult.Enabled, toggle.Name, evaluationResult.Variant?.Name);
+                }
+
+                return evaluationResult.Variant;
+            }
         }
 
         public IEnumerable<VariantDefinition> GetVariants(string toggleName)

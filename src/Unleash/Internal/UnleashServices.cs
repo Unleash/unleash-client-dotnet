@@ -8,6 +8,7 @@ using Unleash.Internal;
 using Unleash.Metrics;
 using Unleash.Scheduling;
 using Unleash.Strategies;
+using YggdrasilEngine = Yggdrasil.YggdrasilEngine;
 
 namespace Unleash
 {
@@ -24,13 +25,25 @@ namespace Unleash
         internal bool IsMetricsDisabled { get; }
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
+        internal YggdrasilEngine YggdrasilEngine { get; }
 
-        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
+
+        public UnleashServices(
+            UnleashSettings settings,
+            EventCallbackConfig eventConfig,
+            Dictionary<string, IStrategy> strategyMap,
+            List<Yggdrasil.IStrategy> strategies = null)
         {
             if (settings.FileSystem == null)
             {
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
+
+            if (settings.UseYggdrasil)
+            {
+                YggdrasilEngine = new YggdrasilEngine(strategies);
+            }
+
 
             var backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
@@ -84,6 +97,7 @@ namespace Unleash
                 settings.JsonSerializer, 
                 settings.FileSystem,
                 eventConfig,
+                YggdrasilEngine,
                 backupFile, 
                 etagBackupFile)
             {
@@ -113,7 +127,8 @@ namespace Unleash
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
                     apiClient, 
                     settings, 
-                    MetricsBucket)
+                    MetricsBucket,
+                    YggdrasilEngine)
                 {
                     Interval = settings.SendMetricsInterval.Value
                 };
@@ -130,6 +145,8 @@ namespace Unleash
             {
                 cancellationTokenSource.Cancel();
             }
+
+            YggdrasilEngine?.Dispose();
 
             scheduledTaskManager?.Dispose();
             ToggleCollection?.Dispose();

@@ -5,6 +5,7 @@ using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Metrics;
 using Unleash.Variants;
+using EngineBucket = Yggdrasil.MetricsBucket;
 
 namespace Unleash.Tests.Mock
 {
@@ -53,6 +54,11 @@ namespace Unleash.Tests.Mock
         }
 
         public Task<bool> SendMetrics(ThreadSafeMetricsBucket metricsBucket, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> SendEngineMetrics(EngineBucket metricsBucket, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }

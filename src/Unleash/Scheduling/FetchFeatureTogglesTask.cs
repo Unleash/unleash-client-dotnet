@@ -8,6 +8,7 @@ using Unleash.Serialization;
 using Unleash.Logging;
 using Unleash.Events;
 using System.Net.Http;
+using YggdrasilEngine = Yggdrasil.YggdrasilEngine;
 
 namespace Unleash.Scheduling
 {
@@ -22,6 +23,7 @@ namespace Unleash.Scheduling
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly ThreadSafeToggleCollection toggleCollection;
+        private readonly YggdrasilEngine engine;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
@@ -32,6 +34,7 @@ namespace Unleash.Scheduling
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
+            YggdrasilEngine engine,
             string toggleFile,
             string etagFile)
         {
@@ -40,6 +43,7 @@ namespace Unleash.Scheduling
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
+            this.engine = engine;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
         }
@@ -70,6 +74,11 @@ namespace Unleash.Scheduling
                 return;
 
             toggleCollection.Instance = result.ToggleCollection;
+
+            if (!string.IsNullOrEmpty(result.ResponseContent) && engine != null)
+            {
+                engine.TakeState(result.ResponseContent);
+            }
 
             // now that the toggle collection has been updated, raise the toggles updated event if configured
             eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });

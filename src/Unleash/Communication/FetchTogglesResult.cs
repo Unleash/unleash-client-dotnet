@@ -7,5 +7,6 @@ namespace Unleash.Communication
         public ToggleCollection ToggleCollection { get; set; }
         public bool HasChanged { get; set; }
         public string Etag { get; set; }
+        public string ResponseContent { get; set; }
     }
 }

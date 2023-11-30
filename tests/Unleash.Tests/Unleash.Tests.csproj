@@ -21,6 +21,7 @@
     <PackageReference Include="NLog" Version="5.2.0" />
     <PackageReference Include="NLog.Config" Version="4.7.15" />
     <PackageReference Include="NLog.Schema" Version="5.2.0" />
+    <PackageReference Include="Yggdrasil.Engine" Version="1.0.0-alpha.1" />
   </ItemGroup>
 
   <ItemGroup>

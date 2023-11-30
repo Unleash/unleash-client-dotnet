@@ -1,13 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <TargetFrameworks>netstandard2.0;net48;net472;net47;net461;net46;net451;net45</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>-->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup>
     <RootNamespace>Unleash</RootNamespace>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -94,6 +97,7 @@
     </PackageReference>
     <PackageReference Include="murmurhash" Version="1.0.3" />
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
+    <PackageReference Include="Yggdrasil.Engine" Version="1.0.0-alpha.1" />
   </ItemGroup>
   
   <ItemGroup>
