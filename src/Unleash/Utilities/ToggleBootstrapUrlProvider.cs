@@ -31,12 +31,12 @@ namespace Unleash.Utilities
             this.customHeaders = customHeaders;
         }
 
-        public ToggleCollection Read()
+        public BootstrapLoadResult Read()
         {
             return Task.Run(() => FetchFile()).GetAwaiter().GetResult();
         }
 
-        private async Task<ToggleCollection> FetchFile()
+        private async Task<BootstrapLoadResult> FetchFile()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, path))
             {
@@ -63,8 +63,12 @@ namespace Unleash.Utilities
 
                     try
                     {
-                        var togglesResponseStream = await response.Content.ReadAsStreamAsync();
-                        return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream);
+                        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        var togglesResponseStream = new MemoryStream(Encoding.UTF8.GetBytes(responseContent));
+                        return new BootstrapLoadResult {
+                            ToggleCollection = settings.JsonSerializer.Deserialize<ToggleCollection>(togglesResponseStream),
+                            ToggleContent = responseContent
+                        };
                     }
                     catch (Exception ex)
                     {

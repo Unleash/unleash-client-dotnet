@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Unleash.Internal;
 using Unleash.Serialization;
@@ -17,10 +18,13 @@ namespace Unleash.Utilities
             this.settings = settings;
         }
 
-        public ToggleCollection Read()
+        public BootstrapLoadResult Read()
         {
-            using (var togglesStream = settings.FileSystem.FileOpenRead(filePath))
-                return settings.JsonSerializer.Deserialize<ToggleCollection>(togglesStream);
+            var fileContent = settings.FileSystem.ReadAllText(filePath);
+            using (var togglesStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
+                return new BootstrapLoadResult {
+                    ToggleCollection = settings.JsonSerializer.Deserialize<ToggleCollection>(togglesStream)
+                };
         }
     }
 }

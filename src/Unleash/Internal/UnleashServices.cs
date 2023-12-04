@@ -60,6 +60,13 @@ namespace Unleash
                 Instance = cachedFilesResult.InitialToggleCollection ?? new ToggleCollection()
             };
 
+            if (settings.UseYggdrasil &&
+                cachedFilesResult.InitialToggleCollection != null &&
+                !string.IsNullOrEmpty(cachedFilesResult.ToggleContent))
+            {
+                YggdrasilEngine.TakeState(cachedFilesResult.ToggleContent);
+            }
+
             MetricsBucket = new ThreadSafeMetricsBucket();
 
             IUnleashApiClient apiClient;

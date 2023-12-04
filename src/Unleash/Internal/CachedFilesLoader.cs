@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 using Unleash.Events;
 using Unleash.Logging;
 using Unleash.Scheduling;
@@ -84,7 +85,9 @@ namespace Unleash.Internal
             {
                 try
                 {
-                    using (var fileStream = fileSystem.FileOpenRead(toggleFile))
+                    var fileContent = fileSystem.ReadAllText(toggleFile);
+                    result.ToggleContent = fileContent;
+                    using (var fileStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
                     {
                         result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
                     }
@@ -101,11 +104,20 @@ namespace Unleash.Internal
                 result.InitialETag = string.Empty;
             }
 
-            if ((result.InitialToggleCollection == null || result.InitialToggleCollection.Features?.Count == 0 || bootstrapOverride) && toggleBootstrapProvider != null)
+            if ((result.InitialToggleCollection == null ||
+                    result.InitialToggleCollection.Features?.Count == 0 ||
+                    bootstrapOverride
+                ) &&
+                toggleBootstrapProvider != null)
             {
-                var bootstrapCollection = toggleBootstrapProvider.Read();
-                if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
-                    result.InitialToggleCollection = bootstrapCollection;
+                var bootstrapResult = toggleBootstrapProvider.Read();
+                if (bootstrapResult != null &&
+                    bootstrapResult.ToggleCollection != null &&
+                    bootstrapResult.ToggleCollection.Features?.Count > 0)
+                {
+                    result.InitialToggleCollection = bootstrapResult.ToggleCollection;
+                    result.ToggleContent = bootstrapResult.ToggleContent;
+                }
             }
 
             return result;
@@ -115,6 +127,7 @@ namespace Unleash.Internal
         {
             public string InitialETag { get; set; }
             public ToggleCollection InitialToggleCollection { get; set; }
+            public string ToggleContent { get; set; }
         }
     }
 }

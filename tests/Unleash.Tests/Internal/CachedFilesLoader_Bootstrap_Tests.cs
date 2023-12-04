@@ -13,30 +13,31 @@ namespace Unleash.Tests.Internal
 {
     public class CachedFilesLoader_Bootstrap_Tests : CachedFilesLoaderTestBase
     {
-        private static ToggleCollection GetTestToggles()
+        private static BootstrapLoadResult GetTestToggles()
         {
-            return new ToggleCollection(new List<FeatureToggle>
-            {
-                new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
+            return new BootstrapLoadResult { 
+                ToggleCollection = new ToggleCollection(new List<FeatureToggle>
                 {
-                    new ActivationStrategy("userWithId", new Dictionary<string, string>(){
-                        {"userIds", "userA" }
-                    })
-                }, new List<VariantDefinition>()
-                {
-                    new VariantDefinition("Aa", 33, null, null),
-                    new VariantDefinition("Aa", 33, null, null),
-                    new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
-                }
-                ),
-                new FeatureToggle("one-disabled",  "release", false, false, new List<ActivationStrategy>()
-                {
-                    new ActivationStrategy("userWithId", new Dictionary<string, string>()
+                    new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
                     {
-                        {"userIds", "userB" }
+                        new ActivationStrategy("userWithId", new Dictionary<string, string>(){
+                            {"userIds", "userA" }
+                        })
+                    }, new List<VariantDefinition>()
+                    {
+                        new VariantDefinition("Aa", 33, null, null),
+                        new VariantDefinition("Aa", 33, null, null),
+                        new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
+                    }
+                    ),
+                    new FeatureToggle("one-disabled",  "release", false, false, new List<ActivationStrategy>()
+                    {
+                        new ActivationStrategy("userWithId", new Dictionary<string, string>()
+                        {
+                            {"userIds", "userB" }
+                        })
                     })
-                })
-            });
+                })};
         }
 
         [Test]
@@ -72,7 +73,7 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-missing.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            ToggleCollection bootstrapToggles = null;
+            BootstrapLoadResult bootstrapToggles = null;
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
@@ -189,7 +190,7 @@ namespace Unleash.Tests.Internal
             var settings = new UnleashSettings();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
-                .Returns(new ToggleCollection());
+                .Returns(new BootstrapLoadResult());
             var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
 
             // Act
