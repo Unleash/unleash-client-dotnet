@@ -25,7 +25,9 @@ namespace Unleash.Internal
             if (variant == null)
                 return DISABLED_VARIANT;
 
-            return new Variant(variant.Name, new Payload(variant.Payload.PayloadType, variant.Payload.Value), variant.Enabled, variant.FeatureEnabled);
+            var payload = variant.Payload != null ? new Payload(variant.Payload.PayloadType, variant.Payload.Value) : null;
+
+            return new Variant(variant.Name, payload, variant.Enabled, variant.FeatureEnabled);
         }
     }
 }
