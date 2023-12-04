@@ -29,7 +29,7 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             ErrorEvent callbackEvent = null;
-            var fakeHttpMessageHandler = new TestHttpMessageHandler()
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(null)
             {
                 Response = new HttpResponseMessage(HttpStatusCode.Unauthorized) { Content = new StringContent("Unauthorized", Encoding.UTF8) },
             };
@@ -55,10 +55,7 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             ErrorEvent callbackEvent = null;
-            var fakeHttpMessageHandler = new TestHttpMessageHandler()
-            {
-                Response = new HttpResponseMessage(HttpStatusCode.Unauthorized) { Content = new StringContent("Unauthorized", Encoding.UTF8) },
-            };
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.Unauthorized) { Content = new StringContent("Unauthorized", Encoding.UTF8) });
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var callbackConfig = new EventCallbackConfig()
             {

@@ -62,18 +62,18 @@ namespace Unleash.Tests.Variants
                 AppName = "testapp",
                 UnleashApi = new Uri("http://localhost:8080/"),
                 ScheduledTaskManager = A.Fake<IUnleashScheduledTaskManager>(),
-                HttpClientFactory = fakeHttpClientFactory
+                HttpClientFactory = fakeHttpClientFactory,
+                UseYggdrasil = true
             };
             var responseContent = TestData;
-            var fakeHttpMessageHandler = new TestHttpMessageHandler();
-            fakeHttpMessageHandler.Response = new HttpResponseMessage() {
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(new HttpResponseMessage() {
                 StatusCode = System.Net.HttpStatusCode.OK,
                 Content = new StringContent(responseContent, Encoding.UTF8, "application/json"),
                 Headers =
                 {
                     ETag = new EntityTagHeaderValue("\"123\"")
                 }
-            };
+            });
             var client = new HttpClient(fakeHttpMessageHandler);
             client.BaseAddress = settings.UnleashApi;
             var factory = new UnleashClientFactory();
@@ -86,16 +86,16 @@ namespace Unleash.Tests.Variants
             ""features"": [
                 {
                     ""name"": ""enabled.with.variants"",
-                    ""description"": ""Test"",
+                    ""type"": ""experimental"",
                     ""enabled"": true,
+                    ""impressionData"": false,
                     ""strategies"": [
                         {
                             ""name"": ""flexibleRollout"",
                             ""parameters"": {
-                                ""rollout"": ""100"",
-                                ""stickiness"": ""default"",
-                                ""groupId"": ""default"",
-                            }
+                                ""rollout"": ""100""
+                            },
+                            ""constraints"": []
                         }
                     ],
                     ""variants"": [
@@ -116,6 +116,8 @@ namespace Unleash.Tests.Variants
                     ""strategies"": [
                         {
                             ""name"": ""default"",
+                            ""parameters"": {},
+                            ""constraints"": []
                         }
                     ]
                 }

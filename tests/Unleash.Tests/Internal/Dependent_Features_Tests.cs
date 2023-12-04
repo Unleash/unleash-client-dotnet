@@ -571,21 +571,9 @@ namespace Unleash.Tests.Internal
 
         public static DefaultUnleash CreateUnleash(string name, ToggleCollection state)
         {
-            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
-            var fakeHttpMessageHandler = new TestHttpMessageHandler();
-            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
-            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
-            var fakeFileSystem = new MockFileSystem();
             var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
-
-            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
-            A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
-            {
-                var task = ((IEnumerable<IUnleashScheduledTask>)action.Arguments[0]).First();
-                task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
-            });
-
-            fakeHttpMessageHandler.Response = new HttpResponseMessage
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(toggleState, Encoding.UTF8, "application/json"),
@@ -593,7 +581,17 @@ namespace Unleash.Tests.Internal
                 {
                     ETag = new EntityTagHeaderValue("\"123\"")
                 }
-            };
+            });
+            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
+            var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
+            var fakeFileSystem = new MockFileSystem();
+
+            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
+            A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
+            {
+                var task = ((IEnumerable<IUnleashScheduledTask>)action.Arguments[0]).First();
+                task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
+            });
 
             var settings = new UnleashSettings
             {

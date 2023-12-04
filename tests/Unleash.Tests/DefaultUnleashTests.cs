@@ -15,6 +15,7 @@ using Unleash.Strategies;
 using Unleash.Tests.Mock;
 using Unleash.Variants;
 using static Unleash.Tests.Specifications.TestFactory;
+using Unleash.ClientFactory;
 
 namespace Unleash.Tests
 {
@@ -61,15 +62,26 @@ namespace Unleash.Tests
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("flexibleRollout", new Dictionary<string, string>() { { "rollout", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+                ""version"": 2,
+                ""features"": [
+                    {
+                        ""name"": ""test_toggle"",
+                        ""type"": ""experimental"",
+                        ""enabled"": true,
+                        ""impressionData"": false,
+                        ""strategies"": [
+                            {
+                                ""name"": ""flexibleRollout"",
+                                ""parameters"": {
+                                    ""rollout"": ""100""
+                                },
+                                ""constraints"": []
+                            }]
+                    }
+                ]
+            }";
             var unleash = CreateUnleash(appname, state);
 
             // Act
@@ -84,15 +96,27 @@ namespace Unleash.Tests
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("gradualRolloutRandom", new Dictionary<string, string>() { { "percentage", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
+
+            var state = @"
             {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+                ""version"": 2,
+                ""features"": [
+                    {
+                        ""name"": ""test_toggle"",
+                        ""type"": ""experimental"",
+                        ""enabled"": true,
+                        ""impressionData"": false,
+                        ""strategies"": [
+                            {
+                                ""name"": ""gradualRolloutRandom"",
+                                ""parameters"": {
+                                    ""percentage"": ""100""
+                                },
+                                ""constraints"": []
+                            }]
+                    }
+                ]
+            }";
             var unleash = CreateUnleash(appname, state);
 
             // Act
@@ -107,15 +131,29 @@ namespace Unleash.Tests
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("gradualRolloutUserId", new Dictionary<string, string>() { { "percentage", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
+
+            var state = @"
             {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
+                ""version"": 2,
+                ""features"": [
+                    {
+                        ""name"": ""test_toggle"",
+                        ""type"": ""experimental"",
+                        ""enabled"": true,
+                        ""impressionData"": false,
+                        ""strategies"": [
+                            {
+                                ""name"": ""gradualRolloutUserId"",
+                                ""parameters"": {
+                                    ""percentage"": ""100"",
+                                    ""groupId"": ""grp""
+                                },
+                                ""constraints"": []
+                            }]
+                    }
+                ]
+            }";
 
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
             var unleash = CreateUnleash(appname, state);
 
             // Act
@@ -125,14 +163,22 @@ namespace Unleash.Tests
             result.Should().BeFalse();
         }
 
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        public static IUnleash CreateUnleash(string name, string state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
-            var fakeHttpMessageHandler = new TestHttpMessageHandler();
+            var content = new StringContent(state, Encoding.UTF8, "application/json");
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = content,
+                Headers =
+                {
+                    ETag = new EntityTagHeaderValue("\"123\"")
+                }
+            });
+
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
-            var fakeFileSystem = new MockFileSystem();
-            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
             A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
@@ -141,22 +187,13 @@ namespace Unleash.Tests
                 task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
             });
 
-            fakeHttpMessageHandler.Response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(toggleState, Encoding.UTF8, "application/json"),
-                Headers =
-                {
-                    ETag = new EntityTagHeaderValue("\"123\"")
-                }
-            };
 
             var settings = new UnleashSettings
             {
                 AppName = name,
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                UseYggdrasil = true
             };
 
             var unleash = new DefaultUnleash(settings);

@@ -136,7 +136,15 @@ namespace Unleash.Tests.Specifications
         public static IUnleash CreateUnleash(TestDefinition testDefinition, UnleashContextDefinition contextDefinition)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
-            var fakeHttpMessageHandler = new TestHttpMessageHandler();
+            var fakeHttpMessageHandler = new TestHttpMessageHandler(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(testDefinition.State.ToString(), Encoding.UTF8, "application/json"),
+                Headers =
+                {
+                    ETag = new EntityTagHeaderValue("\"123\"")
+                }
+            });
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
             var fakeFileSystem = new MockFileSystem();
@@ -147,16 +155,6 @@ namespace Unleash.Tests.Specifications
                 var task = ((IEnumerable<IUnleashScheduledTask>)action.Arguments[0]).First();
                 task.ExecuteAsync((CancellationToken)action.Arguments[1]).Wait();
             });
-
-            fakeHttpMessageHandler.Response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(testDefinition.State.ToString(), Encoding.UTF8, "application/json"),
-                Headers =
-                {
-                    ETag = new EntityTagHeaderValue("\"123\"")
-                }
-            };
 
             var contextBuilder = new UnleashContext.Builder()
                 .UserId(contextDefinition.UserId)
@@ -192,6 +190,11 @@ namespace Unleash.Tests.Specifications
 
         internal class TestHttpMessageHandler : HttpMessageHandler
         {
+            public TestHttpMessageHandler(HttpResponseMessage response)
+            {
+                Response = response;
+            }
+
             public HttpResponseMessage Response { get; set; }
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
