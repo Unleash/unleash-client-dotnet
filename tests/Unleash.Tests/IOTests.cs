@@ -24,7 +24,7 @@ namespace Unleash.Tests
         [Test]
         public async Task GracefullyFailsWhenFileLocked()
         {
-            var settings = new MockedUnleashSettings(false);
+            var settings = new MockedUnleashSettings();
             
             var toggleFile = settings.GetFeatureToggleFilePath();
             var eTagFile = settings.GetFeatureToggleETagFilePath();

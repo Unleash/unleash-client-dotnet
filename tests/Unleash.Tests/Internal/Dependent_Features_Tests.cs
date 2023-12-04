@@ -598,7 +598,6 @@ namespace Unleash.Tests.Internal
                 AppName = name,
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
             };
 
             var unleash = new DefaultUnleash(settings);

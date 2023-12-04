@@ -109,7 +109,6 @@ namespace Unleash.Tests.Strategy.Segments
             });
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
-            var fakeFileSystem = new MockFileSystem();
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
             A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
@@ -126,8 +125,7 @@ namespace Unleash.Tests.Strategy.Segments
                 AppName = name,
                 UnleashContextProvider = new DefaultUnleashContextProvider(contextBuilder.Build()),
                 HttpClientFactory = fakeHttpClientFactory,
-                ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                ScheduledTaskManager = fakeScheduler
             };
 
             var unleash = new DefaultUnleash(settings);

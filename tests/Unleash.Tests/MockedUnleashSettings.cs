@@ -8,19 +8,14 @@ namespace Unleash.Tests
 {
     public class MockedUnleashSettings : UnleashSettings
     {
-        public MockedUnleashSettings(bool mockFileSystem = true)
+        public MockedUnleashSettings()
         {
             AppName = "test";
-            InstanceTag = "test instance 1";
             UnleashApi = new Uri("http://localhost:4242/");
 
             UnleashApiClient = new MockApiClient();
-            FileSystem = new MockFileSystem();
             
-            if (!mockFileSystem)
-            {
-                FileSystem = new FileSystem(Encoding.UTF8);
-            }
+            FileSystem = new FileSystem(Encoding.UTF8);
 
             UnleashContextProvider = new DefaultUnleashContextProvider(new UnleashContext
             {

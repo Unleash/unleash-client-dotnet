@@ -33,7 +33,7 @@ namespace Unleash.Tests.Utilities
             var emptyResult = toggleFileProvider.Read();
 
             // Assert
-            emptyResult.Should().BeNull();
+            emptyResult.ToggleCollection.Should().BeNull();
         }
 
         [Test]
@@ -49,8 +49,8 @@ namespace Unleash.Tests.Utilities
             var result = toggleFileProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            result.ToggleCollection.Features.Count().Should().Be(3);
+            result.ToggleCollection.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
 
         [Test]
@@ -72,8 +72,8 @@ namespace Unleash.Tests.Utilities
             var result = settings.ToggleBootstrapProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            result.ToggleCollection.Features.Count().Should().Be(3);
+            result.ToggleCollection.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
     }
 }
