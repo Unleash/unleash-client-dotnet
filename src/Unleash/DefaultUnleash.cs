@@ -118,11 +118,12 @@ namespace Unleash
         {
             if (settings.UseYggdrasil)
             {
-                var enabled = services.YggdrasilEngine.IsEnabled(toggleName, context) ?? defaultSetting;
+                var enhancedContext = context.ApplyStaticFields(settings);
+                var enabled = services.YggdrasilEngine.IsEnabled(toggleName, enhancedContext) ?? defaultSetting;
                 services.YggdrasilEngine.CountFeature(toggleName, enabled);
                 if (services.YggdrasilEngine.ShouldEmitImpressionEvent(toggleName))
                 {
-                    EmitImpressionEvent("isEnabled", context, enabled, toggleName);
+                    EmitImpressionEvent("isEnabled", enhancedContext, enabled, toggleName);
                 }
 
                 return enabled;
@@ -273,13 +274,13 @@ namespace Unleash
         {
             if (settings.UseYggdrasil)
             {
-                var engineVariant = services.YggdrasilEngine.GetVariant(toggleName, context);
+                var enhancedContext = context.ApplyStaticFields(settings);
+                var engineVariant = services.YggdrasilEngine.GetVariant(toggleName, enhancedContext);
                 var variant = engineVariant != null ? Variant.FromEngineVariant(engineVariant) : defaultValue;
                 services.YggdrasilEngine.CountVariant(toggleName, variant.Name);
-                context.ApplyStaticFields(settings);
                 if (services.YggdrasilEngine.ShouldEmitImpressionEvent(toggleName))
                 {
-                    EmitImpressionEvent("getVariant", context, variant.IsEnabled, toggleName, variant.Name);
+                    EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);
                 }
 
                 return variant;
