@@ -42,6 +42,11 @@ Install the latest version of `Unleash.Client` from [nuget.org](https://www.nuge
 dotnet add package unleash.client
 ```
 
+If you do not have a json library in your project:
+``` bash
+dotnet add package Newtonsoft.Json
+```
+
 ### Create a new a Unleash instance
 
 ---
@@ -60,7 +65,7 @@ This is usually not an issue and Unleash will do this in the background as soon 
 However, if it's important that you do not continue execution until the SDK has synchronized, then you should use the configuration explained in the [synchronous startup](#synchronous-startup) section.
 
 ```csharp
-
+using Unleash;
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
@@ -90,6 +95,9 @@ unleash?.Dispose()
 This unleash client does not throw any exceptions if the unleash server is unreachable. Also, fetching features will return the default value if the feature toggle cache has not yet been populated. In many situations it is perferable to throw an error than allow an application to startup with incorrect feature toggle values. For these cases, we provide a client factory with the option for synchronous initialization.
 
 ```csharp
+using Unleash;
+using Unleash.ClientFactory;
+
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
