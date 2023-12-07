@@ -183,25 +183,27 @@ namespace Unleash.Communication
             var memoryStream = new MemoryStream();
             jsonSerializer.Serialize(memoryStream, registration);
 
-            const int bufferSize = 1024 * 4;
-
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
-                request.Content = new StreamContent(memoryStream, bufferSize);
-                request.Content.Headers.AddContentTypeJson();
-
-                SetRequestHeaders(request, clientRequestHeaders);
-
-                using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                using (var streamReader = new StreamReader(memoryStream))
                 {
-                    if (response.IsSuccessStatusCode)
-                        return true;
+                    var str_content = streamReader.ReadToEnd();
+                    var content = new StringContent(str_content, System.Text.Encoding.UTF8, "application/json");
+                    request.Content = content;
+                    request.Content.Headers.Add(@"Content-Length", str_content.Length.ToString());
+                    SetRequestHeaders(request, clientRequestHeaders);
 
-                    var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
-                    eventConfig?.RaiseError(new ErrorEvent() { Resource = requestUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
+                    using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                    {
+                        if (response.IsSuccessStatusCode)
+                            return true;
 
-                    return false;
+                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
+                        eventConfig?.RaiseError(new ErrorEvent() { Resource = requestUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
+
+                        return false;
+                    }
                 }
             }
         }
@@ -230,25 +232,28 @@ namespace Unleash.Communication
                 });
             }
 
-            const int bufferSize = 1024 * 4;
-
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
-                request.Content = new StreamContent(memoryStream, bufferSize);
-                request.Content.Headers.AddContentTypeJson();
-
-                SetRequestHeaders(request, clientRequestHeaders);
-
-                using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                using (var streamReader = new StreamReader(memoryStream))
                 {
-                    if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotModified)
-                    {
-                        HandleMetricsSuccessResponse(response);
-                        return true;
-                    }
+                    var str_content = streamReader.ReadToEnd();
+                    var content = new StringContent(str_content, System.Text.Encoding.UTF8, "application/json");
+                    request.Content = content;
+                    request.Content.Headers.Add(@"Content-Length", str_content.Length.ToString());
 
-                    await HandleMetricsErrorResponse(response, requestUri);
-                    return false;
+                    SetRequestHeaders(request, clientRequestHeaders);
+
+                    using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
+                    {
+                        if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotModified)
+                        {
+                            HandleMetricsSuccessResponse(response);
+                            return true;
+                        }
+
+                        await HandleMetricsErrorResponse(response, requestUri);
+                        return false;
+                    }
                 }
             }
         }
