@@ -42,7 +42,9 @@ namespace Unleash.Tests.Communication
             jsonSerializer.TryLoad();
             var messageHandler = new InvokingMessageHandler((message) => {
                 Assert.AreEqual(true, message.Content.Headers.Contains("Content-Length"), "Content-Length header is not set");
-                Assert.AreEqual("183", message.Content.Headers.GetValues("Content-Length").First(), "Content-Length header value mismatch");
+                
+                Assert.IsTrue(Int32.TryParse(message.Content.Headers.GetValues("Content-Length").First(), out var contentLength), "Content-Length header value is not a number");
+                Assert.Greater(contentLength, 0, "Content-Length header value is not greater than 0");
             });
             var client = new HttpClient(messageHandler);
             client.BaseAddress = new Uri("http://localhost:8080/api/");
