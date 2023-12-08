@@ -8,7 +8,7 @@ namespace Unleash.Serialization
     {
         public string NugetPackageName => "Newtonsoft.Json (>= 9.0.1)";
 
-        private readonly Encoding encoding = Encoding.UTF8;
+        private readonly Encoding encoding = new UTF8Encoding(false);
 
         private Type jsonTextWriterType;
         private Type jsonTextReaderType;
