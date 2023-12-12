@@ -12,26 +12,19 @@ namespace Unleash.Variants
 
         public static Variant SelectVariant(string groupId, UnleashContext context, List<VariantDefinition> variantDefinitions)
         {
-            var totalWeight = variantDefinitions.Sum(v => v.Weight);
-
-            if (totalWeight == 0) {
-                return null;
-            }
-
-            var variantOverride = GetOverride(variantDefinitions, context);
-            if (variantOverride != null)
-            {
-                return variantOverride.ToVariant();
-            }
-
             var stickiness = variantDefinitions[0].Stickiness ?? "default";
-            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED, totalWeight);
+            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED);
 
             var counter = 0;
             foreach (var variantDefinition in variantDefinitions)
             {
                 if (variantDefinition.Weight != 0)
                 {
+                    if (variantDefinition.Overrides.Count > 0 && variantDefinition.Overrides.Any(OverrideMatchesContext(context)))
+                    {
+                        return variantDefinition.ToVariant();
+                    }
+
                     counter += variantDefinition.Weight;
                     if (counter >= target)
                     {
@@ -52,11 +45,6 @@ namespace Unleash.Variants
 
             return SelectVariant(feature.Name, context, feature.Variants) ?? defaultVariant;
 
-        }
-
-        private static VariantDefinition GetOverride(List<VariantDefinition> variants, UnleashContext context)
-        {
-            return variants.FirstOrDefault(v => v.Overrides.Any(OverrideMatchesContext(context)));
         }
 
         private static Func<VariantOverride, bool> OverrideMatchesContext(UnleashContext context)
