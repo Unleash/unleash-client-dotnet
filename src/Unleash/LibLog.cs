@@ -174,7 +174,7 @@ namespace Unleash.Logging
         {
             if (logger.IsDebugEnabled())
             {
-                logger.Log(LogLevel.Debug, WrapLogInternal(messageFunc));
+                logger.Log(LogLevel.Debug, messageFunc);
             }
         }
 
@@ -224,7 +224,7 @@ namespace Unleash.Logging
         {
             if (logger.IsErrorEnabled())
             {
-                 logger.Log(LogLevel.Error, WrapLogInternal(messageFunc));
+                 logger.Log(LogLevel.Error, messageFunc);
             }
         }
 
@@ -266,7 +266,7 @@ namespace Unleash.Logging
         {
             if (logger.IsFatalEnabled())
             {
-                logger.Log(LogLevel.Fatal, WrapLogInternal(messageFunc));
+                logger.Log(LogLevel.Fatal, messageFunc);
             }
         }
 
@@ -308,7 +308,7 @@ namespace Unleash.Logging
         {
             if (logger.IsInfoEnabled())
             {
-                logger.Log(LogLevel.Info, WrapLogInternal(messageFunc));
+                logger.Log(LogLevel.Info, messageFunc);
             }
         }
 
@@ -350,7 +350,7 @@ namespace Unleash.Logging
         {
             if (logger.IsTraceEnabled())
             {
-                logger.Log(LogLevel.Trace, WrapLogInternal(messageFunc));
+                logger.Log(LogLevel.Trace, messageFunc);
             }
         }
 
@@ -392,7 +392,7 @@ namespace Unleash.Logging
         {
             if (logger.IsWarnEnabled())
             {
-                logger.Log(LogLevel.Warn, WrapLogInternal(messageFunc));
+                logger.Log(LogLevel.Warn, messageFunc);
             }
         }
 
@@ -445,42 +445,14 @@ namespace Unleash.Logging
         }
 
         // Avoid the closure allocation, see https://gist.github.com/AArnott/d285feef75c18f6ecd2b
-        private static Func<T> AsFunc<T>(this T value) where T : class
+        private static Func<string> AsFunc(this string value)
         {
             return value.Return;
         }
 
-        private static T Return<T>(this T value)
+        private static string Return(this string value)
         {
             return value;
-        }
-
-        // Allow passing callsite-logger-type to LogProviderBase using messageFunc
-        internal static Func<string> WrapLogSafeInternal(LoggerExecutionWrapper logger, Func<string> messageFunc)
-        {
-            Func<string> wrappedMessageFunc = () =>
-            {
-                try
-                {
-                    return messageFunc();
-                }
-                catch (Exception ex)
-                {
-                    logger.WrappedLogger(LogLevel.Error, () => LoggerExecutionWrapper.FailedToGenerateLogMessage, ex);
-                }
-                return null;
-            };
-            return wrappedMessageFunc;
-        }
-
-        // Allow passing callsite-logger-type to LogProviderBase using messageFunc
-        private static Func<string> WrapLogInternal(Func<string> messageFunc)
-        {
-            Func<string> wrappedMessageFunc = () =>
-            {
-                return messageFunc();
-            };
-            return wrappedMessageFunc;
         }
     }
 #endif
