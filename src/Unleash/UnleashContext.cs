@@ -55,10 +55,9 @@ namespace Unleash
 
         public UnleashContext ApplyStaticFields(UnleashSettings settings)
         {
-            var environment = string.IsNullOrEmpty(Environment) ? settings.Environment : Environment;
-            var appName = string.IsNullOrEmpty(AppName) ? settings.AppName : AppName;
-
-            return new UnleashContext(appName, environment, UserId, SessionId, RemoteAddress, CurrentTime, new Dictionary<string, string>(Properties));
+            Environment = string.IsNullOrEmpty(Environment) ? settings.Environment : Environment;
+            AppName = string.IsNullOrEmpty(AppName) ? settings.AppName : AppName;
+            return this;
         }
 
         internal static Builder New()
