@@ -48,7 +48,7 @@ namespace Unleash.Internal
             {
                 // race condition with Dispose can cause trigger to be called when underlying
                 // timer is being disposed - and a change will fail in this case.
-                // see 
+                // see
                 // https://msdn.microsoft.com/en-us/library/b97tkt95(v=vs.110).aspx#Anchor_2
                 if (disposeEnded)
                 {
@@ -98,7 +98,7 @@ namespace Unleash.Internal
             }
             catch (Exception exception)
             {
-                Logger.Trace("UNLEASH: Failed to extract local ip address", exception);
+                Logger.Trace(() => "UNLEASH: Failed to extract local ip address", exception);
                 return "undefined";
             }
         }

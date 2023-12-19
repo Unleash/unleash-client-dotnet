@@ -42,12 +42,12 @@ namespace Unleash.Scheduling
                 {
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        Logger.WarnException($"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
+                        Logger.Warn(() => $"UNLEASH: Task '{name}' cancelled ...", taskCanceledException);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException($"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                    Logger.Error(() => $"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                 }
                 finally
                 {

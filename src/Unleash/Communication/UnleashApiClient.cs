@@ -28,14 +28,14 @@ namespace Unleash.Communication
         private int featureRequestsSkipped = 0;
         private int metricsRequestsToSkip = 0;
         private int metricsRequestsSkipped = 0;
-        private readonly int[] backoffResponses = 
+        private readonly int[] backoffResponses =
             new int[]
                 {
                     429,
                     500,
                     502,
                     503,
-                    504                 
+                    504
                 };
         private readonly int[] configurationErrorResponses =
             new int[]
@@ -45,8 +45,8 @@ namespace Unleash.Communication
                     404,
                 };
         public UnleashApiClient(
-            HttpClient httpClient, 
-            IJsonSerializer jsonSerializer, 
+            HttpClient httpClient,
+            IJsonSerializer jsonSerializer,
             UnleashApiClientRequestHeaders clientRequestHeaders,
             EventCallbackConfig eventConfig,
             string projectId = null)
@@ -108,7 +108,7 @@ namespace Unleash.Communication
             }
 
             var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
+            Logger.Trace(() => $"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
             eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
 
             return new FetchTogglesResult
@@ -120,7 +120,7 @@ namespace Unleash.Communication
         private void Backoff(HttpResponseMessage response)
         {
             featureRequestsToSkip = Math.Min(10, featureRequestsToSkip + 1);
-            Logger.Warn($"UNLEASH: Backing off due to {response.StatusCode} from server in '{nameof(FetchToggles)}'.");
+            Logger.Warn(() => $"UNLEASH: Backing off due to {response.StatusCode} from server in '{nameof(FetchToggles)}'.");
         }
 
         private void ConfigurationError(HttpResponseMessage response, string requestUri)
@@ -129,15 +129,15 @@ namespace Unleash.Communication
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                Logger.Error($"UNLEASH: Error when fetching toggles, {requestUri} responded NOT_FOUND (404) which means your API url most likely needs correction.'.");
+                Logger.Error(() => $"UNLEASH: Error when fetching toggles, {requestUri} responded NOT_FOUND (404) which means your API url most likely needs correction.'.");
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
             {
-                Logger.Error($"UNLEASH: Error when fetching toggles, {requestUri} responded FORBIDDEN (403) which means your API token is not valid.");
+                Logger.Error(() => $"UNLEASH: Error when fetching toggles, {requestUri} responded FORBIDDEN (403) which means your API token is not valid.");
             }
             else
             {
-                Logger.Error($"UNLEASH: Configuration error due to {response.StatusCode} from server in '{nameof(FetchToggles)}'.");
+                Logger.Error(() => $"UNLEASH: Configuration error due to {response.StatusCode} from server in '{nameof(FetchToggles)}'.");
             }
         }
 
@@ -147,7 +147,7 @@ namespace Unleash.Communication
 
             var newEtag = response.Headers.ETag?.Tag;
             if (newEtag == etag)
-            { 
+            {
                 return new FetchTogglesResult
                 {
                     HasChanged = false,
@@ -198,7 +198,7 @@ namespace Unleash.Communication
                         return true;
 
                     var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
+                    Logger.Trace(() => $"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
                     eventConfig?.RaiseError(new ErrorEvent() { Resource = requestUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
 
                     return false;
@@ -266,7 +266,7 @@ namespace Unleash.Communication
             }
 
             var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Logger.Trace($"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
+            Logger.Trace(() => $"UNLEASH: Error {response.StatusCode} from request '{requestUri}' in '{nameof(UnleashApiClient)}': " + error);
             eventConfig?.RaiseError(new ErrorEvent() { Resource = requestUri, ErrorType = ErrorType.Client, StatusCode = response.StatusCode });
         }
 

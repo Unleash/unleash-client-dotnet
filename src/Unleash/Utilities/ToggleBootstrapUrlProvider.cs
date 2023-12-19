@@ -53,7 +53,7 @@ namespace Unleash.Utilities
                     if (!response.IsSuccessStatusCode)
                     {
                         var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Logger.Trace($"UNLEASH: Error {response.StatusCode} from server in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}': " + error);
+                        Logger.Trace(() => $"UNLEASH: Error {response.StatusCode} from server in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}': " + error);
 
                         if (throwOnFail)
                             throw new FetchingToggleBootstrapUrlFailedException("Failed to fetch feature toggles", response.StatusCode);
@@ -68,7 +68,7 @@ namespace Unleash.Utilities
                     }
                     catch (Exception ex)
                     {
-                        Logger.Trace($"UNLEASH: Exception in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}' during reading and deserializing ToggleCollection from stream: " + ex.Message);
+                        Logger.Trace(() => $"UNLEASH: Exception in 'ToggleBootstrapUrlProvider.{nameof(FetchFile)}' during reading and deserializing ToggleCollection from stream: " + ex.Message);
 
                         if (throwOnFail)
                             throw new UnleashException("Exception during reading and deserializing ToggleCollection from stream", ex);

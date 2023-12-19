@@ -35,7 +35,7 @@ namespace Unleash.Strategies
 
                 var addressRanges = ToAddressRanges(addresses);
 
-                if (!addressRanges.Any()) 
+                if (!addressRanges.Any())
                     return false;
 
                 return addressRanges
@@ -56,7 +56,7 @@ namespace Unleash.Strategies
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"UNLEASH: RemoteAddressStrategy->ToAddressRanges threw exception: {ex.Message}. (Badly formatted IP/CIDR?)");
+                    Logger.Error(() => $"UNLEASH: RemoteAddressStrategy->ToAddressRanges threw exception: {ex.Message}. (Badly formatted IP/CIDR?)");
                 }
             }
 
