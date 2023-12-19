@@ -143,7 +143,8 @@ namespace Unleash
             strategy = null;
             if (featureToggle == null)
             {
-                Logger.Warn($"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
+                Logger.Warn(() => $"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
+
                 return defaultSetting;
             }
 
