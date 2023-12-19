@@ -33,7 +33,7 @@
 // this can have unintended consequences of consumers of your library using your library to resolve a logger. If the
 // reason is because you want to open this functionality to other projects within your solution,
 // consider [InternalsVisibleTo] instead.
-// 
+//
 // Define LIBLOG_PROVIDERS_ONLY if your library provides its own logging API and you just want to use the
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
@@ -98,7 +98,7 @@ namespace Unleash.Logging
         /// <remarks>
         /// Note to implementers: the message func should not be called if the loglevel is not enabled
         /// so as not to incur performance penalties.
-        /// 
+        ///
         /// To check IsEnabled call Log with only LogLevel and check the return value, no event will be written.
         /// </remarks>
         bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
@@ -172,8 +172,10 @@ namespace Unleash.Logging
 
         public static void Debug(this ILog logger, Func<string> messageFunc)
         {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Debug, WrapLogInternal(messageFunc));
+            if (logger.IsDebugEnabled())
+            {
+                logger.Log(LogLevel.Debug, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Debug(this ILog logger, string message)
@@ -220,8 +222,10 @@ namespace Unleash.Logging
 
         public static void Error(this ILog logger, Func<string> messageFunc)
         {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Error, WrapLogInternal(messageFunc));
+            if (logger.IsErrorEnabled())
+            {
+                 logger.Log(LogLevel.Error, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Error(this ILog logger, string message)
@@ -260,7 +264,10 @@ namespace Unleash.Logging
 
         public static void Fatal(this ILog logger, Func<string> messageFunc)
         {
-            logger.Log(LogLevel.Fatal, WrapLogInternal(messageFunc));
+            if (logger.IsFatalEnabled())
+            {
+                logger.Log(LogLevel.Fatal, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Fatal(this ILog logger, string message)
@@ -299,8 +306,10 @@ namespace Unleash.Logging
 
         public static void Info(this ILog logger, Func<string> messageFunc)
         {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Info, WrapLogInternal(messageFunc));
+            if (logger.IsInfoEnabled())
+            {
+                logger.Log(LogLevel.Info, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Info(this ILog logger, string message)
@@ -339,8 +348,10 @@ namespace Unleash.Logging
 
         public static void Trace(this ILog logger, Func<string> messageFunc)
         {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Trace, WrapLogInternal(messageFunc));
+            if (logger.IsTraceEnabled())
+            {
+                logger.Log(LogLevel.Trace, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Trace(this ILog logger, string message)
@@ -379,8 +390,10 @@ namespace Unleash.Logging
 
         public static void Warn(this ILog logger, Func<string> messageFunc)
         {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Warn, WrapLogInternal(messageFunc));
+            if (logger.IsWarnEnabled())
+            {
+                logger.Log(LogLevel.Warn, WrapLogInternal(messageFunc));
+            }
         }
 
         public static void Warn(this ILog logger, string message)
@@ -551,10 +564,10 @@ namespace Unleash.Logging
         public static bool IsDisabled { get; set; }
 
         /// <summary>
-        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
+        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is
         /// important that hook into this if you are using child libraries (especially ilmerged ones) that are using
         /// LibLog (or other logging abstraction) so you adapt and delegate to them.
-        /// <see cref="SetCurrentLogProvider"/> 
+        /// <see cref="SetCurrentLogProvider"/>
         /// </summary>
         internal static Action<ILogProvider> OnCurrentLogProviderSet
         {
@@ -2264,9 +2277,9 @@ namespace Unleash.Logging.LogProviders
 
         /// <summary>
         /// Some logging frameworks support structured logging, such as serilog. This will allow you to add names to structured data in a format string:
-        /// For example: Log("Log message to {user}", user). This only works with serilog, but as the user of LibLog, you don't know if serilog is actually 
-        /// used. So, this class simulates that. it will replace any text in {curly braces} with an index number. 
-        /// 
+        /// For example: Log("Log message to {user}", user). This only works with serilog, but as the user of LibLog, you don't know if serilog is actually
+        /// used. So, this class simulates that. it will replace any text in {curly braces} with an index number.
+        ///
         /// "Log {message} to {user}" would turn into => "Log {0} to {1}". Then the format parameters are handled using regular .net string.Format.
         /// </summary>
         /// <param name="messageBuilder">The message builder.</param>
