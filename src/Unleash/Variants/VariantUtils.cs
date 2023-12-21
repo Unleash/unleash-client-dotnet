@@ -12,8 +12,15 @@ namespace Unleash.Variants
 
         public static Variant SelectVariant(string groupId, UnleashContext context, List<VariantDefinition> variantDefinitions)
         {
+            var totalWeight = variantDefinitions.Sum(v => v.Weight);
+
+            if (totalWeight == 0)
+            {
+                return null;
+            }
+
             var stickiness = variantDefinitions.FirstOrDefault()?.Stickiness ?? "default";
-            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED);
+            var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED, totalWeight);
 
             var counter = 0;
             Variant result = null;
