@@ -134,6 +134,140 @@ namespace Unleash.Logging
 #endif
     static partial class LogExtensions
     {
+#if LIBLOG_PUBLIC
+        public static bool IsDebugEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Debug, null);
+        }
+
+        public static bool IsErrorEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Error, null);
+        }
+
+        public static bool IsFatalEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Fatal, null);
+        }
+
+        public static bool IsInfoEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Info, null);
+        }
+
+        public static bool IsTraceEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Trace, null);
+        }
+
+        public static bool IsWarnEnabled(this ILog logger)
+        {
+            GuardAgainstNullLogger(logger);
+            return logger.Log(LogLevel.Warn, null);
+        }
+
+        public static void Debug(this ILog logger, string message) => logger.Debug(message.AsFunc());
+
+        public static void Debug(this ILog logger, string message, params object[] args)
+            => logger.Debug(message.AsFunc(), null, args);
+
+        public static void Debug(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Debug(message.AsFunc(), exception, args);
+
+        public static void DebugFormat(this ILog logger, string message, params object[] args)
+            => logger.Debug(message.AsFunc(), null, args);
+
+        public static void DebugException(this ILog logger, string message, Exception exception)
+            => logger.Debug(message.AsFunc(), exception);
+
+        public static void DebugException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Debug(message.AsFunc(), exception, formatParams);
+
+        public static void Error(this ILog logger, string message)
+            => logger.Error(message.AsFunc());
+
+        public static void Error(this ILog logger, string message, params object[] args)
+            => logger.Error(message.AsFunc(), null, args);
+
+        public static void Error(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Error(message.AsFunc(), exception, args);
+
+        public static void ErrorFormat(this ILog logger, string message, params object[] args)
+            => logger.Error(message.AsFunc(), null, args);
+
+        public static void ErrorException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Error(message.AsFunc(), exception, formatParams);
+
+        public static void Fatal(this ILog logger, string message)
+            => logger.Fatal(message.AsFunc());
+
+        public static void Fatal(this ILog logger, string message, params object[] args)
+            => logger.Fatal(message.AsFunc(), null, args);
+
+        public static void Fatal(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Fatal(message.AsFunc(), exception, args);
+
+        public static void FatalFormat(this ILog logger, string message, params object[] args)
+            => logger.Fatal(message.AsFunc(), null, args);
+
+        public static void FatalException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Fatal(message.AsFunc(), exception, formatParams);
+
+        public static void Info(this ILog logger, string message)
+            => logger.Info(message.AsFunc());
+
+        public static void Info(this ILog logger, string message, params object[] args)
+            => logger.Info(message.AsFunc(), null, args);
+
+        public static void Info(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Info(message.AsFunc(), exception, args);
+
+        public static void InfoFormat(this ILog logger, string message, params object[] args)
+            => logger.Info(message.AsFunc(), null, args);
+
+        public static void InfoException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Info(message.AsFunc(), exception, formatParams);
+
+        public static void Trace(this ILog logger, string message)
+            => logger.Trace(message.AsFunc());
+
+        public static void Trace(this ILog logger, string message, params object[] args)
+            => logger.Trace(message.AsFunc(), null, args);
+
+        public static void Trace(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Trace(message.AsFunc(), exception, args);
+
+        public static void TraceFormat(this ILog logger, string message, params object[] args)
+            => logger.Trace(message.AsFunc(), null, args);
+
+        public static void TraceException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Trace(message.AsFunc(), exception, formatParams);
+
+        public static void Warn(this ILog logger, string message)
+            => logger.Warn(message.AsFunc());
+
+        public static void Warn(this ILog logger, string message, params object[] args)
+            => logger.Warn(message.AsFunc(), null, args);
+
+        public static void Warn(this ILog logger, Exception exception, string message, params object[] args)
+            => logger.Warn(message.AsFunc(), exception, args);
+
+        public static void WarnFormat(this ILog logger, string message, params object[] args)
+            => logger.Warn(message.AsFunc(), null, args);
+
+        public static void WarnException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Warn(message.AsFunc(), exception, formatParams);
+
+        // Avoid the closure allocation, see https://gist.github.com/AArnott/d285feef75c18f6ecd2b
+        private static Func<T> AsFunc<T>(this T value) where T : class => value.Return;
+
+        private static T Return<T>(this T value) => value;
+#endif
         public static void Debug(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
             => Log(logger, LogLevel.Debug, messageFunc, exception, args);
 
@@ -154,15 +288,20 @@ namespace Unleash.Logging
 
         private static void Log(ILog logger, LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] args)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException("logger");
-            }
+            GuardAgainstNullLogger(logger);
 
             // Make sure logging is on for the provided level.
             if (logger.Log(logLevel, null))
             {
                 logger.Log(logLevel, messageFunc, exception, args);
+            }
+        }
+
+        private static void GuardAgainstNullLogger(ILog logger)
+        {
+            if (logger == null)
+            {
+                throw new ArgumentNullException("logger");
             }
         }
 
