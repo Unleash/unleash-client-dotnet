@@ -20,9 +20,9 @@ namespace Unleash.Utilities
             {
                 return;
             }
-            
+
             seen.Add(key);
-            logger.Warn(message);
+            logger.Warn(() => message);
         }
     }
 }

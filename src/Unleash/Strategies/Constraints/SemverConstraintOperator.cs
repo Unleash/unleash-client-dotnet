@@ -18,7 +18,7 @@ namespace Unleash.Strategies.Constraints
             SemanticVersion contextSemver;
             if (!SemanticVersion.TryParse(contextValue, out contextSemver))
             {
-                Logger.Info("Couldn't parse version {0} from context");
+                Logger.Info(() => "Couldn't parse version {0} from context");
                 return false;
             }
 
@@ -27,7 +27,7 @@ namespace Unleash.Strategies.Constraints
                 SemanticVersion constraintSemver;
                 if (!SemanticVersion.TryParse(constraint.Value, out constraintSemver))
                     return false;
-                
+
                 if (constraint.Inverted)
                     return !Eval(constraint.Operator, contextSemver, constraintSemver);
 

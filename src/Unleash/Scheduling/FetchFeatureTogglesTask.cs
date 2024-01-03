@@ -53,7 +53,7 @@ namespace Unleash.Scheduling
             }
             catch (HttpRequestException ex)
             {
-                Logger.ErrorException($"UNLEASH: Unhandled exception when fetching toggles.", ex);
+                Logger.Error(() => $"UNLEASH: Unhandled exception when fetching toggles.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, Error = ex });
                 throw new UnleashException("Exception while fetching from API", ex);
             }
@@ -80,10 +80,10 @@ namespace Unleash.Scheduling
                 {
                     jsonSerializer.Serialize(fs, result.ToggleCollection);
                 }
-            } 
+            }
             catch (IOException ex)
             {
-                Logger.WarnException($"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
+                Logger.Warn(() => $"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
 
@@ -95,7 +95,7 @@ namespace Unleash.Scheduling
             }
             catch (IOException ex)
             {
-                Logger.WarnException($"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
+                Logger.Warn(() => $"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
         }

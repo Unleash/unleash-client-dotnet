@@ -49,7 +49,7 @@ namespace Unleash.Internal
                 }
                 catch (IOException ex)
                 {
-                    Logger.ErrorException($"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
+                    Logger.Error(() => $"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
                     eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
             }
@@ -61,7 +61,7 @@ namespace Unleash.Internal
                 }
                 catch (IOException ex)
                 {
-                    Logger.ErrorException($"UNLEASH: Unhandled exception when reading from ETag file '{etagFile}'.", ex);
+                    Logger.Error(() => $"UNLEASH: Unhandled exception when reading from ETag file '{etagFile}'.", ex);
                     eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
             }
@@ -76,7 +76,7 @@ namespace Unleash.Internal
                 }
                 catch (IOException ex)
                 {
-                    Logger.ErrorException($"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
+                    Logger.Error(() => $"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
                     eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
             }
@@ -91,7 +91,7 @@ namespace Unleash.Internal
                 }
                 catch (IOException ex)
                 {
-                    Logger.ErrorException($"UNLEASH: Unhandled exception when reading from toggle file '{toggleFile}'.", ex);
+                    Logger.Error(() => $"UNLEASH: Unhandled exception when reading from toggle file '{toggleFile}'.", ex);
                     eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
             }

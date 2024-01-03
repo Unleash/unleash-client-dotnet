@@ -33,7 +33,7 @@
 // this can have unintended consequences of consumers of your library using your library to resolve a logger. If the
 // reason is because you want to open this functionality to other projects within your solution,
 // consider [InternalsVisibleTo] instead.
-// 
+//
 // Define LIBLOG_PROVIDERS_ONLY if your library provides its own logging API and you just want to use the
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
@@ -98,7 +98,7 @@ namespace Unleash.Logging
         /// <remarks>
         /// Note to implementers: the message func should not be called if the loglevel is not enabled
         /// so as not to incur performance penalties.
-        /// 
+        ///
         /// To check IsEnabled call Log with only LogLevel and check the return value, no event will be written.
         /// </remarks>
         bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters);
@@ -134,6 +134,7 @@ namespace Unleash.Logging
 #endif
     static partial class LogExtensions
     {
+#if LIBLOG_PUBLIC
         public static bool IsDebugEnabled(this ILog logger)
         {
             GuardAgainstNullLogger(logger);
@@ -170,254 +171,132 @@ namespace Unleash.Logging
             return logger.Log(LogLevel.Warn, null);
         }
 
-        public static void Debug(this ILog logger, Func<string> messageFunc)
-        {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Debug, WrapLogInternal(messageFunc));
-        }
-
-        public static void Debug(this ILog logger, string message)
-        {
-            if (logger.IsDebugEnabled())
-            {
-                logger.Log(LogLevel.Debug, message.AsFunc());
-            }
-        }
+        public static void Debug(this ILog logger, string message) => logger.Debug(message.AsFunc());
 
         public static void Debug(this ILog logger, string message, params object[] args)
-        {
-            logger.DebugFormat(message, args);
-        }
+            => logger.Debug(message.AsFunc(), null, args);
 
         public static void Debug(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.DebugException(message, exception, args);
-        }
+            => logger.Debug(message.AsFunc(), exception, args);
 
         public static void DebugFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsDebugEnabled())
-            {
-                logger.LogFormat(LogLevel.Debug, message, args);
-            }
-        }
+            => logger.Debug(message.AsFunc(), null, args);
 
         public static void DebugException(this ILog logger, string message, Exception exception)
-        {
-            if (logger.IsDebugEnabled())
-            {
-                logger.Log(LogLevel.Debug, message.AsFunc(), exception);
-            }
-        }
+            => logger.Debug(message.AsFunc(), exception);
 
         public static void DebugException(this ILog logger, string message, Exception exception, params object[] formatParams)
-        {
-            if (logger.IsDebugEnabled())
-            {
-                logger.Log(LogLevel.Debug, message.AsFunc(), exception, formatParams);
-            }
-        }
-
-        public static void Error(this ILog logger, Func<string> messageFunc)
-        {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Error, WrapLogInternal(messageFunc));
-        }
+            => logger.Debug(message.AsFunc(), exception, formatParams);
 
         public static void Error(this ILog logger, string message)
-        {
-            if (logger.IsErrorEnabled())
-            {
-                logger.Log(LogLevel.Error, message.AsFunc());
-            }
-        }
+            => logger.Error(message.AsFunc());
 
         public static void Error(this ILog logger, string message, params object[] args)
-        {
-            logger.ErrorFormat(message, args);
-        }
+            => logger.Error(message.AsFunc(), null, args);
 
         public static void Error(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.ErrorException(message, exception, args);
-        }
+            => logger.Error(message.AsFunc(), exception, args);
 
         public static void ErrorFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsErrorEnabled())
-            {
-                logger.LogFormat(LogLevel.Error, message, args);
-            }
-        }
+            => logger.Error(message.AsFunc(), null, args);
 
         public static void ErrorException(this ILog logger, string message, Exception exception, params object[] formatParams)
-        {
-            if (logger.IsErrorEnabled())
-            {
-                logger.Log(LogLevel.Error, message.AsFunc(), exception, formatParams);
-            }
-        }
-
-        public static void Fatal(this ILog logger, Func<string> messageFunc)
-        {
-            logger.Log(LogLevel.Fatal, WrapLogInternal(messageFunc));
-        }
+            => logger.Error(message.AsFunc(), exception, formatParams);
 
         public static void Fatal(this ILog logger, string message)
-        {
-            if (logger.IsFatalEnabled())
-            {
-                logger.Log(LogLevel.Fatal, message.AsFunc());
-            }
-        }
+            => logger.Fatal(message.AsFunc());
 
         public static void Fatal(this ILog logger, string message, params object[] args)
-        {
-            logger.FatalFormat(message, args);
-        }
+            => logger.Fatal(message.AsFunc(), null, args);
 
         public static void Fatal(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.FatalException(message, exception, args);
-        }
+            => logger.Fatal(message.AsFunc(), exception, args);
 
         public static void FatalFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsFatalEnabled())
-            {
-                logger.LogFormat(LogLevel.Fatal, message, args);
-            }
-        }
+            => logger.Fatal(message.AsFunc(), null, args);
 
         public static void FatalException(this ILog logger, string message, Exception exception, params object[] formatParams)
-        {
-            if (logger.IsFatalEnabled())
-            {
-                logger.Log(LogLevel.Fatal, message.AsFunc(), exception, formatParams);
-            }
-        }
-
-        public static void Info(this ILog logger, Func<string> messageFunc)
-        {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Info, WrapLogInternal(messageFunc));
-        }
+            => logger.Fatal(message.AsFunc(), exception, formatParams);
 
         public static void Info(this ILog logger, string message)
-        {
-            if (logger.IsInfoEnabled())
-            {
-                logger.Log(LogLevel.Info, message.AsFunc());
-            }
-        }
+            => logger.Info(message.AsFunc());
 
         public static void Info(this ILog logger, string message, params object[] args)
-        {
-            logger.InfoFormat(message, args);
-        }
+            => logger.Info(message.AsFunc(), null, args);
 
         public static void Info(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.InfoException(message, exception, args);
-        }
+            => logger.Info(message.AsFunc(), exception, args);
 
         public static void InfoFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsInfoEnabled())
-            {
-                logger.LogFormat(LogLevel.Info, message, args);
-            }
-        }
+            => logger.Info(message.AsFunc(), null, args);
 
         public static void InfoException(this ILog logger, string message, Exception exception, params object[] formatParams)
-        {
-            if (logger.IsInfoEnabled())
-            {
-                logger.Log(LogLevel.Info, message.AsFunc(), exception, formatParams);
-            }
-        }
-
-        public static void Trace(this ILog logger, Func<string> messageFunc)
-        {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Trace, WrapLogInternal(messageFunc));
-        }
+            => logger.Info(message.AsFunc(), exception, formatParams);
 
         public static void Trace(this ILog logger, string message)
-        {
-            if (logger.IsTraceEnabled())
-            {
-                logger.Log(LogLevel.Trace, message.AsFunc());
-            }
-        }
+            => logger.Trace(message.AsFunc());
 
         public static void Trace(this ILog logger, string message, params object[] args)
-        {
-            logger.TraceFormat(message, args);
-        }
+            => logger.Trace(message.AsFunc(), null, args);
 
         public static void Trace(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.TraceException(message, exception, args);
-        }
+            => logger.Trace(message.AsFunc(), exception, args);
 
         public static void TraceFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsTraceEnabled())
-            {
-                logger.LogFormat(LogLevel.Trace, message, args);
-            }
-        }
+            => logger.Trace(message.AsFunc(), null, args);
 
         public static void TraceException(this ILog logger, string message, Exception exception, params object[] formatParams)
-        {
-            if (logger.IsTraceEnabled())
-            {
-                logger.Log(LogLevel.Trace, message.AsFunc(), exception, formatParams);
-            }
-        }
-
-        public static void Warn(this ILog logger, Func<string> messageFunc)
-        {
-            GuardAgainstNullLogger(logger);
-            logger.Log(LogLevel.Warn, WrapLogInternal(messageFunc));
-        }
+            => logger.Trace(message.AsFunc(), exception, formatParams);
 
         public static void Warn(this ILog logger, string message)
-        {
-            if (logger.IsWarnEnabled())
-            {
-                logger.Log(LogLevel.Warn, message.AsFunc());
-            }
-        }
+            => logger.Warn(message.AsFunc());
 
         public static void Warn(this ILog logger, string message, params object[] args)
-        {
-            logger.WarnFormat(message, args);
-        }
+            => logger.Warn(message.AsFunc(), null, args);
 
         public static void Warn(this ILog logger, Exception exception, string message, params object[] args)
-        {
-            logger.WarnException(message, exception, args);
-        }
+            => logger.Warn(message.AsFunc(), exception, args);
 
         public static void WarnFormat(this ILog logger, string message, params object[] args)
-        {
-            if (logger.IsWarnEnabled())
-            {
-                logger.LogFormat(LogLevel.Warn, message, args);
-            }
-        }
+            => logger.Warn(message.AsFunc(), null, args);
 
         public static void WarnException(this ILog logger, string message, Exception exception, params object[] formatParams)
+            => logger.Warn(message.AsFunc(), exception, formatParams);
+
+        // Avoid the closure allocation, see https://gist.github.com/AArnott/d285feef75c18f6ecd2b
+        private static Func<T> AsFunc<T>(this T value) where T : class => value.Return;
+
+        private static T Return<T>(this T value) => value;
+#endif
+        public static void Debug(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Debug, messageFunc, exception, args);
+
+        public static void Error(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Error, messageFunc, exception, args);
+
+        public static void Fatal(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Fatal, messageFunc, exception, args);
+
+        public static void Info(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Info, messageFunc, exception, args);
+
+        public static void Trace(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Trace, messageFunc, exception, null, args);
+
+        public static void Warn(this ILog logger, Func<string> messageFunc, Exception exception = null, params object[] args)
+            => Log(logger, LogLevel.Warn, messageFunc, exception, args);
+
+        private static void Log(ILog logger, LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] args)
         {
-            if (logger.IsWarnEnabled())
+            GuardAgainstNullLogger(logger);
+
+            // Make sure logging is on for the provided level.
+            if (logger.Log(logLevel, null))
             {
-                logger.Log(LogLevel.Warn, message.AsFunc(), exception, formatParams);
+                logger.Log(logLevel, messageFunc, exception, args);
             }
         }
 
-        // ReSharper disable once UnusedParameter.Local
         private static void GuardAgainstNullLogger(ILog logger)
         {
             if (logger == null)
@@ -426,22 +305,7 @@ namespace Unleash.Logging
             }
         }
 
-        private static void LogFormat(this ILog logger, LogLevel logLevel, string message, params object[] args)
-        {
-            logger.Log(logLevel, message.AsFunc(), null, args);
-        }
-
-        // Avoid the closure allocation, see https://gist.github.com/AArnott/d285feef75c18f6ecd2b
-        private static Func<T> AsFunc<T>(this T value) where T : class
-        {
-            return value.Return;
-        }
-
-        private static T Return<T>(this T value)
-        {
-            return value;
-        }
-
+#if !LIBLOG_PORTABLE
         // Allow passing callsite-logger-type to LogProviderBase using messageFunc
         internal static Func<string> WrapLogSafeInternal(LoggerExecutionWrapper logger, Func<string> messageFunc)
         {
@@ -459,16 +323,7 @@ namespace Unleash.Logging
             };
             return wrappedMessageFunc;
         }
-
-        // Allow passing callsite-logger-type to LogProviderBase using messageFunc
-        private static Func<string> WrapLogInternal(Func<string> messageFunc)
-        {
-            Func<string> wrappedMessageFunc = () =>
-            {
-                return messageFunc();
-            };
-            return wrappedMessageFunc;
-        }
+#endif
     }
 #endif
 
@@ -551,10 +406,10 @@ namespace Unleash.Logging
         public static bool IsDisabled { get; set; }
 
         /// <summary>
-        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
+        /// Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is
         /// important that hook into this if you are using child libraries (especially ilmerged ones) that are using
         /// LibLog (or other logging abstraction) so you adapt and delegate to them.
-        /// <see cref="SetCurrentLogProvider"/> 
+        /// <see cref="SetCurrentLogProvider"/>
         /// </summary>
         internal static Action<ILogProvider> OnCurrentLogProviderSet
         {
@@ -2264,9 +2119,9 @@ namespace Unleash.Logging.LogProviders
 
         /// <summary>
         /// Some logging frameworks support structured logging, such as serilog. This will allow you to add names to structured data in a format string:
-        /// For example: Log("Log message to {user}", user). This only works with serilog, but as the user of LibLog, you don't know if serilog is actually 
-        /// used. So, this class simulates that. it will replace any text in {curly braces} with an index number. 
-        /// 
+        /// For example: Log("Log message to {user}", user). This only works with serilog, but as the user of LibLog, you don't know if serilog is actually
+        /// used. So, this class simulates that. it will replace any text in {curly braces} with an index number.
+        ///
         /// "Log {message} to {user}" would turn into => "Log {0} to {1}". Then the format parameters are handled using regular .net string.Format.
         /// </summary>
         /// <param name="messageBuilder">The message builder.</param>

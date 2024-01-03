@@ -72,12 +72,12 @@ namespace Unleash
 
             services = new UnleashServices(settings, EventConfig, strategyMap);
 
-            Logger.Info($"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
+            Logger.Info(() => $"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
 
             if (currentInstanceNo >= ErrorOnInstanceCount)
             {
-                Logger.Error($"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
-                Logger.Error("Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
+                Logger.Error(() => $"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
+                Logger.Error(() => "Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");
             }
         }
 
@@ -143,7 +143,8 @@ namespace Unleash
             strategy = null;
             if (featureToggle == null)
             {
-                Logger.Warn($"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
+                Logger.Warn(() => $"UNLEASH: Feature flag {toggleName} not present, returning default setting: {defaultSetting}");
+
                 return defaultSetting;
             }
 
@@ -355,7 +356,7 @@ namespace Unleash
         {
             if (callback == null)
             {
-                Logger.Error($"UNLEASH: Unleash->ConfigureEvents parameter callback is null");
+                Logger.Error(() => $"UNLEASH: Unleash->ConfigureEvents parameter callback is null");
                 return;
             }
 
@@ -365,7 +366,7 @@ namespace Unleash
             }
             catch (Exception ex)
             {
-                Logger.Error($"UNLEASH: Unleash->ConfigureEvents executing callback threw exception: {ex.Message}");
+                Logger.Error(() => $"UNLEASH: Unleash->ConfigureEvents executing callback threw exception: {ex.Message}");
             }
         }
 
@@ -373,7 +374,7 @@ namespace Unleash
         {
             if (EventConfig?.ImpressionEvent == null)
             {
-                Logger.Error($"UNLEASH: Unleash->ImpressionData callback is null, unable to emit event");
+                Logger.Error(() => $"UNLEASH: Unleash->ImpressionData callback is null, unable to emit event");
                 return;
             }
 
@@ -391,7 +392,7 @@ namespace Unleash
             }
             catch (Exception ex)
             {
-                Logger.Error($"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
+                Logger.Error(() => $"UNLEASH: Emitting impression event callback threw exception: {ex.Message}");
             }
         }
 
