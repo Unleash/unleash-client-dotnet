@@ -14,33 +14,35 @@ namespace Unleash.Variants
         {
             var totalWeight = variantDefinitions.Sum(v => v.Weight);
 
-            if (totalWeight == 0) {
+            if (totalWeight == 0)
+            {
                 return null;
             }
 
-            var variantOverride = GetOverride(variantDefinitions, context);
-            if (variantOverride != null)
-            {
-                return variantOverride.ToVariant();
-            }
-
-            var stickiness = variantDefinitions[0].Stickiness ?? "default";
+            var stickiness = variantDefinitions.FirstOrDefault()?.Stickiness ?? "default";
             var target = StrategyUtils.GetNormalizedNumber(GetIdentifier(context, stickiness), groupId, VARIANT_NORMALIZATION_SEED, totalWeight);
 
             var counter = 0;
+            Variant result = null;
             foreach (var variantDefinition in variantDefinitions)
             {
                 if (variantDefinition.Weight != 0)
                 {
-                    counter += variantDefinition.Weight;
-                    if (counter >= target)
+                    if (variantDefinition.Overrides.Count > 0 && variantDefinition.Overrides.Any(OverrideMatchesContext(context)))
                     {
-                        return variantDefinition.ToVariant();
+                        result = variantDefinition.ToVariant();
+                        break;
+                    }
+
+                    counter += variantDefinition.Weight;
+                    if (counter >= target && result == null)
+                    {
+                        result = variantDefinition.ToVariant();
                     }
                 }
             }
 
-            return null;
+            return result;
         }
 
         public static Variant SelectVariant(FeatureToggle feature, UnleashContext context, Variant defaultVariant = null)
@@ -52,11 +54,6 @@ namespace Unleash.Variants
 
             return SelectVariant(feature.Name, context, feature.Variants) ?? defaultVariant;
 
-        }
-
-        private static VariantDefinition GetOverride(List<VariantDefinition> variants, UnleashContext context)
-        {
-            return variants.FirstOrDefault(v => v.Overrides.Any(OverrideMatchesContext(context)));
         }
 
         private static Func<VariantOverride, bool> OverrideMatchesContext(UnleashContext context)
