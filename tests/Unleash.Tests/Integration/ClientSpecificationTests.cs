@@ -38,7 +38,7 @@ namespace Unleash.Tests.Specifications
 
             using (var client = new HttpClient())
             {
-                var csTestsVersion = "v5.1.0";
+                var csTestsVersion = "v5.1.3";
                 var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/{csTestsVersion}/specifications/";
                 var indexResponse = client.GetStringAsync(indexPath + "index.json").Result;
                 var indexFilePath = Path.Combine(specificationsPath, "index.json");
@@ -70,7 +70,7 @@ namespace Unleash.Tests.Specifications
                     var tests = testDefinition.Tests?.Select(test =>
                     {
                         var testCaseData = new TestCaseData(CreateTestAction(testDefinition, test));
-                        
+
                         testCaseData.SetName($"{testDefinition.Name}.{test.Description.Replace(" ", "_").Replace(".", "_")}");
 
                         return testCaseData;
@@ -130,7 +130,7 @@ namespace Unleash.Tests.Specifications
                 Assert.AreEqual(testCase.ExpectedResult.IsEnabled, result.IsEnabled, testCase.Description);
                 Assert.AreEqual(testCase.ExpectedResult.FeatureEnabled, result.FeatureEnabled, testCase.Description);
                 Assert.AreEqual(testCase.ExpectedResult.Payload, result.Payload, testCase.Description);
-            };  
+            };
         }
 
         public static IUnleash CreateUnleash(TestDefinition testDefinition, UnleashContextDefinition contextDefinition)
@@ -167,7 +167,7 @@ namespace Unleash.Tests.Specifications
 
             if (contextDefinition.CurrentTime.HasValue)
                 contextBuilder.CurrentTime(contextDefinition.CurrentTime.Value);
-                    
+
             if (contextDefinition.Properties != null)
             {
                 foreach (var property in contextDefinition.Properties)
