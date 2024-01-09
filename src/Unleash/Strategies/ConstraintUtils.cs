@@ -53,9 +53,9 @@ namespace Unleash.Strategies
                 var isIn = contextValue != null && constraint.Values.Contains(contextValue.Trim());
 
                 if (constraint.Operator == Operator.IN)
-                    return isIn;
+                    return constraint.Inverted ? !isIn : isIn;
                 if (constraint.Operator == Operator.NOT_IN)
-                    return !isIn;
+                    return constraint.Inverted ? isIn : !isIn;
             }
 
             return false;
