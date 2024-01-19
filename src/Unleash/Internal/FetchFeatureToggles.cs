@@ -23,7 +23,7 @@ namespace Unleash.Internal
             this.eventConfig = eventConfig;
         }
 
-        public async Task<Tuple<ToggleCollection, string, bool>> FetchToggles(CancellationToken cancellationToken)
+        public async Task<FetchTogglesResult> FetchToggles(CancellationToken cancellationToken)
         {
             FetchTogglesResult result;
             try
@@ -39,16 +39,22 @@ namespace Unleash.Internal
 
             if (!result.HasChanged)
             {
-                return new Tuple<ToggleCollection, string, bool>(null, string.Empty, false);
+                return result;
             }
 
             if (string.IsNullOrEmpty(result.Etag))
-                return new Tuple<ToggleCollection, string, bool>(null, string.Empty, false);
+            {
+                result.HasChanged = false;
+                return result;
+            }
 
             if (result.Etag == Etag)
-                return new Tuple<ToggleCollection, string, bool>(null, string.Empty, false);
+            {
+                result.HasChanged = false;
+                return result;             
+            }
 
-            return new Tuple<ToggleCollection, string, bool>(result.ToggleCollection, result.Etag, true);
+            return result;
         }
     }
 }

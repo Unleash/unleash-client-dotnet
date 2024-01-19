@@ -7,6 +7,7 @@ namespace Unleash
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Unleash.Events;
     using Unleash.Utilities;
     using Unleash.Variants;
@@ -82,7 +83,13 @@ namespace Unleash
         }
 
         /// <inheritdoc />
-        public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
+        public ICollection<FeatureToggle> FeatureToggles => services.GetFeatureFlags().Instance.Features;
+
+        public async Task<ICollection<FeatureToggle>> GetFeatureTogglesAsync() 
+        {
+            var toggles = await services.GetFeatureFlagsAsync();
+            return toggles.Instance.Features;
+        }
 
         private EventCallbackConfig EventConfig { get; } = new EventCallbackConfig();
 
@@ -283,7 +290,7 @@ namespace Unleash
         private FeatureToggle GetToggle(string toggleName)
         {
             return services
-                .ToggleCollection
+                .GetFeatureFlags()
                 .Instance
                 .GetToggleByName(toggleName);
         }
@@ -337,7 +344,7 @@ namespace Unleash
         {
             foreach (var segmentId in activationStrategy.Segments)
             {
-                var segment = services.ToggleCollection.Instance.GetSegmentById(segmentId);
+                var segment = services.GetFeatureFlags().Instance.GetSegmentById(segmentId);
                 if (segment != null)
                 {
                     foreach (var constraint in segment.Constraints)

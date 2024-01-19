@@ -26,7 +26,7 @@ namespace Unleash
 
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }
-        internal ThreadSafeToggleCollection ToggleCollection { get; }
+        private ThreadSafeToggleCollection ToggleCollection { get ; }
         internal bool IsMetricsDisabled { get; }
 
         private readonly FetchFeatureToggles fetchFeatureToggles;
@@ -186,17 +186,19 @@ namespace Unleash
             ToggleCollection?.Dispose();
         }
 
-        public async Task<ThreadSafeToggleCollection> GetFeatureFlags()
+        public async Task<ThreadSafeToggleCollection> GetFeatureFlagsAsync()
         {
             if (LastUpdated == null)
             {
-                (ToggleCollection collection, string etag, bool hasChanged) = await fetchFeatureToggles.FetchToggles(new CancellationToken());
-                ToggleCollection.Instance = collection;
-                StoreState(collection, etag);
+                var fetchTogglesResult = await fetchFeatureToggles.FetchToggles(new CancellationToken());
+                ToggleCollection.Instance = fetchTogglesResult.ToggleCollection;
+                StoreState(fetchTogglesResult.ToggleCollection, fetchTogglesResult.Etag);
                 fetchFeatureTogglesTask.Enabled = true;
             }
 
             return ToggleCollection;
         }
+
+        public ThreadSafeToggleCollection GetFeatureFlags() => GetFeatureFlagsAsync().Result;
     }
 }

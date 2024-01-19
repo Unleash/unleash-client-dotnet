@@ -25,10 +25,10 @@ namespace Unleash.Scheduling
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            (ToggleCollection collection, string etag, bool hasChanged) = await fetchFeatureToggles.FetchToggles(cancellationToken);
-            if (hasChanged)
+            var fetchTogglesResult = await fetchFeatureToggles.FetchToggles(cancellationToken);
+            if (fetchTogglesResult.HasChanged)
             {
-                onFlagsUpdated(collection, etag);
+                onFlagsUpdated(fetchTogglesResult.ToggleCollection, fetchTogglesResult.Etag);
             }
         }
 
