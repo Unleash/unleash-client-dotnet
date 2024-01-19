@@ -5,23 +5,35 @@ using System.Linq;
 using System.Threading;
 using Unleash.Communication;
 using Unleash.Internal;
+using Unleash.Logging;
 using Unleash.Metrics;
 using Unleash.Scheduling;
 using Unleash.Strategies;
+using Unleash.Events;
+using System.Threading.Tasks;
 
 namespace Unleash
 {
     internal class UnleashServices : IDisposable
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
+        private DateTime? LastUpdated;
+        private string backupFile;
         const string supportedSpecVersion = "4.5.1";
 
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }
         internal ThreadSafeToggleCollection ToggleCollection { get; }
         internal bool IsMetricsDisabled { get; }
+
+        private readonly FetchFeatureToggles fetchFeatureToggles;
+        private readonly FetchFeatureTogglesTask fetchFeatureTogglesTask;
+        private readonly UnleashSettings settings;
+        private readonly EventCallbackConfig eventConfig;
+
         internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
 
@@ -32,7 +44,7 @@ namespace Unleash
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
 
-            var backupFile = settings.GetFeatureToggleFilePath();
+            backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
 
             // Cancellation
@@ -78,18 +90,17 @@ namespace Unleash
 
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
-            var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
-                apiClient, 
-                ToggleCollection,
-                settings.JsonSerializer, 
-                settings.FileSystem,
-                eventConfig,
-                backupFile, 
-                etagBackupFile)
+            fetchFeatureToggles = new FetchFeatureToggles(apiClient, eventConfig);
+
+            fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
+                fetchFeatureToggles,
+                OnFeatureFlagsUpdatedChron
+                )
             {
                 ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
                 Interval = settings.FetchTogglesInterval,
-                Etag = cachedFilesResult.InitialETag
+                Etag = cachedFilesResult.InitialETag,
+                Enabled = false
             };
             FetchFeatureTogglesTask = fetchFeatureTogglesTask;
 
@@ -122,6 +133,46 @@ namespace Unleash
             }
 
             scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
+            this.settings = settings;
+            this.eventConfig = eventConfig;
+        }
+
+        private void OnFeatureFlagsUpdatedChron(ToggleCollection toggleCollection, string etag)
+        {
+            ToggleCollection.Instance = toggleCollection;
+
+             // now that the toggle collection has been updated, raise the toggles updated event if configured
+            eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
+
+            StoreState(toggleCollection, etag);
+        }
+
+        private void StoreState(ToggleCollection toggleCollection, string etag)
+        {
+            LastUpdated = DateTime.UtcNow;
+
+            try
+            {
+                using (var fs = settings.FileSystem.FileOpenCreate(backupFile))
+                {
+                    settings.JsonSerializer.Serialize(fs, toggleCollection);
+                }
+            }
+            catch (IOException ex)
+            {
+                Logger.Warn(() => $"UNLEASH: Exception when writing to toggle file '{backupFile}'.", ex);
+                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
+            }
+
+            try
+            {
+                settings.FileSystem.WriteAllText(settings.EtagFilename, etag);
+            }
+            catch (IOException ex)
+            {
+                Logger.Warn(() => $"UNLEASH: Exception when writing to ETag file '{settings.EtagFilename}'.", ex);
+                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
+            }
         }
 
         public void Dispose()
@@ -133,6 +184,19 @@ namespace Unleash
 
             scheduledTaskManager?.Dispose();
             ToggleCollection?.Dispose();
+        }
+
+        public async Task<ThreadSafeToggleCollection> GetFeatureFlags()
+        {
+            if (LastUpdated == null)
+            {
+                (ToggleCollection collection, string etag, bool hasChanged) = await fetchFeatureToggles.FetchToggles(new CancellationToken());
+                ToggleCollection.Instance = collection;
+                StoreState(collection, etag);
+                fetchFeatureTogglesTask.Enabled = true;
+            }
+
+            return ToggleCollection;
         }
     }
 }
