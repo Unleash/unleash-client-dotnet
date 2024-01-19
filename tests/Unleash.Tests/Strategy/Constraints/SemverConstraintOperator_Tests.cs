@@ -251,5 +251,27 @@ namespace Unleash.Tests.Strategy.Constraints
             // Assert
             result.Should().BeFalse();
         }
+
+        [Test]
+        public void SemverConstraint_Handles_Invalid_Semver_Without_Raising_Exception()
+        {
+            // Arrange
+            var target = new SemverConstraintOperator();
+            var constraint = new Constraint(
+                "operator_semver_test",
+                Operator.SEMVER_GT,
+                false,
+                true,
+                "definitely.not.a.valid.semver"
+            );
+            var context = new UnleashContext();
+            context.Properties.Add("operator_semver_test", "also.definitely.not.a.semver");
+
+            // Act + Assert
+            Assert.DoesNotThrow(() =>
+            {
+                target.Evaluate(constraint, context);
+            });
+        }
     }
 }
