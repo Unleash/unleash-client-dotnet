@@ -30,22 +30,22 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,7 +83,7 @@
     <None Include="DefaultUnleashContextProvider.cs" />
     <None Include="UnleashException.cs" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
@@ -95,7 +95,7 @@
     <PackageReference Include="murmurhash" Version="1.0.3" />
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Folder Include="ClientFactory\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\">
@@ -130,26 +130,26 @@
     <Copyright>Copyright 2020</Copyright>
     <PackageTags>feature-toggle runtime-toggling feature-flags continous delivery unleash</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    
+
     <Product>Unleash Feature Toggle Client</Product>
     <PackageIconUrl>https://github.com/Unleash/unleash-client-dotnet/raw/main/resources/logo.png</PackageIconUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Unleash/unleash-client-dotnet/main/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <AssemblyName>Unleash.Client</AssemblyName>
     <PackageProjectUrl>https://github.com/Unleash/unleash-client-dotnet</PackageProjectUrl>
     <IncludeSymbols>True</IncludeSymbols>
     <Company>Unleash</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>NU1605</WarningsAsErrors>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>bin\Release\Unleash.Client.xml</DocumentationFile>
   </PropertyGroup>
-  
+
 </Project>
