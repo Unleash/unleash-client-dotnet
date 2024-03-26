@@ -38,7 +38,7 @@ namespace Unleash.Tests.Specifications
 
             using (var client = new HttpClient())
             {
-                var csTestsVersion = "v5.1.3";
+                var csTestsVersion = "v5.1.4";
                 var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/{csTestsVersion}/specifications/";
                 var indexResponse = client.GetStringAsync(indexPath + "index.json").Result;
                 var indexFilePath = Path.Combine(specificationsPath, "index.json");
