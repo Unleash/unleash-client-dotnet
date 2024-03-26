@@ -220,7 +220,7 @@ namespace Unleash
                 {
                     strategy.Parameters.TryGetValue("groupId", out string groupId);
                     groupId = groupId ?? featureToggle.Name;
-                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants);
+                    variant = VariantUtils.SelectVariant(groupId, context, strategy.Variants, strategy.Parameters);
                 }
 
                 return variant ?? VariantUtils.SelectVariant(featureToggle, context, defaultVariant);
