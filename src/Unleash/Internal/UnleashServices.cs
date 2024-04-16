@@ -85,7 +85,8 @@ namespace Unleash
                 settings.FileSystem,
                 eventConfig,
                 backupFile, 
-                etagBackupFile)
+                etagBackupFile,
+                settings.ThrowOnInitialFetchFail)
             {
                 ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
                 Interval = settings.FetchTogglesInterval,

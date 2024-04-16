@@ -33,7 +33,7 @@ namespace Unleash.Tests.Mock
             })
         });
 
-        public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
+        public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
         {
             return Task.Run(async delegate
             {

@@ -91,14 +91,14 @@ namespace Unleash.Tests.Internal
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
                 .ThrowsAsync(() => new HttpRequestException("The remote server refused the connection"));
 
             var collection = new ThreadSafeToggleCollection();
             var serializer = new DynamicNewtonsoftJsonSerializer();
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             try
@@ -128,7 +128,7 @@ namespace Unleash.Tests.Internal
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
                 .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
@@ -138,7 +138,7 @@ namespace Unleash.Tests.Internal
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -162,7 +162,7 @@ namespace Unleash.Tests.Internal
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._))
+            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
                 .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
 
             var collection = new ThreadSafeToggleCollection();
@@ -173,7 +173,7 @@ namespace Unleash.Tests.Internal
                 .Throws(() => new IOException(exceptionMessage));
 
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt");
+            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));

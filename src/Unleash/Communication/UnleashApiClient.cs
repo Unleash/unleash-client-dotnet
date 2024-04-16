@@ -58,7 +58,7 @@ namespace Unleash.Communication
             this.projectId = projectId;
         }
 
-        public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken)
+        public async Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
         {
             if (featureRequestsToSkip > featureRequestsSkipped)
             {
@@ -87,7 +87,7 @@ namespace Unleash.Communication
                 {
                     if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NotModified)
                     {
-                        return await HandleErrorResponse(response, resourceUri);
+                        return await HandleErrorResponse(response, resourceUri, throwOnFail);
                     }
 
                     return await HandleSuccessResponse(response, etag);
@@ -95,7 +95,7 @@ namespace Unleash.Communication
             }
         }
 
-        private async Task<FetchTogglesResult> HandleErrorResponse(HttpResponseMessage response, string resourceUri)
+        private async Task<FetchTogglesResult> HandleErrorResponse(HttpResponseMessage response, string resourceUri, bool shouldThrow = false)
         {
             if (backoffResponses.Contains((int)response.StatusCode))
             {
@@ -110,6 +110,11 @@ namespace Unleash.Communication
             var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Logger.Trace(() => $"UNLEASH: Error {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
             eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, StatusCode = response.StatusCode, Resource = resourceUri });
+
+            if (shouldThrow)
+            {
+                throw new UnleashException($"Unleash: {response.StatusCode} from server in '{nameof(FetchToggles)}': " + error);
+            }
 
             return new FetchTogglesResult
             {

@@ -140,6 +140,8 @@ namespace Unleash
         /// </summary>
         internal bool ScheduleFeatureToggleFetchImmediatly { get; set; } = true;
 
+        internal bool ThrowOnInitialFetchFail { get; set; }
+
         private static string GetSdkVersion()
         {
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
