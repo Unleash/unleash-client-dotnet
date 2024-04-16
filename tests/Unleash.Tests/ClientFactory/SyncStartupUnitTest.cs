@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Unleash.ClientFactory;
 using FluentAssertions;
 using System;
+using static Unleash.Tests.Specifications.TestFactory;
+using System.Net.Http.Headers;
+using System.Text;
+using Unleash.Scheduling;
 
 namespace Unleash.Tests.ClientFactory
 {
@@ -20,7 +24,7 @@ namespace Unleash.Tests.ClientFactory
         public void Setup()
         {
             mockApiClient = A.Fake<IUnleashApiClient>();
-            settings = new MockedUnleashSettings();
+            settings = new MockedUnleashSettings(instanceTag: "test instance SyncStartupUnitTest");
             unleashFactory = new UnleashClientFactory();
         }
 
@@ -31,7 +35,7 @@ namespace Unleash.Tests.ClientFactory
 
             var unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
 
-            A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
+            A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored, true))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -48,7 +52,7 @@ namespace Unleash.Tests.ClientFactory
         public void ImmediateInitializationBubbleErrors()
         {
             settings.UnleashApiClient = mockApiClient;
-            A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
+            A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored, true))
                 .Throws<Exception>();
 
             Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
@@ -58,7 +62,7 @@ namespace Unleash.Tests.ClientFactory
         public void ImmediateInitializationBubbleAsyncErrors()
         {
             settings.UnleashApiClient = mockApiClient;
-            A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored))
+            A.CallTo(() => mockApiClient.FetchToggles(A<string>.Ignored, A<CancellationToken>.Ignored, true))
                 .ThrowsAsync(new Exception());
 
             Assert.ThrowsAsync<Exception>(async () => await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true));
@@ -71,7 +75,7 @@ namespace Unleash.Tests.ClientFactory
 
             var unleash = await unleashFactory.CreateClientAsync(settings);
 
-            A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored))
+            A.CallTo(() => mockApiClient.FetchToggles(string.Empty, A<CancellationToken>.Ignored, false))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -83,5 +87,170 @@ namespace Unleash.Tests.ClientFactory
             unleash.IsEnabled("one-enabled", false)
                 .Should().BeFalse();
         }
+
+        [Test]
+        public void Synchronous_Initialization_400s_Throws()
+        {
+            // Arrange
+            Assert.Throws<UnleashException>(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.Forbidden,
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+        [Test]
+        public void Synchronous_Initialization_429_Throws()
+        {
+            // Arrange
+            Assert.Throws<UnleashException>(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.Forbidden,
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+        [Test]
+        public void Synchronous_Initialization_304_Does_Not_Throw()
+        {
+            // Arrange
+            Assert.DoesNotThrow(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotModified,
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+
+        [Test]
+        public void Synchronous_Initialization_Ok_Does_Not_Throw()
+        {
+            // Arrange
+            Assert.DoesNotThrow(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Content = new StringContent(TestData, Encoding.UTF8, "application/json"),
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+        [Test]
+        public void Synchronous_Initialization_302_Throws()
+        {
+            // Arrange
+            Assert.Throws<UnleashException>(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.Found,
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+        [Test]
+        public void Synchronous_Initialization_500_Throws()
+        {
+            // Arrange
+            Assert.Throws<UnleashException>(() =>
+            {
+                var unleash = GetUnleash(new HttpResponseMessage()
+                {
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                    Headers =
+                    {
+                        ETag = new EntityTagHeaderValue("\"123\"")
+                    }
+                });
+            });
+        }
+
+        private IUnleash GetUnleash(HttpResponseMessage response)
+        {
+            var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
+            var settings = new UnleashSettings()
+            {
+                AppName = "testapp",
+                UnleashApi = new Uri("http://localhost:8080/"),
+                ScheduledTaskManager = A.Fake<IUnleashScheduledTaskManager>(),
+                HttpClientFactory = fakeHttpClientFactory
+            };
+            var responseContent = TestData;
+            var fakeHttpMessageHandler = new TestHttpMessageHandler();
+            fakeHttpMessageHandler.Response = response;
+            var client = new HttpClient(fakeHttpMessageHandler);
+            client.BaseAddress = settings.UnleashApi;
+            var factory = new UnleashClientFactory();
+            A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(client);
+            return factory.CreateClient(settings, synchronousInitialization: true);
+        }
+
+        public string TestData => @"{
+            ""version"": 2,
+            ""features"": [
+                {
+                    ""name"": ""enabled.with.variants"",
+                    ""description"": ""Test"",
+                    ""enabled"": true,
+                    ""strategies"": [
+                        {
+                            ""name"": ""flexibleRollout"",
+                            ""parameters"": {
+                                ""rollout"": ""100"",
+                                ""stickiness"": ""default"",
+                                ""groupId"": ""default"",
+                            }
+                        }
+                    ],
+                    ""variants"": [
+                        {
+                            ""name"": ""A"",
+                            ""weight"": 50
+                        },
+                        {
+                            ""name"": ""B"",
+                            ""weight"": 50
+                        }
+                    ]
+                },
+                {
+                    ""name"": ""enabled.no.variants"",
+                    ""description"": ""Test"",
+                    ""enabled"": true,
+                    ""strategies"": [
+                        {
+                            ""name"": ""default"",
+                        }
+                    ]
+                }
+            ]
+        }";
     }
 }

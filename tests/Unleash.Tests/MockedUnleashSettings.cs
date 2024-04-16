@@ -8,10 +8,10 @@ namespace Unleash.Tests
 {
     public class MockedUnleashSettings : UnleashSettings
     {
-        public MockedUnleashSettings(bool mockFileSystem = true)
+        public MockedUnleashSettings(bool mockFileSystem = true, string instanceTag = "test instance 1")
         {
             AppName = "test";
-            InstanceTag = "test instance 1";
+            InstanceTag = instanceTag;
             UnleashApi = new Uri("http://localhost:4242/");
 
             UnleashApiClient = new MockApiClient();

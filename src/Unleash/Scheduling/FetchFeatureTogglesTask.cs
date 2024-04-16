@@ -16,12 +16,13 @@ namespace Unleash.Scheduling
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
         private readonly string toggleFile;
         private readonly string etagFile;
-
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
         private readonly ThreadSafeToggleCollection toggleCollection;
+        private readonly bool throwOnInitialLoadFail;
+        private bool ready = false;
 
         // In-memory reference of toggles/etags
         internal string Etag { get; set; }
@@ -33,7 +34,8 @@ namespace Unleash.Scheduling
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
             string toggleFile,
-            string etagFile)
+            string etagFile,
+            bool throwOnInitialLoadFail)
         {
             this.apiClient = apiClient;
             this.toggleCollection = toggleCollection;
@@ -42,6 +44,7 @@ namespace Unleash.Scheduling
             this.eventConfig = eventConfig;
             this.toggleFile = toggleFile;
             this.etagFile = etagFile;
+            this.throwOnInitialLoadFail = throwOnInitialLoadFail;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -49,7 +52,7 @@ namespace Unleash.Scheduling
             FetchTogglesResult result;
             try
             {
-                result = await apiClient.FetchToggles(Etag, cancellationToken).ConfigureAwait(false);
+                result = await apiClient.FetchToggles(Etag, cancellationToken, !ready && this.throwOnInitialLoadFail).ConfigureAwait(false);
             }
             catch (HttpRequestException ex)
             {
@@ -57,6 +60,8 @@ namespace Unleash.Scheduling
                 eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.Client, Error = ex });
                 throw new UnleashException("Exception while fetching from API", ex);
             }
+
+            ready = true;
 
             if (!result.HasChanged)
             {
