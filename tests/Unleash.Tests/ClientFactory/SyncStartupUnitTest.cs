@@ -91,7 +91,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_400s_Throws()
         {
-            // Arrange
+            // Act, Assert
             Assert.Throws<UnleashException>(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
@@ -108,7 +108,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_429_Throws()
         {
-            // Arrange
+            // Act, Assert
             Assert.Throws<UnleashException>(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
@@ -125,7 +125,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_304_Does_Not_Throw()
         {
-            // Arrange
+            // Act, Assert
             Assert.DoesNotThrow(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
@@ -143,7 +143,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_Ok_Does_Not_Throw()
         {
-            // Arrange
+            // Act, Assert
             Assert.DoesNotThrow(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
@@ -161,7 +161,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_302_Throws()
         {
-            // Arrange
+            // Act, Assert
             Assert.Throws<UnleashException>(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
@@ -178,7 +178,7 @@ namespace Unleash.Tests.ClientFactory
         [Test]
         public void Synchronous_Initialization_500_Throws()
         {
-            // Arrange
+            // Act, Assert
             Assert.Throws<UnleashException>(() =>
             {
                 var unleash = GetUnleash(new HttpResponseMessage()
