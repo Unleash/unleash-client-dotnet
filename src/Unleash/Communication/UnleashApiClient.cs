@@ -71,7 +71,7 @@ namespace Unleash.Communication
             }
 
             featureRequestsSkipped = 0;
-                
+
             string resourceUri = "client/features";
             if (!string.IsNullOrWhiteSpace(this.projectId))
                 resourceUri += "?project=" + this.projectId;
