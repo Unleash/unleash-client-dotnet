@@ -47,7 +47,7 @@ namespace Unleash.Scheduling
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(() => $"UNLEASH: Unhandled exception from background task '{name}'.", ex);
+                    Logger.Warn(() => $"UNLEASH: Unhandled exception from background task '{name}'.", ex);
                 }
                 finally
                 {
