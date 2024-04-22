@@ -337,5 +337,27 @@ namespace Unleash.Tests.Strategy
             // Assert
             enabled.Should().BeTrue();
         }
+        
+        [Test]
+        public void Should_be_enabled_for_empty_userid() {
+            // Arrange
+            var strategy = new FlexibleRolloutStrategy();
+            var parameters = new Dictionary<string, string>
+            {
+                { "rollout", "100" },
+                { "stickiness", "default" },
+                { "groupId", "Feature.flexible.rollout.custom.stickiness_100" }
+            };
+            var context = new UnleashContext
+            {
+                UserId = string.Empty
+            };
+
+            // Act
+            var enabled = strategy.IsEnabled(parameters, context);
+
+            // Assert
+            enabled.Should().BeTrue();
+        }
     }
 }
