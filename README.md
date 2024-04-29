@@ -574,11 +574,11 @@ Tests live in `./tests/Unleash.Tests`
 
 ### Release process
 - Draft a new release in releases, target `main`
-- Chose a new version (ie `4.1.9` without `v`)
-- Input new version number as tag, chose `create new tag <x.x.x> on publish`
+- Choose a new version (ie `4.1.9` without `v`)
+- Input new version number as tag, choose `create new tag <x.x.x> on publish`
 - Set the same version number as `Release title`
 - The button `Generate release notes` should give a summary of new commits and contributors
-- Chose to `set as the latest release`
+- Choose to `set as the latest release`
 - Click `Publish release`.
 This starts the release workflow which builds the new release and pushes the artifacts to NuGet
 
