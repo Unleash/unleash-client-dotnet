@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{F098FC57
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unleash.Tests.Benchmarks", "tests\Unleash.Tests.Benchmarks\Unleash.Tests.Benchmarks.csproj", "{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{29C4317B-9580-4E56-ACE0-06D3E74269D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A703F9CB-157F-4166-B81D-27779B586DCB}"
@@ -36,10 +34,6 @@ Global
 		{FF268018-34C4-45EB-937E-2E0AB25EEEDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF268018-34C4-45EB-937E-2E0AB25EEEDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF268018-34C4-45EB-937E-2E0AB25EEEDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,7 +41,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4CF2127B-8FC8-46FC-8614-3918148463A5} = {29C4317B-9580-4E56-ACE0-06D3E74269D1}
 		{FF268018-34C4-45EB-937E-2E0AB25EEEDA} = {A703F9CB-157F-4166-B81D-27779B586DCB}
-		{7FFC30AE-A8AF-4A60-9279-D29FE668B0F6} = {A703F9CB-157F-4166-B81D-27779B586DCB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8777E71-3209-4072-B7D9-466A4F5C7A75}
