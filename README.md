@@ -20,6 +20,7 @@ Read more of the main project at [github.com/unleash/unleash](https://github.com
 
 ## Features
 Supported Frameworks
+* .Net 6
 * NET Standard 2.0
 * .Net 4.8
 * .Net 4.7.2
@@ -560,9 +561,26 @@ The Unleash team have made a separate project which runs unleash server inside d
 
 ## Development
 
-Visual Studio 2017 / Code
+### Setup/Tool suggestions/Requirements
+Visual Studio Community / VS Code / JetBrains Rider
+Microsoft C# Dev Kit extension for VS Code
+.NET 6
 
-Cakebuild
+### Build/Test
+Code lives in `./src/Unleash`
+Tests live in `./tests/Unleash.Tests`
+- Build: `dotnet build`
+- Test: `dotnet test` - This also executes spec tests
+
+### Release process
+- Draft a new release in releases, target `main`
+- Chose a new version (ie `4.1.9` without `v`)
+- Input new version number as tag, chose `create new tag <x.x.x> on publish`
+- Set the same version number as `Release title`
+- The button `Generate release notes` should give a summary of new commits and contributors
+- Chose to `set as the latest release`
+- Click `Publish release`.
+This starts the release workflow which builds the new release and pushes the artifacts to NuGet
 
 ### Other information
 
