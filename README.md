@@ -71,7 +71,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     UnleashApi = new Uri("<your-api-url>"),
-    CustomHttpHeaders = new Dictionary()
+    CustomHttpHeaders = new Dictionary<string, string>()
     {
       {"Authorization","<your-api-token>" }
     }
