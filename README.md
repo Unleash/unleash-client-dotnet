@@ -71,7 +71,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     UnleashApi = new Uri("<your-api-url>"),
-    CustomHttpHeaders = new Dictionary()
+    CustomHttpHeaders = new Dictionary<string, string>()
     {
       {"Authorization","<your-api-token>" }
     }
@@ -280,7 +280,7 @@ var settings = new UnleashSettings()
     AppName = "dotnet-test",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
     UnleashContextProvider = new AspNetContextProvider(),
-    CustomHttpHeaders = new Dictionary()
+    CustomHttpHeaders = new Dictionary<string, string>()
     {
       {"Authorization", "API token" }
     }
@@ -458,7 +458,7 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    CustomHttpHeaders = new Dictionary()
+    CustomHttpHeaders = new Dictionary<string, string>()
     {
       {"Authorization","API token" }
     },
