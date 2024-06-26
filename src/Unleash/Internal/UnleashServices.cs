@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Metrics;
 using Unleash.Scheduling;
-using Unleash.Strategies;
+using Yggdrasil;
 
 namespace Unleash
 {
@@ -20,17 +18,28 @@ namespace Unleash
 
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }
-        internal ThreadSafeToggleCollection ToggleCollection { get; }
         internal bool IsMetricsDisabled { get; }
-        internal ThreadSafeMetricsBucket MetricsBucket { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
+        internal YggdrasilEngine engine { get; }
+        private static readonly List<string> DefaultStrategyNames = new List<string> {
+            "applicationHostname",
+            "default",
+            "flexibleRollout",
+            "gradualRolloutRandom",
+            "gradualRolloutSessionId",
+            "gradualRolloutUserId",
+            "remoteAddress",
+            "userWithId"
+        };
 
-        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, Dictionary<string, IStrategy> strategyMap)
+        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, List<IStrategy> strategies = null)
         {
             if (settings.FileSystem == null)
             {
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
+
+            engine = new YggdrasilEngine(strategies);
 
             var backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
@@ -39,15 +48,13 @@ namespace Unleash
             CancellationToken = cancellationTokenSource.Token;
             ContextProvider = settings.UnleashContextProvider;
 
-            var loader = new CachedFilesLoader(settings.JsonSerializer, settings.FileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
+            var loader = new CachedFilesLoader(settings.FileSystem, settings.ToggleBootstrapProvider, eventConfig, backupFile, etagBackupFile, settings.BootstrapOverride);
             var cachedFilesResult = loader.EnsureExistsAndLoad();
 
-            ToggleCollection = new ThreadSafeToggleCollection
+            if (!string.IsNullOrEmpty(cachedFilesResult.InitialState))
             {
-                Instance = cachedFilesResult.InitialToggleCollection ?? new ToggleCollection()
-            };
-
-            MetricsBucket = new ThreadSafeMetricsBucket();
+                engine.TakeState(cachedFilesResult.InitialState);
+            }
 
             IUnleashApiClient apiClient;
             if (settings.UnleashApiClient == null)
@@ -79,9 +86,9 @@ namespace Unleash
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
+                engine,
                 apiClient,
-                ToggleCollection,
-                settings.JsonSerializer,
+                settings.JsonSerializer, 
                 settings.FileSystem,
                 eventConfig,
                 backupFile,
@@ -100,10 +107,12 @@ namespace Unleash
 
             if (settings.SendMetricsInterval != null)
             {
+                var strategyNames = DefaultStrategyNames.Concat(strategies.Select(s => s.Name)).ToList();
+
                 var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
                     apiClient,
                     settings,
-                    strategyMap.Select(pair => pair.Key).ToList())
+                    strategyNames)
                 {
                     Interval = TimeSpan.Zero,
                     ExecuteDuringStartup = true
@@ -112,9 +121,10 @@ namespace Unleash
                 scheduledTasks.Add(clientRegistrationBackgroundTask);
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
-                    apiClient,
-                    settings,
-                    MetricsBucket)
+                    engine,
+                    apiClient, 
+                    settings
+                    )
                 {
                     Interval = settings.SendMetricsInterval.Value
                 };
@@ -132,8 +142,8 @@ namespace Unleash
                 cancellationTokenSource.Cancel();
             }
 
+            engine?.Dispose();
             scheduledTaskManager?.Dispose();
-            ToggleCollection?.Dispose();
         }
     }
 }
