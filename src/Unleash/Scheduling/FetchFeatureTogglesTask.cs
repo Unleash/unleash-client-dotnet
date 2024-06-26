@@ -8,6 +8,7 @@ using Unleash.Serialization;
 using Unleash.Logging;
 using Unleash.Events;
 using System.Net.Http;
+using Yggdrasil;
 
 namespace Unleash.Scheduling
 {
@@ -20,7 +21,7 @@ namespace Unleash.Scheduling
         private readonly EventCallbackConfig eventConfig;
         private readonly IUnleashApiClient apiClient;
         private readonly IJsonSerializer jsonSerializer;
-        private readonly ThreadSafeToggleCollection toggleCollection;
+        private readonly YggdrasilEngine engine;
         private readonly bool throwOnInitialLoadFail;
         private bool ready = false;
 
@@ -28,8 +29,8 @@ namespace Unleash.Scheduling
         internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
+            YggdrasilEngine engine,
             IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection,
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
@@ -37,8 +38,8 @@ namespace Unleash.Scheduling
             string etagFile,
             bool throwOnInitialLoadFail)
         {
+            this.engine = engine;
             this.apiClient = apiClient;
-            this.toggleCollection = toggleCollection;
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
@@ -74,17 +75,17 @@ namespace Unleash.Scheduling
             if (result.Etag == Etag)
                 return;
 
-            toggleCollection.Instance = result.ToggleCollection;
+            if (!string.IsNullOrEmpty(result.State))
+            {
+                engine.TakeState(result.State);
+            }
 
             // now that the toggle collection has been updated, raise the toggles updated event if configured
             eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
 
             try
             {
-                using (var fs = fileSystem.FileOpenCreate(toggleFile))
-                {
-                    jsonSerializer.Serialize(fs, result.ToggleCollection);
-                }
+                fileSystem.WriteAllText(toggleFile, result.State);
             }
             catch (IOException ex)
             {

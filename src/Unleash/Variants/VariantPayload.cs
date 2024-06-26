@@ -2,14 +2,8 @@ using System;
 
 namespace Unleash.Variants
 {
-    public class Payload
+    public class Payload: Yggdrasil.Payload
     {
-        public Payload(string type, string value)
-        {
-            Type = type;
-            Value = value;
-        }
-
         public string Type { get; private set; }
         public string Value { get; private set; }
 
