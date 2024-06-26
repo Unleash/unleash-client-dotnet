@@ -1,29 +1,27 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Logging;
-using Unleash.Metrics;
+using Yggdrasil;
 
 namespace Unleash.Scheduling
 {
     internal class ClientMetricsBackgroundTask : IUnleashScheduledTask
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(ClientMetricsBackgroundTask));
-
+        private readonly YggdrasilEngine engine;
         private readonly IUnleashApiClient apiClient;
         private readonly UnleashSettings settings;
-        private readonly ThreadSafeMetricsBucket metricsBucket;
 
         public ClientMetricsBackgroundTask(
-            IUnleashApiClient apiClient,
-            UnleashSettings settings,
-            ThreadSafeMetricsBucket metricsBucket)
+            YggdrasilEngine engine,
+            IUnleashApiClient apiClient, 
+            UnleashSettings settings)
         {
+            this.engine = engine;
             this.apiClient = apiClient;
             this.settings = settings;
-            this.metricsBucket = metricsBucket;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -31,7 +29,7 @@ namespace Unleash.Scheduling
             if (settings.SendMetricsInterval == null)
                 return;
 
-            var result = await apiClient.SendMetrics(metricsBucket, cancellationToken).ConfigureAwait(false);
+            var result = await apiClient.SendMetrics(engine.GetMetrics(), cancellationToken).ConfigureAwait(false);
 
             // Ignore return value    
             if (!result)

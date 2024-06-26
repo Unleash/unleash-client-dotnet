@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
-using Unleash.Metrics;
 using Unleash.Serialization;
+using Yggdrasil;
 
 namespace Unleash.Communication
 {
@@ -157,14 +157,12 @@ namespace Unleash.Communication
                 {
                     HasChanged = false,
                     Etag = newEtag,
-                    ToggleCollection = null,
                 };
             }
 
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (toggleCollection == null)
+            if (string.IsNullOrEmpty(content))
             {
                 return new FetchTogglesResult
                 {
@@ -177,11 +175,11 @@ namespace Unleash.Communication
             {
                 HasChanged = true,
                 Etag = newEtag,
-                ToggleCollection = toggleCollection
+                State = content
             };
         }
 
-        public async Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken)
+        public async Task<bool> RegisterClient(Metrics.ClientRegistration registration, CancellationToken cancellationToken)
         {
             const string requestUri = "client/register";
 
@@ -211,29 +209,18 @@ namespace Unleash.Communication
             }
         }
 
-        public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(MetricsBucket metrics, CancellationToken cancellationToken)
         {
-            if (metricsRequestsToSkip > metricsRequestsSkipped)
-            {
-                metricsRequestsSkipped++;
-                return false;
-            }
-
-            metricsRequestsSkipped = 0;
-
             const string requestUri = "client/metrics";
 
             var memoryStream = new MemoryStream();
 
-            using (metrics.StopCollectingMetrics(out var bucket))
+            jsonSerializer.Serialize(memoryStream, new ClientMetrics
             {
-                jsonSerializer.Serialize(memoryStream, new ClientMetrics
-                {
-                    AppName = clientRequestHeaders.AppName,
-                    InstanceId = clientRequestHeaders.InstanceTag,
-                    Bucket = bucket
-                });
-            }
+                AppName = clientRequestHeaders.AppName,
+                InstanceId = clientRequestHeaders.InstanceTag,
+                Bucket = metrics
+            });
 
             const int bufferSize = 1024 * 4;
 

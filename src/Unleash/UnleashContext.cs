@@ -6,16 +6,8 @@ namespace Unleash
     /// <summary>
     /// A context which the feature request should be validated against. Usually scoped to a web request through an implementation of IUnleashContextProvider.
     /// </summary>
-    public class UnleashContext
+    public class UnleashContext : Yggdrasil.Context
     {
-        public string AppName { get; set; }
-        public string Environment { get; set; }
-        public string UserId { get; set; }
-        public string SessionId { get; set; }
-        public string RemoteAddress { get; set; }
-        public DateTimeOffset? CurrentTime { get; set; }
-        public Dictionary<string, string> Properties { get; set; }
-
         public UnleashContext()
         {
             Properties = new Dictionary<string, string>();
