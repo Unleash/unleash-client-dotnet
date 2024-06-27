@@ -1,15 +1,11 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Scheduling;
-using Unleash.Serialization;
 using Unleash.Tests.Mock;
+using Yggdrasil;
 
 namespace Unleash.Tests.Internal
 {
@@ -27,15 +23,13 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = "", Etag = "one" }));
 
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+            var engine = new YggdrasilEngine();
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -56,15 +50,13 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, State = "", Etag = "one" }));
 
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+            var engine = new YggdrasilEngine();
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -93,14 +85,13 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = fetchResultToggleCollection, Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = fetchResultToggleCollection.ToString(), Etag = "one" }));
 
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+            var engine = new YggdrasilEngine();
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, toggleCollection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));

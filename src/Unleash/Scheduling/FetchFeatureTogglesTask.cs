@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 using Unleash.Logging;
 using Unleash.Events;
 using System.Net.Http;
@@ -20,7 +19,6 @@ namespace Unleash.Scheduling
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
         private readonly IUnleashApiClient apiClient;
-        private readonly IJsonSerializer jsonSerializer;
         private readonly YggdrasilEngine engine;
         private readonly bool throwOnInitialLoadFail;
         private bool ready = false;
@@ -31,7 +29,6 @@ namespace Unleash.Scheduling
         public FetchFeatureTogglesTask(
             YggdrasilEngine engine,
             IUnleashApiClient apiClient,
-            IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
             string toggleFile,
@@ -40,7 +37,6 @@ namespace Unleash.Scheduling
         {
             this.engine = engine;
             this.apiClient = apiClient;
-            this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
             this.toggleFile = toggleFile;
