@@ -79,7 +79,7 @@ namespace Unleash.Tests.Internal
             fileSystem.FileExists(etagFileName).Should().BeTrue();
             fileSystem.ReadAllText(etagFileName).Should().Be(string.Empty);
 
-            ensureResult.InitialState.Should().BeNull();
+            ensureResult.InitialState.Should().BeEmpty();
             fileSystem.FileExists(toggleFileName).Should().BeTrue();
             fileSystem.ReadAllText(toggleFileName).Should().Be(string.Empty);
         }
