@@ -103,14 +103,22 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
 
             var variant = services.engine.GetVariant(toggleName, enhancedContext) ?? defaultValue;
+            var enabled = services.engine.IsEnabled(toggleName, enhancedContext);
+            services.engine.CountFeature(toggleName, enabled ?? false);
+
+            if (enabled != null)
+            {
+                services.engine.CountVariant(toggleName, variant.Name);
+            }
+
+            variant.FeatureEnabled = enabled ?? false;
             
-            services.engine.CountVariant(toggleName, variant.Name);
             if (services.engine.ShouldEmitImpressionEvent(toggleName))
             {
                 EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);
             }
 
-            return (Variant)variant;
+            return Variant.UpgradeVariant(variant);
         }
 
         public void ConfigureEvents(Action<EventCallbackConfig> callback)
