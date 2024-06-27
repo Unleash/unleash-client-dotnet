@@ -1,13 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Unleash.Internal;
-using Unleash.Serialization;
 using Unleash.Tests.Serialization;
 using Unleash.Utilities;
 
@@ -49,8 +44,11 @@ namespace Unleash.Tests.Utilities
             var result = toggleFileProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            result.Should().Be(fileContent);
+
+            var deserializedResult = JsonSerializer.Deserialize<ToggleCollection>(result);
+            deserializedResult?.Features.Count().Should().Be(3);
+            deserializedResult?.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
 
         [Test]
@@ -72,8 +70,11 @@ namespace Unleash.Tests.Utilities
             var result = settings.ToggleBootstrapProvider.Read();
 
             // Assert
-            result.Features.Count().Should().Be(3);
-            result.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            result.Should().Be(fileContent);
+
+            var deserializedResult = JsonSerializer.Deserialize<ToggleCollection>(result);
+            deserializedResult?.Features.Count().Should().Be(3);
+            deserializedResult?.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
     }
 }

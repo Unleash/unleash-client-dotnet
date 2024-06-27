@@ -1,24 +1,17 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using static Unleash.Tests.Specifications.TestFactory;
 using Unleash.Tests.Mock;
 using Unleash.Scheduling;
-using System.Threading;
 using Unleash.Internal;
 using Unleash.Events;
 using Unleash.Communication;
 using Unleash.Serialization;
 using FluentAssertions;
 using Unleash.Metrics;
-using System.IO;
+using Yggdrasil;
 
 namespace Unleash.Tests.Internal
 {
@@ -94,11 +87,10 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
                 .ThrowsAsync(() => new HttpRequestException("The remote server refused the connection"));
 
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
+            var engine = A.Fake<YggdrasilEngine>();
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             try
@@ -126,8 +118,6 @@ namespace Unleash.Tests.Internal
                 ErrorEvent = evt => { callbackEvent = evt; }
             };
 
-            var serializer = A.Fake<IJsonSerializer>();
-
             var exceptionMessage = "Writing failed";
             var filesystem = A.Fake<IFileSystem>();
             A.CallTo(() => filesystem.WriteAllText(A<string>._, A<string>._))
@@ -135,7 +125,7 @@ namespace Unleash.Tests.Internal
 
             var toggleBootstrapProvider = A.Fake<IToggleBootstrapProvider>();
 
-            var filecache = new CachedFilesLoader(serializer, filesystem, toggleBootstrapProvider, callbackConfig, "toggle.txt", "etag.txt");
+            var filecache = new CachedFilesLoader(filesystem, toggleBootstrapProvider, callbackConfig, "toggle.txt", "etag.txt");
 
             // Act
             filecache.EnsureExistsAndLoad();

@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System.IO;
 using System.Text;
 using Unleash.Internal;
-using Unleash.Tests.Serialization;
 
 namespace Unleash.Tests.Internal
 {
@@ -15,17 +13,15 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
             string etagFileName = AppDataFile("etag-12345.txt");
-            var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(fileSystem, null, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
 
             // Assert
             ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            ensureResult.InitialState.Should().Be(fileSystem.ReadAllText(toggleFileName));
         }
 
         [Test]
@@ -34,10 +30,8 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
             string etagFileName = AppDataFile("etag-missing.txt");
-            var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(fileSystem, null, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -46,7 +40,7 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be(string.Empty);
             fileSystem.FileExists(etagFileName).Should().BeTrue();
             fileSystem.ReadAllText(etagFileName).Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Features.Should().HaveCount(3);
+            ensureResult.InitialState.Should().Be(fileSystem.ReadAllText(toggleFileName));
         }
 
         [Test]
@@ -55,17 +49,15 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-missing.json");
             string etagFileName = AppDataFile("etag-12345.txt");
-            var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(fileSystem, null, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
 
             // Assert
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialToggleCollection.Should().BeNull();
+            ensureResult.InitialState.Should().BeNull();
             fileSystem.FileExists(toggleFileName).Should().BeTrue();
             fileSystem.ReadAllText(toggleFileName).Should().Be(string.Empty);
         }
@@ -76,10 +68,8 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-missing.json");
             string etagFileName = AppDataFile("etag-missing.txt");
-            var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(fileSystem, null, null, toggleFileName, etagFileName);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -89,7 +79,7 @@ namespace Unleash.Tests.Internal
             fileSystem.FileExists(etagFileName).Should().BeTrue();
             fileSystem.ReadAllText(etagFileName).Should().Be(string.Empty);
 
-            ensureResult.InitialToggleCollection.Should().BeNull();
+            ensureResult.InitialState.Should().BeNull();
             fileSystem.FileExists(toggleFileName).Should().BeTrue();
             fileSystem.ReadAllText(toggleFileName).Should().Be(string.Empty);
         }

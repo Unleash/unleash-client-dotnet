@@ -88,7 +88,6 @@ namespace Unleash
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
                 engine,
                 apiClient,
-                settings.JsonSerializer, 
                 settings.FileSystem,
                 eventConfig,
                 backupFile,
