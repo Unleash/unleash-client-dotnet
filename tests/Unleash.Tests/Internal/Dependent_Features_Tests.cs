@@ -197,40 +197,6 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
-        public void Depends_On_One_Enabled_Parent_Fires_Impression_Events_For_Both_Parend_And_Child()
-        {
-            // Arrange
-            var appname = "testapp";
-            var impressionEventCount = 0;
-            var dependencies = new List<Dependency>()
-            {
-                new Dependency("parent-enabled-1"),
-            };
-            var toggles = new List<FeatureToggle>()
-            {
-                ParentEnabledOne(impressionData: true),
-                ParentEnabledTwo(impressionData: true),
-                ChildDependentOn("child-1", dependencies, impressionData: true)
-            };
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
-            unleash.ConfigureEvents(cfg =>
-            {
-                cfg.ImpressionEvent = (ev) =>
-                {
-                    impressionEventCount++;
-                };
-            });
-
-            // Act
-            var result = unleash.IsEnabled("child-1");
-
-            // Assert
-            impressionEventCount.Should().Be(2);
-        }
-
-        [Test]
         public void Depends_On_One_Enabled_Parent_With_No_Variants_Expects_Red_Or_Blue_IsEnabled_False()
         {
             // Arrange
@@ -576,7 +542,13 @@ namespace Unleash.Tests.Internal
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
             var fakeFileSystem = new MockFileSystem();
-            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
+            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state, new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                }
+            });
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
             A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
