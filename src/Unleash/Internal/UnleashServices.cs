@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Unleash.Communication;
 using Unleash.Internal;
+using Unleash.Logging;
 using Unleash.Scheduling;
 using Yggdrasil;
 
@@ -11,6 +12,7 @@ namespace Unleash
 {
     internal class UnleashServices : IDisposable
     {
+        private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashServices));
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
@@ -53,7 +55,11 @@ namespace Unleash
 
             if (!string.IsNullOrEmpty(cachedFilesResult.InitialState))
             {
-                engine.TakeState(cachedFilesResult.InitialState);
+                try {
+                    engine.TakeState(cachedFilesResult.InitialState);
+                } catch (Exception ex) {
+                    Logger.Error(() => $"UNLEASH: Failed to load initial state from file: {ex.Message}");
+                }
             }
 
             IUnleashApiClient apiClient;
