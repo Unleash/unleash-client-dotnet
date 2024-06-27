@@ -57,7 +57,7 @@ namespace Unleash.Tests.Internal
 
             // Assert
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialState.Should().BeNull();
+            ensureResult.InitialState.Should().BeEmpty();
             fileSystem.FileExists(toggleFileName).Should().BeTrue();
             fileSystem.ReadAllText(toggleFileName).Should().Be(string.Empty);
         }
