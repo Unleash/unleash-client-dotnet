@@ -124,12 +124,12 @@ namespace Unleash.Tests.Internal
             var result = unleash.IsEnabled("child-1");
 
             // Assert
-            unleash.services.MetricsBucket.StopCollectingMetrics(out var bucket);
-            var childMetrics = bucket.Toggles.Single(t => t.Key == "child-1").Value;
-            childMetrics.No.Should().Be(0L);
-            childMetrics.Yes.Should().Be(1L);
+            var bucket = unleash.services.engine.GetMetrics();
+            var childMetrics = bucket?.Toggles.Single(t => t.Key == "child-1").Value;
+            childMetrics?.No.Should().Be(0L);
+            childMetrics?.Yes.Should().Be(1L);
 
-            var parentMetrics = bucket.Toggles.Any(t => t.Key == "parent-enabled-1").Should().BeFalse();
+            var parentMetrics = bucket?.Toggles.Any(t => t.Key == "parent-enabled-1").Should().BeFalse();
         }
 
         [Test]

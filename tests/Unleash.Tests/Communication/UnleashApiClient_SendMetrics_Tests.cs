@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
-using Unleash.Metrics;
+using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using NUnit.Framework.Internal;
+using Yggdrasil;
 
 namespace Unleash.Tests.Communication
 {
@@ -25,11 +25,10 @@ namespace Unleash.Tests.Communication
                 .WithPartialContent("\"yggdrasilVersion\":null")
                 .Respond("application/json", "{ 'status': 'ok' }");
 
-            var metricsBucket = new ThreadSafeMetricsBucket();
+            var engine = new YggdrasilEngine();
+            engine.CountFeature("someTestToggle", true);
 
-            metricsBucket.RegisterCount("someTestToggle", true);
-
-            var result = await client.SendMetrics(metricsBucket, CancellationToken.None);
+            var result = await client.SendMetrics(engine.GetMetrics(), CancellationToken.None);
             Assert.IsTrue(result);
         }
     }
