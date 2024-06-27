@@ -7,7 +7,7 @@ namespace Unleash.Tests.Mock
 {
     internal class MockApiClient : IUnleashApiClient
     {
-        private static readonly string State = new List<FeatureToggle>
+        private static readonly string State = Newtonsoft.Json.JsonConvert.SerializeObject(new ToggleCollection(new List<FeatureToggle>
         {
             new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
             {
@@ -28,7 +28,13 @@ namespace Unleash.Tests.Mock
                     {"userIds", "userB" }
                 })
             })
-        }.ToString();
+        }), new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                }
+            });
 
         public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
         {

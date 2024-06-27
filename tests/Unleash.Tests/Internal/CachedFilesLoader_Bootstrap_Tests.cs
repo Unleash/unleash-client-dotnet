@@ -9,7 +9,7 @@ namespace Unleash.Tests.Internal
 {
     public class CachedFilesLoader_Bootstrap_Tests : CachedFilesLoaderTestBase
     {
-        private static string State = new List<FeatureToggle>
+        private static string State = Newtonsoft.Json.JsonConvert.SerializeObject(new ToggleCollection(new List<FeatureToggle>
         {
             new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
             {
@@ -30,7 +30,13 @@ namespace Unleash.Tests.Internal
                     {"userIds", "userB" }
                 })
             })
-        }.ToString();
+        }), new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                }
+            });
 
         [Test]
         public void Loads_From_Bootstrap_Provider_When_Backup_File_Is_Missing()
@@ -75,7 +81,7 @@ namespace Unleash.Tests.Internal
             A.CallTo(() => bootstrapProviderFake.Read())
                 .MustHaveHappenedOnceExactly();
             ensureResult.InitialETag.Should().Be(string.Empty);
-            ensureResult.InitialState.Should().BeNull();
+            ensureResult.InitialState.Should().BeEmpty();
         }
 
         [Test]
