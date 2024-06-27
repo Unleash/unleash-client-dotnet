@@ -72,22 +72,26 @@ namespace Unleash.Tests.Internal
             var fetchResultToggleCollection = new ToggleCollection();
             fetchResultToggleCollection.Features.Add(new FeatureToggle("toggle-1", "operational", true, false, new List<ActivationStrategy>())); // after toggles are fetched, the toggle is enabled
 
-            var toggleCollection = new ThreadSafeToggleCollection();
-            toggleCollection.Instance = new ToggleCollection();
-            toggleCollection.Instance.Features.Add(new FeatureToggle("toggle-1", "operational", false, false, new List<ActivationStrategy>())); // initially, the toggle is NOT enabled
+            var engine = new YggdrasilEngine();
 
             var toggleIsEnabledResultAfterEvent = false;
             var callbackConfig = new EventCallbackConfig
             {
                 // when toggles updated event is raised (after the fetch), check toggle collection to see if toggle is enabled
-                TogglesUpdatedEvent = evt => { toggleIsEnabledResultAfterEvent = toggleCollection.Instance.Features.ElementAt(0).Enabled; }
+                TogglesUpdatedEvent = evt => { toggleIsEnabledResultAfterEvent = engine.IsEnabled("toggle-1", new UnleashContext()) ?? false; }
             };
+
+            var fetchState = Newtonsoft.Json.JsonConvert.SerializeObject(fetchResultToggleCollection, new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                }
+            });
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = fetchResultToggleCollection.ToString(), Etag = "one" }));
-
-            var engine = new YggdrasilEngine();
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = fetchState, Etag = "one" }));
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
@@ -97,7 +101,7 @@ namespace Unleash.Tests.Internal
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
 
             // Assert
-            toggleCollection.Instance.Features.ElementAt(0).Enabled.Should().BeTrue(); // verify that toggle collection has been updated after fetch and shows that toggle is enabled
+            engine.IsEnabled("toggle-1", new UnleashContext()).Should().BeTrue(); // verify that toggle is enabled after fetch
             toggleIsEnabledResultAfterEvent.Should().BeTrue(); // verify that toggles updated event handler got the correct result for the updated toggle state (should now be enabled)
         }
     }
