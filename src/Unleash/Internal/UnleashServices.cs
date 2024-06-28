@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Unleash.Communication;
+using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Scheduling;
@@ -59,6 +60,7 @@ namespace Unleash
                     engine.TakeState(cachedFilesResult.InitialState);
                 } catch (Exception ex) {
                     Logger.Error(() => $"UNLEASH: Failed to load initial state from file: {ex.Message}");
+                    eventConfig.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
             }
 
@@ -112,7 +114,7 @@ namespace Unleash
 
             if (settings.SendMetricsInterval != null)
             {
-                var strategyNames = DefaultStrategyNames.Concat(strategies.Select(s => s.Name)).ToList();
+                var strategyNames = (strategies == null ? DefaultStrategyNames : DefaultStrategyNames.Concat(strategies.Select(s => s.Name))).ToList();
 
                 var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
                     apiClient,

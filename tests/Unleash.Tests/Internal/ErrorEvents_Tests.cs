@@ -135,5 +135,31 @@ namespace Unleash.Tests.Internal
             callbackEvent.Error.Should().NotBeNull();
             callbackEvent.ErrorType.Should().Be(ErrorType.FileCache);
         }
+
+        [Test]
+        public void Engine_TakeState_InvalidJson_Throws_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns("Something that is definitely not valid JSON");
+
+            // Act
+            var services = new UnleashServices(new UnleashSettings() {
+                ToggleBootstrapProvider = bootstrapProviderFake,
+                BootstrapOverride = true
+            }, callbackConfig);
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+            callbackEvent.Error.Should().NotBeNull();
+            callbackEvent.ErrorType.Should().Be(ErrorType.FileCache);
+        }
     }
 }
