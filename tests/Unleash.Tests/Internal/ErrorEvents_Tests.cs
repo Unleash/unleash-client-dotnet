@@ -109,37 +109,6 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
-        public void FetchFeatureToggleTask_Serialization_Throws_Raises_ErrorEvent()
-        {
-            // Arrange
-            ErrorEvent callbackEvent = null;
-            var exceptionMessage = "Serialization failed";
-            var callbackConfig = new EventCallbackConfig()
-            {
-                ErrorEvent = evt => { callbackEvent = evt; }
-            };
-
-            var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, State = "", Etag = "one" }));
-
-            var engine = A.Fake<YggdrasilEngine>();
-
-            var filesystem = new MockFileSystem();
-            var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
-
-            // Act
-            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
-
-            // Assert
-            callbackEvent.Should().NotBeNull();
-            callbackEvent.Error.Should().NotBeNull();
-            callbackEvent.Error.Message.Should().Be(exceptionMessage);
-            callbackEvent.ErrorType.Should().Be(ErrorType.TogglesBackup);
-        }
-
-        [Test]
         public void FetchFeatureToggleTask_Etag_Writing_Throws_Raises_ErrorEvent()
         {
             // Arrange
@@ -194,6 +163,32 @@ namespace Unleash.Tests.Internal
 
             // Act
             filecache.EnsureExistsAndLoad();
+
+            // Assert
+            callbackEvent.Should().NotBeNull();
+            callbackEvent.Error.Should().NotBeNull();
+            callbackEvent.ErrorType.Should().Be(ErrorType.FileCache);
+        }
+
+        [Test]
+        public void Engine_TakeState_InvalidJson_Throws_Raises_ErrorEvent()
+        {
+            // Arrange
+            ErrorEvent callbackEvent = null;
+            var callbackConfig = new EventCallbackConfig()
+            {
+                ErrorEvent = evt => { callbackEvent = evt; }
+            };
+
+            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            A.CallTo(() => bootstrapProviderFake.Read())
+                .Returns("Something that is definitely not valid JSON");
+
+            // Act
+            var services = new UnleashServices(new UnleashSettings() {
+                ToggleBootstrapProvider = bootstrapProviderFake,
+                BootstrapOverride = true
+            }, callbackConfig);
 
             // Assert
             callbackEvent.Should().NotBeNull();
