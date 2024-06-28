@@ -36,6 +36,7 @@ namespace Unleash.Tests.Specifications
         {
             var specificationsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Integration", "Data");
 
+            Console.WriteLine("KICK THE BUILD SERVER!");
             using (var client = new HttpClient())
             {
                 var csTestsVersion = "v5.1.4";
