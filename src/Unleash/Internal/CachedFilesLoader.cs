@@ -68,7 +68,7 @@ namespace Unleash.Internal
                 try
                 {
                     fileSystem.WriteAllText(toggleFile, string.Empty);
-                    result.InitialState = null;
+                    result.InitialState = string.Empty;
                 }
                 catch (IOException ex)
                 {
