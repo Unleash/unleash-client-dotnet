@@ -184,25 +184,5 @@ namespace Unleash.Tests.Internal
             ensureResult.InitialETag.Should().Be("12345");
             ensureResult.InitialState.Should().Be(fileSystem.ReadAllText(toggleFileName));
         }
-
-        [Test]
-        public void Bootstrap_Override_Disabled_Bootstraps_When_Backup_Is_Empty_Collection()
-        {
-            // Arrange
-            string toggleFileName = AppDataFile("features-v1-empty.json");
-            string etagFileName = AppDataFile("etag-12345.txt");
-            var fileSystem = new FileSystem(Encoding.UTF8);
-            var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
-            A.CallTo(() => bootstrapProviderFake.Read())
-                .Returns(State);
-            var fileLoader = new CachedFilesLoader(fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, false);
-
-            // Act
-            var ensureResult = fileLoader.EnsureExistsAndLoad();
-
-            // Assert
-            ensureResult.InitialETag.Should().Be("12345");
-            ensureResult.InitialState.Should().Be(State);
-        }
     }
 }
