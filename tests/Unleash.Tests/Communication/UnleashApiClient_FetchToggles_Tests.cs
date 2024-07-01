@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -17,9 +14,9 @@ namespace Unleash.Tests.Communication
             var result1 = await api.FetchToggles(etag, CancellationToken.None);
 
             result1.HasChanged.Should().BeTrue();
-            result1.ToggleCollection.Should().NotBeNull();
+            result1.State.Should().NotBeNull();
 
-            result1.ToggleCollection.TraceToJson();
+            result1.State.TraceToJson();
 
             //
             // NB: Could fail below if server content has changed after previous call. Just try again..
@@ -28,7 +25,7 @@ namespace Unleash.Tests.Communication
             // With etag from previous response
             var result2 = await api.FetchToggles(result1.Etag, CancellationToken.None);
             result2.HasChanged.Should().BeFalse();
-            result2.ToggleCollection.Should().BeNull();
+            result2.State.Should().BeNull();
             result2.Etag.Should().Be(result1.Etag);
         }
 

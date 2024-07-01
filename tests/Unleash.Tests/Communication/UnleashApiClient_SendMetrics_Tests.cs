@@ -1,8 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
-using Unleash.Metrics;
+using Yggdrasil;
 
 namespace Unleash.Tests.Communication
 {
@@ -12,11 +10,11 @@ namespace Unleash.Tests.Communication
         [Ignore("Requires a valid accesstoken")]
         public async Task SendMetrics_Success()
         {
-            var metricsBucket = new ThreadSafeMetricsBucket();
-            metricsBucket.RegisterCount("Demo123", true);
-            metricsBucket.RegisterCount("Demo123", false);
+            var engine = new YggdrasilEngine();
+            engine.CountFeature("Demo123", true);
+            engine.CountFeature("Demo123", false);
             
-            var result = await api.SendMetrics(metricsBucket, CancellationToken.None);
+            var result = await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
             result.Should().Be(true);
 
             // Check result:

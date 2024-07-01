@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Unleash.Communication;
 using Unleash.Serialization;
+using Yggdrasil;
 
 namespace Unleash.Tests.Communication
 {
@@ -96,11 +91,12 @@ namespace Unleash.Tests.Communication
                 {"expectedHeader2", "expectedValue2"}
             };
             api = CreateApiClient();
+            var engine = new YggdrasilEngine();
 
             var etag = "";
             await api.FetchToggles(etag, CancellationToken.None);
             await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
-            await api.SendMetrics(new Unleash.Metrics.ThreadSafeMetricsBucket(), CancellationToken.None);
+            await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
 
             messageHandler.calls.Count.Should().Be(3);
             foreach (var call in messageHandler.calls)
@@ -126,11 +122,12 @@ namespace Unleash.Tests.Communication
 
             httpHeadersProvider = new UnleashCustomHttpHeaderProvider();
             api = CreateApiClient();
+            var engine = new YggdrasilEngine();
 
             var etag = "";
             await api.FetchToggles(etag, CancellationToken.None);
             await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
-            await api.SendMetrics(new Unleash.Metrics.ThreadSafeMetricsBucket(), CancellationToken.None);
+            await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
 
             messageHandler.calls.Count.Should().Be(3);
             foreach (var call in messageHandler.calls)

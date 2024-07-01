@@ -1,12 +1,9 @@
-﻿using System.Threading;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Unleash.Communication;
 using FakeItEasy;
-using System.Threading.Tasks;
 using Unleash.ClientFactory;
 using FluentAssertions;
-using System;
 using static Unleash.Tests.Specifications.TestFactory;
 using System.Net.Http.Headers;
 using System.Text;
@@ -225,7 +222,7 @@ namespace Unleash.Tests.ClientFactory
                             ""parameters"": {
                                 ""rollout"": ""100"",
                                 ""stickiness"": ""default"",
-                                ""groupId"": ""default"",
+                                ""groupId"": ""default""
                             }
                         }
                     ],
@@ -246,7 +243,7 @@ namespace Unleash.Tests.ClientFactory
                     ""enabled"": true,
                     ""strategies"": [
                         {
-                            ""name"": ""default"",
+                            ""name"": ""default""
                         }
                     ]
                 }
