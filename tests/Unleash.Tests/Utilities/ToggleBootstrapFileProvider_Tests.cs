@@ -46,8 +46,9 @@ namespace Unleash.Tests.Utilities
             result.Should().Be(fileContent);
 
             var deserializedResult = Newtonsoft.Json.JsonConvert.DeserializeObject<ToggleCollection>(result);
-            deserializedResult?.Features.Count().Should().Be(3);
-            deserializedResult?.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            deserializedResult.Should().NotBeNull();
+            deserializedResult.Features.Count().Should().Be(3);
+            deserializedResult.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
 
         [Test]
@@ -72,8 +73,9 @@ namespace Unleash.Tests.Utilities
             result.Should().Be(fileContent);
 
             var deserializedResult = Newtonsoft.Json.JsonConvert.DeserializeObject<ToggleCollection>(result);
-            deserializedResult?.Features.Count().Should().Be(3);
-            deserializedResult?.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
+            deserializedResult.Should().NotBeNull();
+            deserializedResult.Features.Count().Should().Be(3);
+            deserializedResult.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
     }
 }
