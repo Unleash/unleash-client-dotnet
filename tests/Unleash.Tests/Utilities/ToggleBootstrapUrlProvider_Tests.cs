@@ -32,7 +32,8 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
-            deserializedResponseContent?.Features.Should().BeEmpty();
+            deserializedResponseContent.Should().NotBeNull();
+            deserializedResponseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -66,7 +67,8 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
-            deserializedResponseContent?.Features.Should().BeEmpty();
+            deserializedResponseContent.Should().NotBeNull();
+            deserializedResponseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -130,8 +132,9 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
+            deserializedResponseContent.Should().NotBeNull();
             var configuredHeader = customHeaders.First();
-            deserializedResponseContent?.Features.Should().BeEmpty();
+            deserializedResponseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
             messageHandlerMock.SentMessages.First().Headers.Any(kvp => kvp.Key == configuredHeader.Key && kvp.Value.First() == configuredHeader.Value).Should().BeTrue();
