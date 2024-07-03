@@ -73,7 +73,13 @@ namespace Unleash.Scheduling
 
             if (!string.IsNullOrEmpty(result.State))
             {
-                engine.TakeState(result.State);
+                try {
+                    engine.TakeState(result.State);
+                } catch (Exception ex) {
+                    Logger.Warn(() => $"UNLEASH: Exception when updating toggle collection.", ex);
+                    eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesUpdate, Error = ex });
+                    throw new UnleashException("Exception while updating toggle collection", ex);
+                }
             }
 
             // now that the toggle collection has been updated, raise the toggles updated event if configured
