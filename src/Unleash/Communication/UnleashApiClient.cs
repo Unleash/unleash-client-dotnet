@@ -211,6 +211,14 @@ namespace Unleash.Communication
 
         public async Task<bool> SendMetrics(MetricsBucket metrics, CancellationToken cancellationToken)
         {
+            if (metricsRequestsToSkip > metricsRequestsSkipped)
+            {
+                metricsRequestsSkipped++;
+                return false;
+            }
+
+            metricsRequestsSkipped = 0;
+            
             const string requestUri = "client/metrics";
 
             var memoryStream = new MemoryStream();
