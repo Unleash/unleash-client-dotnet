@@ -3,6 +3,7 @@
     public enum ErrorType
     {
         Client,
+        TogglesUpdate,
         Bootstrap,
         ImpressionEvent,
         FileCache
