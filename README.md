@@ -349,7 +349,6 @@ End Class
 
 Dim unleashSettings As New UnleashSettings()
 unleashSettings.AppName = "dotnet-test"
-unleashSettings.InstanceTag = "instance z"
 ' add the custom http header provider to the settings
 unleashSettings.UnleashCustomHttpHeaderProvider = New CustomHttpHeaderProvider()
 unleashSettings.UnleashApi = new Uri("http://unleash.herokuapp.com/api/")
@@ -425,24 +424,7 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 * When .json file does not exists
 * When the named feature toggle does not exist in .json file
 
-The backup file name will follow this pattern: `{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}.{extension}`, where InstanceTag is either what you configure on `UnleashSettings` during startup, or a formatted string with a random component following this pattern: `{Dns.GetHostName()}-generated-{Guid.NewGuid()}`.
-
-You can configure InstanceTag like this:
-
-```csharp
-var settings = new UnleashSettings()
-{
-    AppName = "dotnet-test",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    // Set an instance tag for consistent backup file naming
-    InstanceTag = "CustomInstanceTag",
-    UnleashContextProvider = new AspNetContextProvider(),
-    CustomHttpHeaders = new Dictionary<string, string>()
-    {
-        {"Authorization", "API token" }
-    }
-};
-```
+The backup file name will follow this pattern: `{fileNameWithoutExtension}-{AppName}-{SdkVersion}.{extension}`.
 
 ## Bootstrapping
 * Unleash supports bootstrapping from a JSON string.

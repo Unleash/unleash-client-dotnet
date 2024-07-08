@@ -24,7 +24,6 @@ namespace Unleash.Tests.Communication
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
-                InstanceTag = "instance1",
                 CustomHttpHeaders = new Dictionary<string, string>()
                 {
                     // "Test" token from 21.10.2021
