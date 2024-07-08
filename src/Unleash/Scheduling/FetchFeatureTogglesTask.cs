@@ -89,7 +89,6 @@ namespace Unleash.Scheduling
             catch (IOException ex)
             {
                 Logger.Warn(() => $"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
-                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
 
             Etag = result.Etag;
@@ -101,7 +100,6 @@ namespace Unleash.Scheduling
             catch (IOException ex)
             {
                 Logger.Warn(() => $"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
-                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
             }
         }
 

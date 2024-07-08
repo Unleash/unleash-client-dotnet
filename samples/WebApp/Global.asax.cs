@@ -27,7 +27,6 @@ namespace WebApp
                 UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
                 //UnleashApi = new Uri("http://localhost:4242/api/"),
                 AppName = "dotnet-api-test",
-                InstanceTag = "instance 1",
                 SendMetricsInterval = TimeSpan.FromSeconds(20),
                 UnleashContextProvider = new AspNetContextProvider(),
                 //JsonSerializer = new JsonNetSerializer()
