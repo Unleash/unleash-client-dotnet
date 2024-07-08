@@ -426,6 +426,12 @@ By default unleash-client fetches the feature toggles from unleash-server every 
 
 The backup file name will follow this pattern: `{fileNameWithoutExtension}-{AppName}-{SdkVersion}.{extension}`.
 
+### InstanceTag
+
+As of version `5.0.0`, `InstanceTag` is no longer a property of `UnleashSettings`. Instead, an internal `InstanceId` is automatically generated.
+
+This means that the backup file names have been simplified and no longer include the `InstanceTag` property value.
+
 ## Bootstrapping
 * Unleash supports bootstrapping from a JSON string.
 * Configure your own custom provider implementing the `IToggleBootstrapProvider` interface's single method `ToggleCollection Read()`.
