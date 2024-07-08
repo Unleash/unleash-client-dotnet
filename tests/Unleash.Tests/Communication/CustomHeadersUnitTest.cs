@@ -24,7 +24,6 @@ namespace Unleash.Tests.Communication
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
-                InstanceTag = "instance1",
                 CustomHttpHeaders = httpHeaders,
                 CustomHttpHeaderProvider = httpHeadersProvider
             };
