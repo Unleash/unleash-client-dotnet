@@ -16,7 +16,7 @@ namespace Unleash
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
 
-        const string supportedSpecVersion = "4.5.1";
+        public const string supportedSpecVersion = "4.5.1";
 
         internal CancellationToken CancellationToken { get; }
         internal IUnleashContextProvider ContextProvider { get; }
@@ -70,7 +70,7 @@ namespace Unleash
             }
             else
             {
-                // Mocked backend: fill instance collection 
+                // Mocked backend: fill instance collection
                 apiClient = settings.UnleashApiClient;
             }
 
