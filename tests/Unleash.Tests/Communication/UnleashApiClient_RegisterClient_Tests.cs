@@ -18,6 +18,10 @@ namespace Unleash.Tests.Communication
                 .WithPartialContent("\"interval\":1000")
                 .WithPartialContent("\"sdkVersion\":\"1.0.1\"")
                 .WithPartialContent("\"strategies\":[\"abc\"]")
+                .WithPartialContent("specVersion")
+                .WithPartialContent("platformName")
+                .WithPartialContent("platformVersion")
+                .WithPartialContent("\"yggdrasilVersion\":null")
                 .Respond("application/json", "{ 'status': 'ok' }");
 
             var clientRegistration = new ClientRegistration()

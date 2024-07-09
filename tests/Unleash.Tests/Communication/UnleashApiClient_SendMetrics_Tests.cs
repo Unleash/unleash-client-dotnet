@@ -19,6 +19,10 @@ namespace Unleash.Tests.Communication
                 .WithPartialContent("instanceId")
                 .WithPartialContent("\"no\":0")
                 .WithPartialContent("\"yes\":1")
+                .WithPartialContent("specVersion")
+                .WithPartialContent("platformName")
+                .WithPartialContent("platformVersion")
+                .WithPartialContent("\"yggdrasilVersion\":null")
                 .Respond("application/json", "{ 'status': 'ok' }");
 
             var metricsBucket = new ThreadSafeMetricsBucket();

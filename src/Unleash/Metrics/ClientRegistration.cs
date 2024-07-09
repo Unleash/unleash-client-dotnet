@@ -11,5 +11,34 @@ namespace Unleash.Metrics
         public List<string> Strategies { get; set; }
         public DateTimeOffset Started { get; set; }
         public long Interval { get; set; }
+        public string PlatformName
+        {
+            get
+            {
+                return MetricsMetadata.GetPlatformName();
+
+            }
+        }
+        public string PlatformVersion
+        {
+            get
+            {
+                return MetricsMetadata.GetPlatformVersion();
+            }
+        }
+        public string YggdrasilVersion
+        {
+            get
+            {
+                return null;
+            }
+        }
+        public string SpecVersion
+        {
+            get
+            {
+                return UnleashServices.supportedSpecVersion;
+            }
+        }
     }
 }
