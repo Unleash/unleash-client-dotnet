@@ -103,7 +103,7 @@ namespace Unleash.Tests.Strategy
                 }
             }
 
-            var measuredPercentage = Math.Round(((double) countEnabled / rounds * 100));
+            var measuredPercentage = Math.Round(((double)countEnabled / rounds * 100));
 
             (measuredPercentage >= min).Should().BeTrue();
             (measuredPercentage <= max).Should().BeTrue();

@@ -25,7 +25,7 @@ namespace Unleash.Tests.Metrics
 
             Parallel.For(0, totalTasks, options, state =>
             {
-                
+
                 var i = (state % numFeatureToggles).ToString();
                 var predicate = DateTime.Now.Ticks % 2 == 0;
 
@@ -100,7 +100,7 @@ namespace Unleash.Tests.Metrics
             var total = toggleCounter + missedRegistrations;
             total.Should().Be(totalTasks);
 
-            var percentageMissed = (double) missedRegistrations / totalTasks;
+            var percentageMissed = (double)missedRegistrations / totalTasks;
             percentageMissed.Should().BeLessThan(0.0001);//TODO: originally the value should be 0.00001, but appveyor are resource limited
         }
 

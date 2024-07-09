@@ -79,12 +79,12 @@ namespace Unleash
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
             var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
-                apiClient, 
+                apiClient,
                 ToggleCollection,
-                settings.JsonSerializer, 
+                settings.JsonSerializer,
                 settings.FileSystem,
                 eventConfig,
-                backupFile, 
+                backupFile,
                 etagBackupFile,
                 settings.ThrowOnInitialFetchFail)
             {
@@ -101,7 +101,7 @@ namespace Unleash
             if (settings.SendMetricsInterval != null)
             {
                 var clientRegistrationBackgroundTask = new ClientRegistrationBackgroundTask(
-                    apiClient, 
+                    apiClient,
                     settings,
                     strategyMap.Select(pair => pair.Key).ToList())
                 {
@@ -112,8 +112,8 @@ namespace Unleash
                 scheduledTasks.Add(clientRegistrationBackgroundTask);
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
-                    apiClient, 
-                    settings, 
+                    apiClient,
+                    settings,
                     MetricsBucket)
                 {
                     Interval = settings.SendMetricsInterval.Value

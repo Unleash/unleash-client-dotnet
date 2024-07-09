@@ -307,7 +307,7 @@ var settings = new UnleashSettings()
 ### HttpMessageHandlers/Custom HttpClient initialization
 If you need to specify HttpMessageHandlers or to control the instantiation of the HttpClient, you can create a custom
 HttpClientFactory that inherits from DefaultHttpClientFactory, and override the method CreateHttpClientInstance.
-Then configure UnleashSettings to use your custom HttpClientFactory. 
+Then configure UnleashSettings to use your custom HttpClientFactory.
 
 ```csharp
 internal class CustomHttpClientFactory : DefaultHttpClientFactory
@@ -332,7 +332,7 @@ var settings = new UnleashSettings
 ```
 
 ### Dynamic custom HTTP headers
-If you need custom http headers that change during the lifetime of the client, a provider can be defined via the `UnleashSettings`. 
+If you need custom http headers that change during the lifetime of the client, a provider can be defined via the `UnleashSettings`.
 
 ```vb
 Public Class CustomHttpHeaderProvider
@@ -354,7 +354,7 @@ unleashSettings.UnleashCustomHttpHeaderProvider = New CustomHttpHeaderProvider()
 unleashSettings.UnleashApi = new Uri("http://unleash.herokuapp.com/api/")
 unleashSettings.UnleashContextProvider = New AspNetContextProvider()
 Dim unleash = New DefaultUnleash(unleashSettings)
-                
+
 ```
 
 ## Logging
@@ -519,7 +519,7 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
         using (var jsonWriter = new JsonTextWriter(writer))
         {
             Serializer.Serialize(jsonWriter, instance);
-            
+
             jsonWriter.Flush();
 			stream.Position = 0;
         }
@@ -559,6 +559,12 @@ Code lives in `./src/Unleash`
 Tests live in `./tests/Unleash.Tests`
 - Build: `dotnet build`
 - Test: `dotnet test` - This also executes spec tests
+
+## Formatting
+
+We enforce formatting with `dotnet format`. This can be installed using the following command:
+
+`dotnet tool install -g dotnet-format`.
 
 ### Release process
 - Draft a new release in releases, target `main`

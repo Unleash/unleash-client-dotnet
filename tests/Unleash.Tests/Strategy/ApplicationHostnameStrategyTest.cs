@@ -81,7 +81,7 @@ namespace Unleash.Tests.Strategy
         [Test]
         public void should_be_enabled_for_InetAddress()
         {
-            var hostName = UnleashExtensions.GetLocalIpAddress(); 
+            var hostName = UnleashExtensions.GetLocalIpAddress();
             Environment.SetEnvironmentVariable("hostname", hostName);
 
             var strategy = new ApplicationHostnameStrategy();

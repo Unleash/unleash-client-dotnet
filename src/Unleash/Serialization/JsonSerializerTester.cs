@@ -110,5 +110,5 @@ namespace Unleash.Serialization
                     throw new UnleashException($"Wrong expected strategy parameters value (127.0.0.1): {errorMessage}");
             }
         }
-   }
+    }
 }

@@ -129,12 +129,13 @@ namespace Unleash.Tests.Strategy
             {
                 var context = UnleashContext.New().UserId("user" + userId).Build();
 
-                if (gradualRolloutStrategy.IsEnabled(paramseters, context)) {
+                if (gradualRolloutStrategy.IsEnabled(paramseters, context))
+                {
                     enabledCount++;
                 }
             }
 
-            var actualPercentage = (enabledCount / (double) rounds) * 100.0;
+            var actualPercentage = (enabledCount / (double)rounds) * 100.0;
 
             ((percentage - 1) < actualPercentage)
                 .Should().BeTrue("Expected " + percentage + "%, but was " + actualPercentage + "%");
@@ -144,7 +145,7 @@ namespace Unleash.Tests.Strategy
         }
 
         [Test]
-		[Ignore("Manual inspection")]
+        [Ignore("Manual inspection")]
         public void generateReportForListOfLoginIDs()
         {
             var numberOfIDs = 200000;
@@ -152,7 +153,7 @@ namespace Unleash.Tests.Strategy
             foreach (int percentage in percentages)
             {
                 var numberOfEnabledUsers = checkRandomLoginIDs(numberOfIDs, percentage);
-                var p = ((double) numberOfEnabledUsers / numberOfIDs) * 100.0;
+                var p = ((double)numberOfEnabledUsers / numberOfIDs) * 100.0;
 
                 Console.WriteLine("Testing " + percentage + "% --> " + numberOfEnabledUsers + " of " + numberOfIDs + " got new feature (" + p + "%)");
             }

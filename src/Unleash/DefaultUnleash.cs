@@ -72,7 +72,7 @@ namespace Unleash
 
             services = new UnleashServices(settings, EventConfig, strategyMap);
 
-            Logger.Info(() => $"UNLEASH: Unleash instance number { currentInstanceNo } is initialized and configured with: {settings}");
+            Logger.Info(() => $"UNLEASH: Unleash instance number {currentInstanceNo} is initialized and configured with: {settings}");
 
             if (currentInstanceNo >= ErrorOnInstanceCount)
             {
@@ -121,7 +121,8 @@ namespace Unleash
             var enhancedContext = context.ApplyStaticFields(settings);
             var enabled = DetermineIsEnabledAndStrategy(toggleName, featureToggle, enhancedContext, defaultSetting, out var strategy);
             var variant = DetermineVariant(enabled, featureToggle, strategy, enhancedContext, defaultVariant);
-            if (variant != null) {
+            if (variant != null)
+            {
                 variant.FeatureEnabled = enabled;
             }
 
@@ -190,15 +191,17 @@ namespace Unleash
                 return false;
             }
 
-            if (parentToggle.Dependencies.Any()) {
+            if (parentToggle.Dependencies.Any())
+            {
                 return false;
             }
 
-            if (dependency.Enabled) {
+            if (dependency.Enabled)
+            {
                 if (dependency.Variants != null && dependency.Variants.Any())
                 {
                     var checkResult = CheckIsEnabled(dependency.Feature, context, false, Variant.DISABLED_VARIANT);
-                    return checkResult.Enabled  && dependency.Variants.Contains(checkResult.Variant.Name);
+                    return checkResult.Enabled && dependency.Variants.Contains(checkResult.Variant.Name);
                 }
                 return CheckIsEnabled(dependency.Feature, context, false).Enabled;
             }

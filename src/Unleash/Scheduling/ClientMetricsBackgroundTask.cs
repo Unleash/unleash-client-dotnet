@@ -17,7 +17,7 @@ namespace Unleash.Scheduling
         private readonly ThreadSafeMetricsBucket metricsBucket;
 
         public ClientMetricsBackgroundTask(
-            IUnleashApiClient apiClient, 
+            IUnleashApiClient apiClient,
             UnleashSettings settings,
             ThreadSafeMetricsBucket metricsBucket)
         {

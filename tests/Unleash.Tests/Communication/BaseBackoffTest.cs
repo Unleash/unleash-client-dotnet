@@ -40,7 +40,7 @@ public class BaseBackoffTest
     /// <summary>
     /// 200 OK
     /// </summary>
-    protected static HttpResponseMessage Ok => 
+    protected static HttpResponseMessage Ok =>
         new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -50,13 +50,13 @@ public class BaseBackoffTest
     /// <summary>
     /// 304 Not Modified
     /// </summary>
-    protected static HttpResponseMessage NotModified => 
+    protected static HttpResponseMessage NotModified =>
         new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.NotModified,
             Content = new StringContent("{}")
         };
-    
+
     /// <summary>
     /// 401 Unauthorized
     /// </summary>
@@ -90,13 +90,13 @@ public class BaseBackoffTest
     /// <summary>
     /// 429 Too Many Requests
     /// </summary>
-    protected static HttpResponseMessage TooManyRequests => 
+    protected static HttpResponseMessage TooManyRequests =>
         new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.TooManyRequests,
             Content = new StringContent("")
         };
-    
+
     /// <summary>
     /// 500 Internal Server Error
     /// </summary>

@@ -113,16 +113,17 @@ namespace Unleash.Tests.Strategy
                 actual.Should().BeTrue("should be enabled when " + p + "% rollout");
             }
         }
-        
+
         [Test]
         [Ignore("Intended for manual execution")]
         public void generateReportForListOfLoginIDs()
         {
             var numberOfIDs = 200000;
 
-            foreach (int percentage in percentages) {
+            foreach (int percentage in percentages)
+            {
                 var numberOfEnabledUsers = checkRandomLoginIDs(numberOfIDs, percentage);
-                var p = (numberOfEnabledUsers / (double) numberOfIDs) * 100.0;
+                var p = (numberOfEnabledUsers / (double)numberOfIDs) * 100.0;
                 Console.WriteLine($"Testing {percentage}% --> {numberOfEnabledUsers} of {numberOfIDs} got new feature ({p}%)");
             }
         }

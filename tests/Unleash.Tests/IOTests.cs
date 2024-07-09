@@ -25,7 +25,7 @@ namespace Unleash.Tests
         public async Task GracefullyFailsWhenFileLocked()
         {
             var settings = new MockedUnleashSettings(false);
-            
+
             var toggleFile = settings.GetFeatureToggleFilePath();
             var eTagFile = settings.GetFeatureToggleETagFilePath();
 
@@ -33,7 +33,7 @@ namespace Unleash.Tests
             Thread lockETagFile = new Thread(LockFile);
             lockToggleFile.Start(toggleFile);
             lockETagFile.Start(eTagFile);
-            
+
             var factory = new UnleashClientFactory();
             unleash = await factory.CreateClientAsync(settings, true);
 
