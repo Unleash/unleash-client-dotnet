@@ -12,6 +12,7 @@ namespace Unleash.Tests
         {
             AppName = "test";
             UnleashApi = new Uri("http://localhost:4242/");
+            DisableSingletonWarning = true;
 
             UnleashApiClient = new MockApiClient();
             FileSystem = new MockFileSystem();

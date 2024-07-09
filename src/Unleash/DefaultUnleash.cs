@@ -74,7 +74,7 @@ namespace Unleash
 
             Logger.Info(() => $"UNLEASH: Unleash instance number {currentInstanceNo} is initialized and configured with: {settings}");
 
-            if (currentInstanceNo >= ErrorOnInstanceCount)
+            if (!settings.DisableSingletonWarning && currentInstanceNo >= ErrorOnInstanceCount)
             {
                 Logger.Error(() => $"UNLEASH: Unleash instance count for this process is now {currentInstanceNo}.");
                 Logger.Error(() => "Ideally you should only need 1 instance of Unleash per app/process, we strongly recommend setting up Unleash as a singleton.");

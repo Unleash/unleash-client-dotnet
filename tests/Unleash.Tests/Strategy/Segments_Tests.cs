@@ -122,7 +122,8 @@ namespace Unleash.Tests.Strategy.Segments
                 UnleashContextProvider = new DefaultUnleashContextProvider(contextBuilder.Build()),
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                FileSystem = fakeFileSystem,
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);

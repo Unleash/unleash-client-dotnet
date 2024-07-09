@@ -29,8 +29,6 @@ namespace Unleash.Tests.Synchronization
                 var i5 = x.Instance;
 
                 var numReaders = x.CurrentReadCount;
-                if (numReaders > 1)
-                    Console.WriteLine($"Num Readers: {numReaders}");
 
                 x.Instance = state;
 

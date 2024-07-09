@@ -63,7 +63,8 @@ namespace Unleash.Tests.Variants
                 AppName = "testapp",
                 UnleashApi = new Uri("http://localhost:8080/"),
                 ScheduledTaskManager = A.Fake<IUnleashScheduledTaskManager>(),
-                HttpClientFactory = fakeHttpClientFactory
+                HttpClientFactory = fakeHttpClientFactory,
+                DisableSingletonWarning = true
             };
             var responseContent = TestData;
             var fakeHttpMessageHandler = new TestHttpMessageHandler();

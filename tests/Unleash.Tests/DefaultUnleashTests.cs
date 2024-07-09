@@ -27,6 +27,7 @@ namespace Unleash.Tests
             var settings = new UnleashSettings
             {
                 AppName = "testapp",
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);
@@ -156,7 +157,8 @@ namespace Unleash.Tests
                 AppName = name,
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                FileSystem = fakeFileSystem,
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);

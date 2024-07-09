@@ -142,6 +142,11 @@ namespace Unleash
 
         internal bool ThrowOnInitialFetchFail { get; set; }
 
+        /// <summary>
+        /// Disables the error message if multiple instances of Unleash were instantiated in this memory space. Generally you aim to create only a single instance of Unleash in your application.
+        /// </summary>
+        internal bool DisableSingletonWarning { get; set; } = false;
+
         private static string GetSdkVersion()
         {
             var assemblyName = Assembly.GetExecutingAssembly().GetName();

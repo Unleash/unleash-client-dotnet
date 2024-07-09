@@ -600,7 +600,8 @@ namespace Unleash.Tests.Internal
                 AppName = name,
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                FileSystem = fakeFileSystem,
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);
