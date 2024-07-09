@@ -321,7 +321,8 @@ namespace Unleash.Tests.Strategy
         }
 
         [Test]
-        public void Should_be_enabled_without_a_context() {
+        public void Should_be_enabled_without_a_context()
+        {
             // Arrange
             var strategy = new FlexibleRolloutStrategy();
             var parameters = new Dictionary<string, string>
@@ -337,9 +338,10 @@ namespace Unleash.Tests.Strategy
             // Assert
             enabled.Should().BeTrue();
         }
-        
+
         [Test]
-        public void Should_be_enabled_for_empty_userid() {
+        public void Should_be_enabled_for_empty_userid()
+        {
             // Arrange
             var strategy = new FlexibleRolloutStrategy();
             var parameters = new Dictionary<string, string>

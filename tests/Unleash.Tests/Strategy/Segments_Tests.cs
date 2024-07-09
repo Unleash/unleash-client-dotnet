@@ -1,15 +1,8 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Internal;
 using Unleash.Scheduling;
 using Unleash.Tests.Mock;
@@ -41,7 +34,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.That(result, Is.EqualTo(true));
         }
 
         [Test]
@@ -66,7 +59,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.That(result, Is.EqualTo(false));
         }
 
         [Test]
@@ -91,7 +84,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.That(result, Is.EqualTo(true));
         }
 
         public static IUnleash CreateUnleash(string name, ToggleCollection state)

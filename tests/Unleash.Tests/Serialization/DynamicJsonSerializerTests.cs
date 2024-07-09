@@ -35,7 +35,7 @@ namespace Unleash.Tests.Serialization
             var originalJson = File.ReadAllText(path);
             var expected = JsonConvert.DeserializeObject<ToggleCollection>(originalJson);
 
-            var serializer = (IDynamicJsonSerializer) Activator.CreateInstance(type);
+            var serializer = (IDynamicJsonSerializer)Activator.CreateInstance(type);
             serializer.TryLoad().Should().BeTrue();
 
             using (var fileStream = File.OpenRead(path))
@@ -70,7 +70,7 @@ namespace Unleash.Tests.Serialization
                 })
             });
 
-            var serializer = (IDynamicJsonSerializer) Activator.CreateInstance(type);
+            var serializer = (IDynamicJsonSerializer)Activator.CreateInstance(type);
             serializer.TryLoad()
                 .Should().BeTrue();
 
@@ -140,7 +140,8 @@ namespace Unleash.Tests.Serialization
         }
 
         [Test]
-        public void Dependent_Feature_Enabled_Defaults_To_True() {
+        public void Dependent_Feature_Enabled_Defaults_To_True()
+        {
             // Arrange
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "App_Data", "dependent-features-missing-enabled.json");
             var originalJson = File.ReadAllText(path);

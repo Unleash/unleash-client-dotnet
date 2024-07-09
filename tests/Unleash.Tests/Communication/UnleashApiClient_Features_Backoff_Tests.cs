@@ -33,7 +33,7 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
         var result = Task.Run(() => apiClient.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
-        
+
         // Assert
         messageHandler.CallCount.Should().Be(1);
     }
@@ -67,7 +67,7 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
         var result2 = Task.Run(() => apiClient.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
-        
+
         // Assert
         messageHandler.CallCount.Should().Be(2);
     }
@@ -112,7 +112,8 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
     }
 
     [Test]
-    public void Backoff_Caps_Out_At_10() {
+    public void Backoff_Caps_Out_At_10()
+    {
         // Arrange
         var messageHandler = new CountingConfigurableHttpMessageHandler
         (
@@ -145,7 +146,7 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
         }
 
         messageHandler.CallCount.Should().Be(10);
-        
+
         // Get the 11th bad response
         for (var i = 0; i < 11; i++)
         {
@@ -187,10 +188,11 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
 
         // Should have made 1 additional attempt as part of decrease
         messageHandler.CallCount.Should().Be(13);
-   }
+    }
 
     [Test]
-    public void Backoff_Gradually_Decreases() {
+    public void Backoff_Gradually_Decreases()
+    {
         // Arrange
         var messageHandler = new CountingConfigurableHttpMessageHandler
         (
@@ -225,9 +227,9 @@ public class UnleashApiClient_Features_Backoff_Tests : BaseBackoffTest
 
         for (var i = 0; i < 11; i++)
         {
-          var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
-              .GetAwaiter()
-              .GetResult();
+            var loopResult = Task.Run(() => client.FetchToggles("etag", CancellationToken.None))
+                .GetAwaiter()
+                .GetResult();
         }
 
         // Still takes 11 fetches to get a new GET, this one will return 200 so the backoff should decrease

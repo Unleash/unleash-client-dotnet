@@ -36,8 +36,8 @@ namespace Unleash.Strategies
         /// <param name="percentage">A numeric string value</param>
         public static int GetPercentage(string percentage)
         {
-            var p = int.TryParse(percentage, out var result) 
-                ? result 
+            var p = int.TryParse(percentage, out var result)
+                ? result
                 : 0;
 
             // Ensure between 0 and 100.

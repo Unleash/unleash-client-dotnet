@@ -15,7 +15,7 @@ namespace Unleash.Tests
 
             UnleashApiClient = new MockApiClient();
             FileSystem = new MockFileSystem();
-            
+
             if (!mockFileSystem)
             {
                 FileSystem = new FileSystem(Encoding.UTF8);

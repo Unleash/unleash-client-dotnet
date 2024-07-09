@@ -500,7 +500,7 @@ namespace Unleash.Tests.Internal
             result.Should().BeFalse();
         }
 
-        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies, bool impressionData = false, List<VariantDefinition>? variants = null) 
+        public static FeatureToggle ChildDependentOn(string name, List<Dependency> dependencies, bool impressionData = false, List<VariantDefinition>? variants = null)
         {
             return new FeatureToggle(name, "release", true, impressionData, OnlyFlexibleRollout100Pct(), dependencies: dependencies, variants: variants);
         }

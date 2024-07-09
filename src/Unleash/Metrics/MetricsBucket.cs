@@ -17,7 +17,7 @@ namespace Unleash.Metrics
 
         private readonly MetricsBucket metricsBucket;
 
-        private readonly ReaderWriterLockSlim @lock = 
+        private readonly ReaderWriterLockSlim @lock =
             new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         public ThreadSafeMetricsBucket(MetricsBucket metricsBucket = null)
@@ -71,7 +71,7 @@ namespace Unleash.Metrics
         public IDisposable StopCollectingMetrics(out MetricsBucket bucket)
         {
             @lock.EnterWriteLock();
-            
+
             bucket = metricsBucket;
             bucket.Stop = DateTimeOffset.UtcNow;
 

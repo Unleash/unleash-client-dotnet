@@ -24,7 +24,7 @@ namespace Unleash.Tests.Variants
             // Assert
             variant.IsEnabled.Should().BeTrue();
             variant.FeatureEnabled.Should().BeTrue();
-            new [] { "A", "B" }.Should().Contain(variant.Name);
+            new[] { "A", "B" }.Should().Contain(variant.Name);
         }
 
         [Test]
@@ -58,7 +58,8 @@ namespace Unleash.Tests.Variants
         private IUnleash GetUnleash()
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
-            var settings = new UnleashSettings() {
+            var settings = new UnleashSettings()
+            {
                 AppName = "testapp",
                 UnleashApi = new Uri("http://localhost:8080/"),
                 ScheduledTaskManager = A.Fake<IUnleashScheduledTaskManager>(),
@@ -66,7 +67,8 @@ namespace Unleash.Tests.Variants
             };
             var responseContent = TestData;
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
-            fakeHttpMessageHandler.Response = new HttpResponseMessage() {
+            fakeHttpMessageHandler.Response = new HttpResponseMessage()
+            {
                 StatusCode = System.Net.HttpStatusCode.OK,
                 Content = new StringContent(responseContent, Encoding.UTF8, "application/json"),
                 Headers =

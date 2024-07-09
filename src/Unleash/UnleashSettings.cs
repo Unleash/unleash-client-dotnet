@@ -30,7 +30,7 @@ namespace Unleash
 
         /// <summary>
         /// Gets or set the uri for the backend unleash server.
-        /// 
+        ///
         /// Default: http://unleash.herokuapp.com/api/
         /// </summary>
         public Uri UnleashApi { get; set; } = new Uri("http://unleash.herokuapp.com/api/");
@@ -57,21 +57,21 @@ namespace Unleash
 
         /// <summary>
         /// Gets or sets the interval in which feature toggle changes are re-fetched.
-        /// 
+        ///
         /// Default: 30 seconds
         /// </summary>
         public TimeSpan FetchTogglesInterval { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// Gets or sets the interval in which metrics are sent to the server. When null, no metrics are sent.
-        /// 
+        ///
         /// Default: 60s
         /// </summary>
         public TimeSpan? SendMetricsInterval { get; set; } = TimeSpan.FromSeconds(60);
 
         /// <summary>
-        /// Gets or set a directory for storing temporary files (toggles and current etag values). 
-        /// 
+        /// Gets or set a directory for storing temporary files (toggles and current etag values).
+        ///
         /// Default: Path.GetTempPath()
         /// </summary>
         public Func<string> LocalStorageFolder { get; set; } = Path.GetTempPath;
@@ -89,16 +89,16 @@ namespace Unleash
         public IUnleashCustomHttpHeaderProvider UnleashCustomHttpHeaderProvider { get; set; } = new DefaultCustomHttpHeaderProvider();
 
         /// <summary>
-        /// Gets or sets the unleash context provider. This is needed when using any of the activation strategies 
+        /// Gets or sets the unleash context provider. This is needed when using any of the activation strategies
         /// that needs application specific context like userid etc.
-        /// 
+        ///
         /// Default: A provider with no context.
         /// </summary>
         public IUnleashContextProvider UnleashContextProvider { get; set; } = new DefaultUnleashContextProvider();
 
         /// <summary>
-        /// Gets or sets a json serializer. 
-        /// 
+        /// Gets or sets a json serializer.
+        ///
         /// Default: A serializer based on Newtonsoft will be used, given that these assemblies are loaded into the appdomain already.
         /// </summary>
         public IJsonSerializer JsonSerializer { get; set; } = new DynamicNewtonsoftJsonSerializer();

@@ -26,7 +26,8 @@ namespace Unleash.Internal
             togglesCache = new Dictionary<string, FeatureToggle>(Features.Count);
             segmentsCache = new Dictionary<int, Segment>(Segments.Count);
 
-            foreach (var featureToggle in Features) {
+            foreach (var featureToggle in Features)
+            {
                 togglesCache.Add(featureToggle.Name, featureToggle);
             }
 
@@ -42,8 +43,8 @@ namespace Unleash.Internal
 
         public FeatureToggle GetToggleByName(string name)
         {
-            return togglesCache.TryGetValue(name, out var value) 
-                ? value 
+            return togglesCache.TryGetValue(name, out var value)
+                ? value
                 : null;
         }
 

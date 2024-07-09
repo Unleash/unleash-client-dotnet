@@ -7,7 +7,7 @@ namespace Unleash.ClientFactory
     /// <inheritdoc />
     public class UnleashClientFactory : IUnleashClientFactory
     {
-        private static readonly TaskFactory TaskFactory = 
+        private static readonly TaskFactory TaskFactory =
             new TaskFactory(CancellationToken.None,
                           TaskCreationOptions.None,
                           TaskContinuationOptions.None,
@@ -30,7 +30,7 @@ namespace Unleash.ClientFactory
                     .Unwrap()
                     .GetAwaiter()
                     .GetResult();
-                
+
                 return unleash;
             }
             return new DefaultUnleash(settings, strategies);
