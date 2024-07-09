@@ -27,6 +27,14 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
+      - name: Install dotnet format tool
+        run: dotnet tool install -g dotnet-format
+
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes
+        env:
+          PATH: ${{ github.env.PATH }}:/home/runner/.dotnet/tools
+
       # Get NuGet setup for restoring, packaging and pushing
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
@@ -36,14 +44,6 @@ jobs:
 
       - name: Build the solution
         run: msbuild Unleash.sln /p:Configuration=Release
-
-      - name: Install dotnet format tool
-        run: dotnet tool install -g dotnet-format
-
-      - name: Verify formatting
-        run: dotnet format --verify-no-changes
-        env:
-          PATH: ${{ github.env.PATH }}:/home/runner/.dotnet/tools
 
       - name: Run tests
         run: dotnet test tests/Unleash.Tests/Unleash.Tests.csproj --no-restore --verbosity normal
