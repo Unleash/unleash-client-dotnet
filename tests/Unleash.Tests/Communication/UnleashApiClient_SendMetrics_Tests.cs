@@ -1,28 +1,32 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Unleash.Metrics;
+using RichardSzalay.MockHttp;
+using NUnit.Framework.Internal;
 
 namespace Unleash.Tests.Communication
 {
-    public class UnleashApiClient_SendMetrics_Tests : BaseUnleashApiClientTest
+    public class UnleashApiClient_SendMetrics_Tests
     {
+        private const string BASE_URL = "http://some-mock-url/api/client";
+
         [Test]
-        [Ignore("Requires a valid accesstoken")]
         public async Task SendMetrics_Success()
         {
+            var (mockHttp, client) = MockHttpClient.MakeMockClient(BASE_URL);
+
+            mockHttp.When($"{BASE_URL}/metrics")
+                .WithPartialContent("appName")
+                .WithPartialContent("instanceId")
+                .WithPartialContent("\"no\":0")
+                .WithPartialContent("\"yes\":1")
+                .Respond("application/json", "{ 'status': 'ok' }");
+
             var metricsBucket = new ThreadSafeMetricsBucket();
-            metricsBucket.RegisterCount("Demo123", true);
-            metricsBucket.RegisterCount("Demo123", false);
 
-            var result = await api.SendMetrics(metricsBucket, CancellationToken.None);
-            result.Should().Be(true);
+            metricsBucket.RegisterCount("someTestToggle", true);
 
-            // Check result:
-            // http://unleash.herokuapp.com/#/features/view/Demo123
-            // http://unleash.herokuapp.com/api/admin/metrics/feature-toggles    
+            var result = await client.SendMetrics(metricsBucket, CancellationToken.None);
+            Assert.IsTrue(result);
         }
-
     }
 }
