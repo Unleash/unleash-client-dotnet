@@ -46,7 +46,7 @@ namespace Unleash.Tests.Strategy
             strategy.Name.Should().Be("remoteAddress");
         }
 
-        [Test, TestCaseSource("data")]
+        [Test, TestCaseSource(nameof(data))]
         public void test(string actualIp, string parameterstring, bool expected)
         {
 

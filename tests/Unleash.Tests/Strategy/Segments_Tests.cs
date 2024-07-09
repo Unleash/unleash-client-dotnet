@@ -41,7 +41,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.That(result, Is.EqualTo(true));
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.That(result, Is.EqualTo(false));
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace Unleash.Tests.Strategy.Segments
             unleash.Dispose();
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.That(result, Is.EqualTo(true));
         }
 
         public static IUnleash CreateUnleash(string name, ToggleCollection state)
@@ -129,7 +129,8 @@ namespace Unleash.Tests.Strategy.Segments
                 UnleashContextProvider = new DefaultUnleashContextProvider(contextBuilder.Build()),
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                FileSystem = fakeFileSystem,
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);

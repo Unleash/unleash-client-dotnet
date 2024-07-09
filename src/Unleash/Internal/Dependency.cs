@@ -1,5 +1,7 @@
-namespace Unleash.Internal {
-    public class Dependency {
+namespace Unleash.Internal
+{
+    public class Dependency
+    {
         /// <summary>
         /// Feature is the name of the feature toggle we depend upon
         /// </summary>

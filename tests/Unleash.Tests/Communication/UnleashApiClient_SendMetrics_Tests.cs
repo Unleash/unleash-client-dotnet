@@ -15,7 +15,7 @@ namespace Unleash.Tests.Communication
             var metricsBucket = new ThreadSafeMetricsBucket();
             metricsBucket.RegisterCount("Demo123", true);
             metricsBucket.RegisterCount("Demo123", false);
-            
+
             var result = await api.SendMetrics(metricsBucket, CancellationToken.None);
             result.Should().Be(true);
 
@@ -23,6 +23,6 @@ namespace Unleash.Tests.Communication
             // http://unleash.herokuapp.com/#/features/view/Demo123
             // http://unleash.herokuapp.com/api/admin/metrics/feature-toggles    
         }
-        
+
     }
 }

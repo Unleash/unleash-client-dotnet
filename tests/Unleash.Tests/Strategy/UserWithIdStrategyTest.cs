@@ -30,7 +30,7 @@ namespace Unleash.Tests.Strategy
             parameters.Add(strategy.UserIdsConst, "123");
 
             strategy.IsEnabled(parameters, context)
-				.Should().BeTrue();
+                .Should().BeTrue();
         }
 
         [Test]

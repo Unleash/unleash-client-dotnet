@@ -50,8 +50,8 @@ namespace Unleash.Tests.Strategy
         [Test]
         public void GetNormalizedNumber_Is_Compatible_With_Java_And_Go_Implementations()
         {
-            Assert.AreEqual(73, StrategyUtils.GetNormalizedNumber("123", "gr1", 0));
-            Assert.AreEqual(25, StrategyUtils.GetNormalizedNumber("999", "groupX", 0));
+            Assert.That(StrategyUtils.GetNormalizedNumber("123", "gr1", 0), Is.EqualTo(73));
+            Assert.That(StrategyUtils.GetNormalizedNumber("999", "groupX", 0), Is.EqualTo(25));
         }
     }
 }

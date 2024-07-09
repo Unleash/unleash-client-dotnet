@@ -17,8 +17,8 @@ namespace Unleash.Scheduling
         private readonly List<string> strategies;
 
         public ClientRegistrationBackgroundTask(
-            IUnleashApiClient apiClient, 
-            UnleashSettings settings, 
+            IUnleashApiClient apiClient,
+            UnleashSettings settings,
             List<string> strategies)
         {
             this.apiClient = apiClient;

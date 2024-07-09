@@ -20,7 +20,7 @@ namespace Unleash.Tests.Specifications
 {
     public class ClientSpecificationTests
     {
-        [TestCaseSource(typeof(TestFactory), "Tests")]
+        [TestCaseSource(typeof(TestFactory), nameof(TestFactory.Tests))]
         public void ShouldBeEnabledWhenExpected(Action testAction)
         {
             testAction();
@@ -111,7 +111,7 @@ namespace Unleash.Tests.Specifications
                 var result = unleash.IsEnabled(testCase.ToggleName);
 
                 // Assert
-                Assert.AreEqual(testCase.ExpectedResult, result, testCase.Description);
+                Assert.That(result, Is.EqualTo(testCase.ExpectedResult), testCase.Description);
             };
         }
 
@@ -126,10 +126,10 @@ namespace Unleash.Tests.Specifications
                 var result = unleash.GetVariant(testCase.ToggleName);
 
                 // Assert
-                Assert.AreEqual(testCase.ExpectedResult.Name, result.Name, testCase.Description);
-                Assert.AreEqual(testCase.ExpectedResult.IsEnabled, result.IsEnabled, testCase.Description);
-                Assert.AreEqual(testCase.ExpectedResult.FeatureEnabled, result.FeatureEnabled, testCase.Description);
-                Assert.AreEqual(testCase.ExpectedResult.Payload, result.Payload, testCase.Description);
+                Assert.That(result.Name, Is.EqualTo(testCase.ExpectedResult.Name), testCase.Description);
+                Assert.That(result.IsEnabled, Is.EqualTo(testCase.ExpectedResult.IsEnabled), testCase.Description);
+                Assert.That(result.FeatureEnabled, Is.EqualTo(testCase.ExpectedResult.FeatureEnabled), testCase.Description);
+                Assert.That(result.Payload, Is.EqualTo(testCase.ExpectedResult.Payload), testCase.Description);
             };
         }
 
@@ -182,7 +182,8 @@ namespace Unleash.Tests.Specifications
                 UnleashContextProvider = new DefaultUnleashContextProvider(contextBuilder.Build()),
                 HttpClientFactory = fakeHttpClientFactory,
                 ScheduledTaskManager = fakeScheduler,
-                FileSystem = fakeFileSystem
+                FileSystem = fakeFileSystem,
+                DisableSingletonWarning = true
             };
 
             var unleash = new DefaultUnleash(settings);

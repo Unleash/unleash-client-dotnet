@@ -32,7 +32,7 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
         var result = Task.Run(() => apiClient.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
-        
+
         // Assert
         messageHandler.CallCount.Should().Be(1);
     }
@@ -66,7 +66,7 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
         var result2 = Task.Run(() => apiClient.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
-        
+
         // Assert
         messageHandler.CallCount.Should().Be(2);
     }
@@ -108,7 +108,7 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
         var result = Task.Run(() => apiClient.FetchToggles("etag", CancellationToken.None))
             .GetAwaiter()
             .GetResult();
-        
+
         // Assert
         messageHandler.CallCount.Should().Be(1);
     }

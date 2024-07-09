@@ -20,7 +20,7 @@ namespace Unleash.Tests.Communication
             var newHttpClient = httpClientFactory.Create(apiUri);
             var actualHashId = newHttpClient.GetHashCode();
 
-            Assert.AreEqual(expectedHashId, actualHashId);
+            Assert.That(actualHashId, Is.EqualTo(expectedHashId));
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Unleash.Tests.Communication
             var newHttpClient = httpClientFactory.Create(newApiUri);
             var actualHashId = newHttpClient.GetHashCode();
 
-            Assert.AreNotEqual(expectedHashId, actualHashId);
+            Assert.That(actualHashId, Is.Not.EqualTo(expectedHashId));
         }
     }
 }
