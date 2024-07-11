@@ -7,8 +7,8 @@ namespace Unleash
     using System.Threading;
     using Unleash.Utilities;
 
-  /// <inheritdoc />
-  public class DefaultUnleash : IUnleash
+    /// <inheritdoc />
+    public class DefaultUnleash : IUnleash
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(DefaultUnleash));
 
@@ -71,9 +71,9 @@ namespace Unleash
         public bool IsEnabled(string toggleName, UnleashContext context, bool defaultSetting)
         {
             var enhancedContext = context.ApplyStaticFields(settings);
-            
+
             var enabled = services.engine.IsEnabled(toggleName, enhancedContext) ?? defaultSetting;
-            
+
             services.engine.CountFeature(toggleName, enabled);
             if (services.engine.ShouldEmitImpressionEvent(toggleName))
             {
@@ -112,7 +112,7 @@ namespace Unleash
             }
 
             variant.FeatureEnabled = enabled ?? false;
-            
+
             if (services.engine.ShouldEmitImpressionEvent(toggleName))
             {
                 EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);

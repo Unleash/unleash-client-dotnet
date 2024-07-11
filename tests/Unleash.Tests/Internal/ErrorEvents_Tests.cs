@@ -151,7 +151,8 @@ namespace Unleash.Tests.Internal
                 .Returns("Something that is definitely not valid JSON");
 
             // Act
-            new UnleashServices(new UnleashSettings() {
+            new UnleashServices(new UnleashSettings()
+            {
                 ToggleBootstrapProvider = bootstrapProviderFake,
                 BootstrapOverride = true
             }, callbackConfig);

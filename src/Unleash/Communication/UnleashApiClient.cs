@@ -218,7 +218,7 @@ namespace Unleash.Communication
             }
 
             metricsRequestsSkipped = 0;
-            
+
             const string requestUri = "client/metrics";
 
             var memoryStream = new MemoryStream();

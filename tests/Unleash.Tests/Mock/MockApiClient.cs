@@ -29,12 +29,12 @@ namespace Unleash.Tests.Mock
                 })
             })
         }), new Newtonsoft.Json.JsonSerializerSettings
+        {
+            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
             {
-                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-                {
-                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
-                }
-            });
+                NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+            }
+        });
 
         public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
         {
