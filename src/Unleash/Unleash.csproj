@@ -29,32 +29,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ActivationStrategy.cs" />
-    <Compile Remove="FeatureToggle.cs" />
     <Compile Remove="IUnleashScheduledTask.cs" />
-    <Compile Remove="UnleashConfig.cs" />
     <Compile Remove="UnleashExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Internal\ActivationStrategy.cs" />
-    <None Include="Internal\FeatureEvaluationResult.cs" />
     <None Include="DefaultUnleash.cs" />
-    <None Include="Internal\FeatureToggle.cs" />
     <None Include="Metrics\ClientMetrics.cs" />
     <None Include="Metrics\ClientRegistration.cs" />
-    <None Include="Metrics\MetricsBucket.cs" />
-    <None Include="Metrics\ToggleCount.cs" />
     <None Include="Internal\ToggleCollection.cs" />
-    <None Include="Strategies\ApplicationHostnameStrategy.cs" />
-    <None Include="Strategies\DefaultStrategy.cs" />
-    <None Include="Strategies\GradualRolloutRandomStrategy.cs" />
-    <None Include="Strategies\GradualRolloutSessionIdStrategy.cs" />
-    <None Include="Strategies\GradualRolloutUserIdStrategy.cs" />
-    <None Include="Strategies\RemoteAddressStrategy.cs" />
-    <None Include="Strategies\StrategyUtils.cs" />
-    <None Include="Strategies\UnknownStrategy.cs" />
-    <None Include="Strategies\UserWithIdStrategy.cs" />
     <None Include="IUnleash.cs" />
     <None Include="UnleashContext.cs" />
     <None Include="DefaultUnleashContextProvider.cs" />
