@@ -3,42 +3,11 @@ using System.Collections.Generic;
 
 namespace Unleash.Metrics
 {
-    internal class ClientRegistration
+    internal class ClientRegistration: BaseMetrics
     {
-        public string AppName { get; set; }
-        public string InstanceId { get; set; }
         public string SdkVersion { get; set; }
         public List<string> Strategies { get; set; }
         public DateTimeOffset Started { get; set; }
         public long Interval { get; set; }
-        public string PlatformName
-        {
-            get
-            {
-                return MetricsMetadata.GetPlatformName();
-
-            }
-        }
-        public string PlatformVersion
-        {
-            get
-            {
-                return MetricsMetadata.GetPlatformVersion();
-            }
-        }
-        public string YggdrasilVersion
-        {
-            get
-            {
-                return null;
-            }
-        }
-        public string SpecVersion
-        {
-            get
-            {
-                return UnleashServices.supportedSpecVersion;
-            }
-        }
     }
 }
