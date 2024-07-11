@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
+using Unleash.Metrics;
 using Unleash.Serialization;
-using Yggdrasil;
 
 namespace Unleash.Communication
 {
@@ -179,7 +179,7 @@ namespace Unleash.Communication
             };
         }
 
-        public async Task<bool> RegisterClient(Metrics.ClientRegistration registration, CancellationToken cancellationToken)
+        public async Task<bool> RegisterClient(ClientRegistration registration, CancellationToken cancellationToken)
         {
             const string requestUri = "client/register";
 
@@ -209,7 +209,7 @@ namespace Unleash.Communication
             }
         }
 
-        public async Task<bool> SendMetrics(MetricsBucket metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(Yggdrasil.MetricsBucket metrics, CancellationToken cancellationToken)
         {
             if (metricsRequestsToSkip > metricsRequestsSkipped)
             {
@@ -223,10 +223,10 @@ namespace Unleash.Communication
 
             var memoryStream = new MemoryStream();
 
-            jsonSerializer.Serialize(memoryStream, new
+            jsonSerializer.Serialize(memoryStream, new ClientMetrics
             {
-                clientRequestHeaders.AppName,
-                clientRequestHeaders.InstanceId,
+                AppName = clientRequestHeaders.AppName,
+                InstanceId = clientRequestHeaders.InstanceId,
                 Bucket = metrics
             });
 
