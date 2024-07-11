@@ -1,17 +1,14 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
 using static Unleash.Tests.Specifications.TestFactory;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using Unleash.Internal;
 using Unleash.Scheduling;
-
 using Unleash.Tests.Mock;
 using Unleash.Variants;
-using System.Collections.Generic;
 
 namespace Unleash.Tests.Variants
 {
