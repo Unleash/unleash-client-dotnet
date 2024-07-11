@@ -56,9 +56,12 @@ namespace Unleash
 
             if (!string.IsNullOrEmpty(cachedFilesResult.InitialState))
             {
-                try {
+                try
+                {
                     engine.TakeState(cachedFilesResult.InitialState);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Logger.Error(() => $"UNLEASH: Failed to load initial state from file: {ex.Message}");
                     eventConfig.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
                 }
@@ -129,7 +132,7 @@ namespace Unleash
 
                 var clientMetricsBackgroundTask = new ClientMetricsBackgroundTask(
                     engine,
-                    apiClient, 
+                    apiClient,
                     settings
                     )
                 {

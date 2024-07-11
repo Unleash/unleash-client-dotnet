@@ -31,12 +31,12 @@ namespace Unleash.Tests.Internal
                 })
             })
         }), new Newtonsoft.Json.JsonSerializerSettings
+        {
+            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
             {
-                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-                {
-                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
-                }
-            });
+                NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+            }
+        });
 
         [Test]
         public void Loads_From_Bootstrap_Provider_When_Backup_File_Is_Missing()

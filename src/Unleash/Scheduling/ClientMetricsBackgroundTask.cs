@@ -16,7 +16,7 @@ namespace Unleash.Scheduling
 
         public ClientMetricsBackgroundTask(
             YggdrasilEngine engine,
-            IUnleashApiClient apiClient, 
+            IUnleashApiClient apiClient,
             UnleashSettings settings)
         {
             this.engine = engine;
