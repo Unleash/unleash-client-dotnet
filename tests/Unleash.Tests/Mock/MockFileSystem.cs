@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Unleash.Internal;
+﻿using Unleash.Internal;
 
 namespace Unleash.Tests.Mock
 {

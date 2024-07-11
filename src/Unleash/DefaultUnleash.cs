@@ -6,6 +6,7 @@ namespace Unleash
     using System.Linq;
     using System.Threading;
     using Unleash.Utilities;
+    using Yggdrasil;
 
     /// <inheritdoc />
     public class DefaultUnleash : IUnleash
@@ -27,7 +28,7 @@ namespace Unleash
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
         ///// <param name="strategies">Custom strategies.</param>
-        public DefaultUnleash(UnleashSettings settings, params Yggdrasil.IStrategy[] strategies)
+        public DefaultUnleash(UnleashSettings settings, params IStrategy[] strategies)
         {
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 
@@ -118,7 +119,7 @@ namespace Unleash
                 EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);
             }
 
-            return Variant.UpgradeVariant(variant);
+            return variant;
         }
 
         public void ConfigureEvents(Action<EventCallbackConfig> callback)

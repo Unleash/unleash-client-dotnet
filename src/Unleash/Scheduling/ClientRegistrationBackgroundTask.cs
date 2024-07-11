@@ -41,11 +41,7 @@ namespace Unleash.Scheduling
                 Strategies = strategies
             };
 
-            var result = await apiClient.RegisterClient(clientRegistration, cancellationToken).ConfigureAwait(false);
-            if (!result)
-            {
-                // Already logged..    
-            }
+            await apiClient.RegisterClient(clientRegistration, cancellationToken).ConfigureAwait(false);
         }
 
         public string Name => "register-client-task";

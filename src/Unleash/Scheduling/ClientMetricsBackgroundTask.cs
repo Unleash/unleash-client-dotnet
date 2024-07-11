@@ -29,13 +29,7 @@ namespace Unleash.Scheduling
             if (settings.SendMetricsInterval == null)
                 return;
 
-            var result = await apiClient.SendMetrics(engine.GetMetrics(), cancellationToken).ConfigureAwait(false);
-
-            // Ignore return value    
-            if (!result)
-            {
-                // Logged elsewhere.
-            }
+            await apiClient.SendMetrics(engine.GetMetrics(), cancellationToken).ConfigureAwait(false);
         }
 
         public string Name => "report-metrics-task";

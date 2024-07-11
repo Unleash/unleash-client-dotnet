@@ -12,6 +12,7 @@ using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Metrics;
 using Unleash.Serialization;
+using Yggdrasil;
 
 namespace Unleash.Communication
 {
@@ -209,7 +210,7 @@ namespace Unleash.Communication
             }
         }
 
-        public async Task<bool> SendMetrics(Yggdrasil.MetricsBucket metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(MetricsBucket metrics, CancellationToken cancellationToken)
         {
             if (metricsRequestsToSkip > metricsRequestsSkipped)
             {
