@@ -119,8 +119,8 @@ namespace Unleash.Tests.Specifications
 
                 // Assert
                 Assert.That(result.Name, Is.EqualTo(testCase.ExpectedResult.Name), testCase.Description);
-                Assert.That(result.IsEnabled, Is.EqualTo(testCase.ExpectedResult.IsEnabled), testCase.Description);
-                Assert.That(result.FeatureEnabled, Is.EqualTo(testCase.ExpectedResult.FeatureEnabled), testCase.Description);
+                Assert.That(result.Enabled, Is.EqualTo(testCase.ExpectedResult.Enabled), testCase.Description);
+                Assert.That(result.Feature_Enabled, Is.EqualTo(testCase.ExpectedResult.Feature_Enabled), testCase.Description);
                 Assert.That(result.Payload, Is.EqualTo(testCase.ExpectedResult.Payload), testCase.Description);
             };
         }

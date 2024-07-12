@@ -112,11 +112,11 @@ namespace Unleash
                 services.engine.CountVariant(toggleName, variant.Name);
             }
 
-            variant.FeatureEnabled = enabled ?? false;
+            variant.Feature_Enabled = enabled ?? false;
 
             if (services.engine.ShouldEmitImpressionEvent(toggleName))
             {
-                EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);
+                EmitImpressionEvent("getVariant", enhancedContext, variant.Enabled, toggleName, variant.Name);
             }
 
             return variant;
