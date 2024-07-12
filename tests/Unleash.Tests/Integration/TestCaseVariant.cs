@@ -1,4 +1,4 @@
-﻿using Yggdrasil;
+﻿using Unleash.Internal;
 
 namespace Unleash.Tests.Specifications
 {
