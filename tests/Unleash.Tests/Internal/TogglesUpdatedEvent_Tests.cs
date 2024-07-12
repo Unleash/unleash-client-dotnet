@@ -69,8 +69,19 @@ namespace Unleash.Tests.Internal
         public void TogglesUpdated_Event_Is_Raised_After_ToggleCollection_Is_Updated()
         {
             // Arrange
-            var fetchResultToggleCollection = new ToggleCollection();
-            fetchResultToggleCollection.Features.Add(new FeatureToggle("toggle-1", "operational", true, false, new List<ActivationStrategy>())); // after toggles are fetched, the toggle is enabled
+            var fetchState = @"
+            {
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""toggle-1"",
+                  ""type"": ""operational"",
+                  ""enabled"": true,
+                  ""impressionData"": false,
+                  ""strategies"": []
+                }
+              ]
+            }";
 
             var engine = new YggdrasilEngine();
 
@@ -80,14 +91,6 @@ namespace Unleash.Tests.Internal
                 // when toggles updated event is raised (after the fetch), check toggle collection to see if toggle is enabled
                 TogglesUpdatedEvent = evt => { toggleIsEnabledResultAfterEvent = engine.IsEnabled("toggle-1", new UnleashContext()) ?? false; }
             };
-
-            var fetchState = Newtonsoft.Json.JsonConvert.SerializeObject(fetchResultToggleCollection, new Newtonsoft.Json.JsonSerializerSettings
-            {
-                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-                {
-                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
-                }
-            });
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))

@@ -1,19 +1,11 @@
 ﻿using FakeItEasy;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Scheduling;
-using Unleash.Strategies.Constraints;
 using Unleash.Tests.Mock;
 
 namespace Unleash.Tests.Specifications
@@ -127,8 +119,8 @@ namespace Unleash.Tests.Specifications
 
                 // Assert
                 Assert.That(result.Name, Is.EqualTo(testCase.ExpectedResult.Name), testCase.Description);
-                Assert.That(result.IsEnabled, Is.EqualTo(testCase.ExpectedResult.IsEnabled), testCase.Description);
-                Assert.That(result.FeatureEnabled, Is.EqualTo(testCase.ExpectedResult.FeatureEnabled), testCase.Description);
+                Assert.That(result.Enabled, Is.EqualTo(testCase.ExpectedResult.Enabled), testCase.Description);
+                Assert.That(result.Feature_Enabled, Is.EqualTo(testCase.ExpectedResult.Feature_Enabled), testCase.Description);
                 Assert.That(result.Payload, Is.EqualTo(testCase.ExpectedResult.Payload), testCase.Description);
             };
         }

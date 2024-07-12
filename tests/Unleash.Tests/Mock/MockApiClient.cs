@@ -1,40 +1,65 @@
 ﻿using Unleash.Communication;
-using Unleash.Internal;
 using Unleash.Metrics;
-using Unleash.Variants;
+using Yggdrasil;
 
 namespace Unleash.Tests.Mock
 {
     internal class MockApiClient : IUnleashApiClient
     {
-        private static readonly string State = Newtonsoft.Json.JsonConvert.SerializeObject(new ToggleCollection(new List<FeatureToggle>
+        private static readonly string State = @"
         {
-            new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
-            {
-                new ActivationStrategy("userWithId", new Dictionary<string, string>(){
-                    {"userIds", "userA" }
-                })
-            }, new List<VariantDefinition>()
-            {
-                new VariantDefinition("Aa", 33, null, null),
-                new VariantDefinition("Aa", 33, null, null),
-                new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
-            }
-            ),
-            new FeatureToggle("one-disabled",  "release", false, false, new List<ActivationStrategy>()
-            {
-                new ActivationStrategy("userWithId", new Dictionary<string, string>()
-                {
-                    {"userIds", "userB" }
-                })
-            })
-        }), new Newtonsoft.Json.JsonSerializerSettings
-        {
-            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-            {
-                NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
-            }
-        });
+            ""version"": 2,
+            ""features"": [
+              {
+                ""name"": ""one-enabled"",
+                ""type"": ""release"",
+                ""enabled"": true,
+                ""impressionData"": false,
+                ""strategies"": [
+                  {
+                    ""name"": ""userWithId"",
+                    ""parameters"": {
+                      ""userIds"": ""userA""
+                    }
+                  }
+                ],
+                ""variants"": [
+                  {
+                    ""name"": ""Aa"",
+                    ""weight"": 33
+                  },
+                  {
+                    ""name"": ""Aa"",
+                    ""weight"": 33
+                  },
+                  {
+                    ""name"": ""Ab"",
+                    ""weight"": 34,
+                    ""overrides"": [
+                      {
+                        ""contextName"": ""context"",
+                        ""values"": [""a"", ""b""]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                ""name"": ""one-disabled"",
+                ""type"": ""release"",
+                ""enabled"": false,
+                ""impression-data"": false,
+                ""strategies"": [
+                  {
+                    ""name"": ""userWithId"",
+                    ""parameters"": {
+                      ""userIds"": ""userB""
+                    }
+                  }
+                ]
+              }
+            ]
+        }";
 
         public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
         {
@@ -55,7 +80,7 @@ namespace Unleash.Tests.Mock
             return Task.FromResult(true);
         }
 
-        public Task<bool> SendMetrics(Yggdrasil.MetricsBucket metricsBucket, CancellationToken cancellationToken)
+        public Task<bool> SendMetrics(MetricsBucket metricsBucket, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }
