@@ -24,7 +24,7 @@ namespace Unleash.Tests.ClientFactory
         public void Setup()
         {
             mockApiClient = A.Fake<IUnleashApiClient>();
-            settings = new MockedUnleashSettings();
+            settings = new MockedUnleashSettings(instanceTag: "test instance SyncStartupUnitTest");
             unleashFactory = new UnleashClientFactory();
         }
 

@@ -26,6 +26,7 @@ namespace WebApplication
             {
                 UnleashApi = new Uri("http://localhost:4242/api"),
                 AppName = "variant-sample",
+                InstanceTag = "instance 1",
                 SendMetricsInterval = TimeSpan.FromSeconds(10),
                 FetchTogglesInterval = TimeSpan.FromSeconds(10),
             });

@@ -230,7 +230,7 @@ namespace Unleash.Communication
                 jsonSerializer.Serialize(memoryStream, new ClientMetrics
                 {
                     AppName = clientRequestHeaders.AppName,
-                    InstanceId = clientRequestHeaders.InstanceId,
+                    InstanceId = clientRequestHeaders.InstanceTag,
                     Bucket = bucket
                 });
             }
@@ -290,7 +290,7 @@ namespace Unleash.Communication
 
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(userAgentHeader, headers.AppName);
-            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceId);
+            requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
             requestMessage.Headers.TryAddWithoutValidation(supportedSpecVersionHeader, headers.SupportedSpecVersion);
 
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);

@@ -34,7 +34,7 @@ namespace Unleash.Scheduling
             var clientRegistration = new ClientRegistration
             {
                 AppName = settings.AppName,
-                InstanceId = settings.InstanceId,
+                InstanceId = settings.InstanceTag,
                 Interval = (long)settings.SendMetricsInterval.Value.TotalMilliseconds,
                 SdkVersion = settings.SdkVersion,
                 Started = DateTimeOffset.UtcNow,
