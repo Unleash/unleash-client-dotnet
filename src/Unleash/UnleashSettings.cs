@@ -46,9 +46,9 @@ namespace Unleash
         public string Environment { get; set; } = "default";
 
         /// <summary>
-        /// INTERNAL: Gets or sets an instance id. Used for communication with backend api.
+        /// Gets or sets an instance tag. Used for communication with backend api.
         /// </summary>
-        internal string InstanceId { get; set; } = Guid.NewGuid().ToString();
+        public string InstanceTag { get; set; } = GetDefaultInstanceTag();
 
         /// <summary>
         /// Sets the project to fetch feature toggles for.
@@ -155,6 +155,13 @@ namespace Unleash
             return $"unleash-client-dotnet:v{version}";
         }
 
+        private static string GetDefaultInstanceTag()
+        {
+            var hostName = Dns.GetHostName();
+
+            return $"{hostName}-generated-{Guid.NewGuid()}";
+        }
+
         /// <summary>
         /// Returns info about the unleash setup.
         /// </summary>
@@ -164,7 +171,7 @@ namespace Unleash
 
             sb.AppendLine($"Application name: {AppName}");
             sb.AppendLine($"Environment: {Environment}");
-            sb.AppendLine($"Instance Id: {InstanceId}");
+            sb.AppendLine($"Instance tag: {InstanceTag}");
             sb.AppendLine($"Project Id: {ProjectId}");
             sb.AppendLine($"Server Uri: {UnleashApi}");
             sb.AppendLine($"Sdk version: {SdkVersion}");
@@ -208,7 +215,7 @@ namespace Unleash
             var extension = Path.GetExtension(filename);
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
 
-            return new string($"{fileNameWithoutExtension}-{AppName}-{SdkVersion}{extension}"
+            return new string($"{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}"
                 .Where(c => !invalidFileNameChars.Contains(c))
                 .ToArray());
         }

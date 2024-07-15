@@ -10,6 +10,9 @@ namespace Unleash.Internal
             if (settings.AppName == null)
                 throw new UnleashException("You are required to specify an appName");
 
+            if (settings.InstanceTag == null)
+                throw new UnleashException("You are required to specify an instance id");
+
             if (settings.JsonSerializer == null)
                 throw new UnleashException("You are required to specify an json serializer");
 

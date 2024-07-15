@@ -62,7 +62,7 @@ namespace Unleash
                 apiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
                 {
                     AppName = settings.AppName,
-                    InstanceId = settings.InstanceId,
+                    InstanceTag = settings.InstanceTag,
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
