@@ -2,14 +2,12 @@ using System.IO;
 using Unleash.Events;
 using Unleash.Logging;
 using Unleash.Scheduling;
-using Unleash.Serialization;
 
 namespace Unleash.Internal
 {
     internal class CachedFilesLoader
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(FetchFeatureTogglesTask));
-        private readonly IJsonSerializer jsonSerializer;
         private readonly IFileSystem fileSystem;
         private readonly IToggleBootstrapProvider toggleBootstrapProvider;
         private readonly EventCallbackConfig eventConfig;
@@ -18,7 +16,6 @@ namespace Unleash.Internal
         private readonly bool bootstrapOverride;
 
         public CachedFilesLoader(
-            IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             IToggleBootstrapProvider toggleBootstrapProvider,
             EventCallbackConfig eventConfig,
@@ -26,7 +23,6 @@ namespace Unleash.Internal
             string etagFile,
             bool bootstrapOverride = true)
         {
-            this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.toggleBootstrapProvider = toggleBootstrapProvider;
             this.eventConfig = eventConfig;
@@ -72,7 +68,7 @@ namespace Unleash.Internal
                 try
                 {
                     fileSystem.WriteAllText(toggleFile, string.Empty);
-                    result.InitialToggleCollection = null;
+                    result.InitialState = string.Empty;
                 }
                 catch (IOException ex)
                 {
@@ -84,10 +80,7 @@ namespace Unleash.Internal
             {
                 try
                 {
-                    using (var fileStream = fileSystem.FileOpenRead(toggleFile))
-                    {
-                        result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
-                    }
+                    result.InitialState = fileSystem.ReadAllText(toggleFile);
                 }
                 catch (IOException ex)
                 {
@@ -96,16 +89,16 @@ namespace Unleash.Internal
                 }
             }
 
-            if (result.InitialToggleCollection == null)
+            if (string.IsNullOrEmpty(result.InitialState))
             {
                 result.InitialETag = string.Empty;
             }
 
-            if ((result.InitialToggleCollection == null || result.InitialToggleCollection.Features?.Count == 0 || bootstrapOverride) && toggleBootstrapProvider != null)
+            if ((string.IsNullOrEmpty(result.InitialState) || bootstrapOverride) && toggleBootstrapProvider != null)
             {
-                var bootstrapCollection = toggleBootstrapProvider.Read();
-                if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
-                    result.InitialToggleCollection = bootstrapCollection;
+                var bootstrapState = toggleBootstrapProvider.Read();
+                if (!string.IsNullOrEmpty(bootstrapState))
+                    result.InitialState = bootstrapState;
             }
 
             return result;
@@ -114,7 +107,7 @@ namespace Unleash.Internal
         internal class CachedFilesResult
         {
             public string InitialETag { get; set; }
-            public ToggleCollection InitialToggleCollection { get; set; }
+            public string InitialState { get; set; }
         }
     }
 }

@@ -157,14 +157,12 @@ namespace Unleash.Communication
                 {
                     HasChanged = false,
                     Etag = newEtag,
-                    ToggleCollection = null,
                 };
             }
 
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (toggleCollection == null)
+            if (string.IsNullOrEmpty(content))
             {
                 return new FetchTogglesResult
                 {
@@ -177,7 +175,7 @@ namespace Unleash.Communication
             {
                 HasChanged = true,
                 Etag = newEtag,
-                ToggleCollection = toggleCollection
+                State = content
             };
         }
 
@@ -211,7 +209,7 @@ namespace Unleash.Communication
             }
         }
 
-        public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(Yggdrasil.MetricsBucket metrics, CancellationToken cancellationToken)
         {
             if (metricsRequestsToSkip > metricsRequestsSkipped)
             {
@@ -225,15 +223,12 @@ namespace Unleash.Communication
 
             var memoryStream = new MemoryStream();
 
-            using (metrics.StopCollectingMetrics(out var bucket))
+            jsonSerializer.Serialize(memoryStream, new ClientMetrics
             {
-                jsonSerializer.Serialize(memoryStream, new ClientMetrics
-                {
-                    AppName = clientRequestHeaders.AppName,
-                    InstanceId = clientRequestHeaders.InstanceTag,
-                    Bucket = bucket
-                });
-            }
+                AppName = clientRequestHeaders.AppName,
+                InstanceId = clientRequestHeaders.InstanceTag,
+                Bucket = metrics
+            });
 
             const int bufferSize = 1024 * 4;
 

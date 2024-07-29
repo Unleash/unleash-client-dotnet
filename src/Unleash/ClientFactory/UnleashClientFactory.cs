@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Unleash.Strategies;
+using Yggdrasil;
 
 namespace Unleash.ClientFactory
 {

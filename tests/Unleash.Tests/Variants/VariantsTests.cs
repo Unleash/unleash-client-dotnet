@@ -97,7 +97,7 @@ namespace Unleash.Tests.Variants
                             ""parameters"": {
                                 ""rollout"": ""100"",
                                 ""stickiness"": ""default"",
-                                ""groupId"": ""default"",
+                                ""groupId"": ""default""
                             }
                         }
                     ],
@@ -118,7 +118,7 @@ namespace Unleash.Tests.Variants
                     ""enabled"": true,
                     ""strategies"": [
                         {
-                            ""name"": ""default"",
+                            ""name"": ""default""
                         }
                     ]
                 }

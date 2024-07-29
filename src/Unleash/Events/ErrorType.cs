@@ -8,6 +8,7 @@ namespace Unleash.Events
     {
         Client,
         TogglesBackup,
+        TogglesUpdate,
         Bootstrap,
         ImpressionEvent,
         FileCache
