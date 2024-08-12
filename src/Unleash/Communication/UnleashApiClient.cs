@@ -187,6 +187,7 @@ namespace Unleash.Communication
 
             var memoryStream = new MemoryStream();
             jsonSerializer.Serialize(memoryStream, registration);
+            memoryStream.Position = 0;
 
             const int bufferSize = 1024 * 4;
 
@@ -233,6 +234,7 @@ namespace Unleash.Communication
                     InstanceId = clientRequestHeaders.InstanceTag,
                     Bucket = bucket
                 });
+                memoryStream.Position = 0;
             }
 
             const int bufferSize = 1024 * 4;
