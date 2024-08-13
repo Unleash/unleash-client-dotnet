@@ -533,7 +533,6 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
             Serializer.Serialize(jsonWriter, instance);
 
             jsonWriter.Flush();
-			stream.Position = 0;
         }
     }
 
