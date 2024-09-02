@@ -31,6 +31,7 @@ namespace Unleash.Utilities
             this.customHeaders = customHeaders;
         }
 
+        [Obsolete("Will return json string in the next major version", false)]
         public ToggleCollection Read()
         {
             return Task.Run(() => FetchFile()).GetAwaiter().GetResult();

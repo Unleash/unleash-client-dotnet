@@ -17,6 +17,7 @@ namespace Unleash.Utilities
             this.settings = settings;
         }
 
+        [Obsolete("Will return json string in the next major version", false)]
         public ToggleCollection Read()
         {
             using (var togglesStream = settings.FileSystem.FileOpenRead(filePath))
