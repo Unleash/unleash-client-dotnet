@@ -14,6 +14,7 @@ namespace Unleash
         /// <summary>
         /// Collection of currently loaded Feature Toggles
         /// </summary>
+        [Obsolete("Will be removed in the next major version", false)]
         ICollection<FeatureToggle> FeatureToggles { get; }
 
         /// <summary>
@@ -73,6 +74,7 @@ namespace Unleash
         /// </summary>
         /// <param name="toggleName">The name of the toggle.</param>
         /// <returns>A list of available variants.</returns>
+        [Obsolete("Will be removed in the next major version", false)]
         IEnumerable<VariantDefinition> GetVariants(string toggleName);
 
         /// <summary>
@@ -81,6 +83,7 @@ namespace Unleash
         /// <param name="toggleName">The name of the toggle.</param>
         /// /// <param name="context">The Unleash context to evaluate the toggle state against.</param>
         /// <returns>A list of available variants.</returns>
+        [Obsolete("Will be removed in the next major version", false)]
         IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context);
 
         void ConfigureEvents(Action<EventCallbackConfig> config);

@@ -56,6 +56,7 @@ namespace Unleash
         ///// <param name="config">Unleash settings</param>
         ///// <param name="overrideDefaultStrategies">When true, it overrides the default strategies.</param>
         ///// <param name="strategies">Custom strategies.</param>
+        [Obsolete("Will be removed in the next major version", false)]
         public DefaultUnleash(UnleashSettings settings, bool overrideDefaultStrategies, params IStrategy[] strategies)
         {
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
@@ -82,6 +83,7 @@ namespace Unleash
         }
 
         /// <inheritdoc />
+        [Obsolete("This property will be removed in the next major release", false)]
         public ICollection<FeatureToggle> FeatureToggles => services.ToggleCollection.Instance.Features;
 
         private EventCallbackConfig EventConfig { get; } = new EventCallbackConfig();
@@ -269,11 +271,13 @@ namespace Unleash
             return evaluationResult.Variant;
         }
 
+        [Obsolete("Will be removed in the next major version", false)]
         public IEnumerable<VariantDefinition> GetVariants(string toggleName)
         {
             return GetVariants(toggleName, services.ContextProvider.Context);
         }
 
+        [Obsolete("Will be removed in the next major version", false)]
         public IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context)
         {
             if (!IsEnabled(toggleName, context)) return null;
