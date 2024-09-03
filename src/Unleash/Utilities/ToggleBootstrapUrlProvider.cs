@@ -30,8 +30,7 @@ namespace Unleash.Utilities
             this.throwOnFail = throwOnFail;
             this.customHeaders = customHeaders;
         }
-
-        [Obsolete("Will return json string in the next major version", false)]
+        [Obsolete("Will be replaced in the next major version", false)]
         public ToggleCollection Read()
         {
             return Task.Run(() => FetchFile()).GetAwaiter().GetResult();
