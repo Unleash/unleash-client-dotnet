@@ -15,7 +15,7 @@ namespace Unleash.Strategies
         public FlexibleRolloutStrategy()
         {
             var random = new Random();
-            randomGenerator = () => (random.Next() * 10000).ToString();
+            randomGenerator = () => random.Next(1, 10001).ToString();
         }
 
         public FlexibleRolloutStrategy(Func<string> randomGenerator)
