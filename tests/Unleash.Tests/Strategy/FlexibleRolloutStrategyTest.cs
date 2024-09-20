@@ -361,5 +361,43 @@ namespace Unleash.Tests.Strategy
             // Assert
             enabled.Should().BeTrue();
         }
+
+        [Test]
+        public void Should_only_at_most_miss_by_one_percent()
+        {
+            // Arrange
+            var strategy = new GradualRolloutRandomStrategy();
+            var percentage = 25;
+            var groupId = "groupId";
+            var rounds = 200_000;
+            var enabledCount = 0;
+
+            // Act
+            for (int i = 0; i < rounds; i++)
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "percentage", percentage },
+                    { "groupId", groupId }
+                };
+                var context = new UnleashContext
+                {
+                    SessionId = i.ToString()
+                };
+
+                if (strategy.IsEnabled(parameters, context))
+                {
+                    enabledCount++;
+                }
+            }
+
+            var actualPercentage = (int)Math.Round((enabledCount / (double)rounds) * 100);
+            var highMark = percentage + 1;
+            var lowMark = percentage - 1;
+
+            // Assert
+            actualPercentage.Should().BeGreaterOrEqualTo(lowMark);
+            actualPercentage.Should().BeLessOrEqualTo(highMark);
+        }
     }
 }
