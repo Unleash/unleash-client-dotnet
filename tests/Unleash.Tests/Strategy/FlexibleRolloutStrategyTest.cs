@@ -755,7 +755,7 @@ namespace Unleash.Tests.Strategy
             {
                 var parameters = new Dictionary<string, string>
                 {
-                    { "percentage", percentage.ToString() },
+                    { "rollout", percentage.ToString() },
                     { "groupId", groupId }
                 };
                 var context = new UnleashContext
