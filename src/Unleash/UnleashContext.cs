@@ -46,6 +46,8 @@ namespace Unleash
                     return SessionId;
                 case "remoteAddress":
                     return RemoteAddress;
+                case "currentTime":
+                    return (CurrentTime ?? DateTimeOffset.UtcNow).ToString("O");
                 default:
                     string result;
                     Properties.TryGetValue(contextName, out result);
