@@ -82,5 +82,27 @@ namespace Unleash.Tests
             enhancedContext.AppName.Should().Be("myapp");
             enhancedContext.Properties["test"].Should().Be("me");
         }
+
+        [Test]
+        public void GetByName_Should_Return_CurrentTime_For_currentTime_Context_Name()
+        {
+            var date = new DateTimeOffset(2024, 10, 23, 15, 0, 0, TimeSpan.FromHours(-4));
+            var context = new UnleashContext.Builder()
+                .CurrentTime(date)
+                .Build();
+
+            var value = context.GetByName("currentTime");
+            value.Should().Be(date.ToString("O"));
+        }
+
+        [Test]
+        public void GetByName_Should_Return_UtcNow_For_currentTime_Context_Name_When_CurrentTime_Is_Not_Set()
+        {
+            var context = new UnleashContext();
+
+            var value = context.GetByName("currentTime");
+            var parsedValue = DateTimeOffset.Parse(value);
+            parsedValue.Should().BeLessThan(TimeSpan.FromSeconds(1)).Before(DateTimeOffset.UtcNow);
+        }
     }
 }
