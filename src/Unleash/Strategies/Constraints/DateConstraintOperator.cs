@@ -14,19 +14,11 @@ namespace Unleash.Strategies.Constraints
 
             var contextValue = context.GetByName(constraint.ContextName);
             DateTimeOffset? contextDate;
-            if (!string.IsNullOrWhiteSpace(contextValue))
-            {
-                if (!DateTimeOffset.TryParse(contextValue, out var date))
-                    return false;
-                else
-                    contextDate = date;
-            }
+
+            if (!DateTimeOffset.TryParse(contextValue, out var date))
+                return false;
             else
-            {
-                contextDate = context.CurrentTime;
-                if (!contextDate.HasValue)
-                    return false;
-            }
+                contextDate = date;
 
             if (constraint.Inverted)
                 return !Eval(constraint.Operator, constraintDate, contextDate.Value);
