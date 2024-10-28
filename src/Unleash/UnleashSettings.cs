@@ -103,6 +103,7 @@ namespace Unleash
         ///
         /// Default: A serializer based on Newtonsoft will be used, given that these assemblies are loaded into the appdomain already.
         /// </summary>
+        [Obsolete("No longer supported in recent versions of Unleash, will be removed in the next major version", false)]
         public IJsonSerializer JsonSerializer { get; set; } = new DynamicNewtonsoftJsonSerializer();
 
         /// <summary>
