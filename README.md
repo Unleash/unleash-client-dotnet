@@ -533,7 +533,6 @@ public class NewtonsoftJson7Serializer : IJsonSerializer
             Serializer.Serialize(jsonWriter, instance);
 
             jsonWriter.Flush();
-			stream.Position = 0;
         }
     }
 
@@ -572,7 +571,7 @@ Tests live in `./tests/Unleash.Tests`
 - Build: `dotnet build`
 - Test: `dotnet test` - This also executes spec tests
 
-## Formatting
+### Formatting
 
 We enforce formatting with `dotnet format`. This can be installed using the following command:
 
@@ -588,6 +587,6 @@ We enforce formatting with `dotnet format`. This can be installed using the foll
 - Click `Publish release`.
 This starts the release workflow which builds the new release and pushes the artifacts to NuGet
 
-### Other information
+## Other information
 
 - Check out our guide for more information on how to build and scale [feature flag](https://docs.getunleash.io/topics/feature-flags/feature-flag-best-practices) systems

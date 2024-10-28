@@ -147,5 +147,35 @@ namespace Unleash.Tests.Strategy.Constraints
             // Assert
             result.Should().BeTrue();
         }
+
+        [Test]
+        public void DATE_AFTER_CurrentTime()
+        {
+            // Arrange
+            var target = new DateConstraintOperator();
+            var constraint = new Constraint("currentTime", Operator.DATE_AFTER, false, false, DateTime.UtcNow.AddDays(-30).ToString("O"));
+            var context = new UnleashContext.Builder().Now().Build();
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DATE_AFTER_CurrentTime_Not_Set_Uses_UtcNow()
+        {
+            // Arrange
+            var target = new DateConstraintOperator();
+            var constraint = new Constraint("currentTime", Operator.DATE_AFTER, false, false, DateTime.UtcNow.AddDays(-30).ToString("O"));
+            var context = new UnleashContext();
+
+            // Act
+            var result = target.Evaluate(constraint, context);
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
