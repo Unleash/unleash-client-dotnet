@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Unleash.Internal;
-using Unleash.Variants;
 
 namespace Unleash
 {
@@ -11,12 +9,6 @@ namespace Unleash
     /// </summary>
     public interface IUnleash : IDisposable
     {
-        /// <summary>
-        /// Collection of currently loaded Feature Toggles
-        /// </summary>
-        [Obsolete("Will be removed in the next major version", false)]
-        ICollection<FeatureToggle> FeatureToggles { get; }
-
         /// <summary>
         /// Determines if the given feature toggle is enabled or not, defaulting to <c>false</c> if the toggle cannot be found.
         /// </summary>
@@ -68,23 +60,6 @@ namespace Unleash
         /// <param name="defaultValue">If a toggle is not found, the default value will be returned.</param>
         /// <returns>A weighted variant or the supplied default value if feature is not available</returns>
         Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue);
-
-        /// <summary>
-        /// Get available feature variants.
-        /// </summary>
-        /// <param name="toggleName">The name of the toggle.</param>
-        /// <returns>A list of available variants.</returns>
-        [Obsolete("Will be removed in the next major version", false)]
-        IEnumerable<VariantDefinition> GetVariants(string toggleName);
-
-        /// <summary>
-        /// Get available feature variants.
-        /// </summary>
-        /// <param name="toggleName">The name of the toggle.</param>
-        /// /// <param name="context">The Unleash context to evaluate the toggle state against.</param>
-        /// <returns>A list of available variants.</returns>
-        [Obsolete("Will be removed in the next major version", false)]
-        IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context);
 
         void ConfigureEvents(Action<EventCallbackConfig> config);
     }

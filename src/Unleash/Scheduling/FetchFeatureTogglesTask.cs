@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 using Unleash.Logging;
 using Unleash.Events;
 using System.Net.Http;
+using Yggdrasil;
 
 namespace Unleash.Scheduling
 {
@@ -19,8 +19,7 @@ namespace Unleash.Scheduling
         private readonly IFileSystem fileSystem;
         private readonly EventCallbackConfig eventConfig;
         private readonly IUnleashApiClient apiClient;
-        private readonly IJsonSerializer jsonSerializer;
-        private readonly ThreadSafeToggleCollection toggleCollection;
+        private readonly YggdrasilEngine engine;
         private readonly bool throwOnInitialLoadFail;
         private bool ready = false;
 
@@ -28,18 +27,16 @@ namespace Unleash.Scheduling
         internal string Etag { get; set; }
 
         public FetchFeatureTogglesTask(
+            YggdrasilEngine engine,
             IUnleashApiClient apiClient,
-            ThreadSafeToggleCollection toggleCollection,
-            IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             EventCallbackConfig eventConfig,
             string toggleFile,
             string etagFile,
             bool throwOnInitialLoadFail)
         {
+            this.engine = engine;
             this.apiClient = apiClient;
-            this.toggleCollection = toggleCollection;
-            this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.eventConfig = eventConfig;
             this.toggleFile = toggleFile;
@@ -74,17 +71,26 @@ namespace Unleash.Scheduling
             if (result.Etag == Etag)
                 return;
 
-            toggleCollection.Instance = result.ToggleCollection;
+            if (!string.IsNullOrEmpty(result.State))
+            {
+                try
+                {
+                    engine.TakeState(result.State);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(() => $"UNLEASH: Exception when updating toggle collection.", ex);
+                    eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesUpdate, Error = ex });
+                    throw new UnleashException("Exception while updating toggle collection", ex);
+                }
+            }
 
             // now that the toggle collection has been updated, raise the toggles updated event if configured
             eventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
 
             try
             {
-                using (var fs = fileSystem.FileOpenCreate(toggleFile))
-                {
-                    jsonSerializer.Serialize(fs, result.ToggleCollection);
-                }
+                fileSystem.WriteAllText(toggleFile, result.State);
             }
             catch (IOException ex)
             {

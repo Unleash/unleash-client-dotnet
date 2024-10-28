@@ -1,17 +1,14 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
 using static Unleash.Tests.Specifications.TestFactory;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using Unleash.Internal;
 using Unleash.Scheduling;
-
 using Unleash.Tests.Mock;
 using Unleash.Variants;
-using System.Collections.Generic;
 
 namespace Unleash.Tests.Variants
 {
@@ -251,7 +248,13 @@ namespace Unleash.Tests.Variants
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
             var fakeFileSystem = new MockFileSystem();
-            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
+            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state, new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                }
+            });
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
             A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
