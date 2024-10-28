@@ -2,7 +2,6 @@ using System.Net;
 using FakeItEasy;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 
 public class BaseBackoffTest
 {
@@ -30,7 +29,6 @@ public class BaseBackoffTest
 
         var apiClient = new UnleashApiClient(
             httpClient,
-            A.Fake<IJsonSerializer>(),
             A.Fake<UnleashApiClientRequestHeaders>(),
             new EventCallbackConfig()
         );

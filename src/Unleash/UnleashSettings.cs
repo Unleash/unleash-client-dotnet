@@ -8,7 +8,6 @@ using System.Text;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Scheduling;
-using Unleash.Serialization;
 using Unleash.Utilities;
 
 namespace Unleash
@@ -99,14 +98,6 @@ namespace Unleash
         public IUnleashContextProvider UnleashContextProvider { get; set; } = new DefaultUnleashContextProvider();
 
         /// <summary>
-        /// Gets or sets a json serializer.
-        ///
-        /// Default: A serializer based on Newtonsoft will be used, given that these assemblies are loaded into the appdomain already.
-        /// </summary>
-        [Obsolete("No longer supported in recent versions of Unleash, will be removed in the next major version", false)]
-        public IJsonSerializer JsonSerializer { get; set; } = new DynamicNewtonsoftJsonSerializer();
-
-        /// <summary>
         /// Get or sets a factory class for creating the HttpClient instance used for communicating with the backend.
         /// </summary>
         public IHttpClientFactory HttpClientFactory { get; set; } = new DefaultHttpClientFactory();
@@ -173,9 +164,7 @@ namespace Unleash
             var sb = new StringBuilder("## Unleash settings ##");
 
             sb.AppendLine($"Application name: {AppName}");
-            sb.AppendLine($"Environment: {Environment}");
             sb.AppendLine($"Instance tag: {InstanceTag}");
-            sb.AppendLine($"Project Id: {ProjectId}");
             sb.AppendLine($"Server Uri: {UnleashApi}");
             sb.AppendLine($"Sdk version: {SdkVersion}");
 
@@ -190,7 +179,6 @@ namespace Unleash
             sb.AppendLine($"Etag file: {EtagFilename}");
 
             sb.AppendLine($"HttpClient Factory: {HttpClientFactory.GetType().Name}");
-            sb.AppendLine($"Json serializer: {JsonSerializer.GetType().Name}");
             sb.AppendLine($"Context provider: {UnleashContextProvider.GetType().Name}");
 
             sb.AppendLine($"Bootstrap overrides: {BootstrapOverride}");

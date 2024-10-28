@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Unleash.Communication;
-using Unleash.Serialization;
 using Yggdrasil;
 
 namespace Unleash.Tests.Communication
@@ -13,9 +12,6 @@ namespace Unleash.Tests.Communication
 
         private IUnleashApiClient CreateApiClient()
         {
-            var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
-            jsonSerializer.TryLoad();
-
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
@@ -28,7 +24,7 @@ namespace Unleash.Tests.Communication
             {
                 BaseAddress = new Uri("http://example.com")
             };
-            var client = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, null);
+            var client = new UnleashApiClient(httpClient, requestHeaders, null);
             return client;
         }
 

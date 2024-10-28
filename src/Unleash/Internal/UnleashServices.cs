@@ -77,7 +77,7 @@ namespace Unleash
                 }
 
                 var httpClient = settings.HttpClientFactory.Create(uri);
-                apiClient = new UnleashApiClient(httpClient, settings.JsonSerializer, new UnleashApiClientRequestHeaders()
+                apiClient = new UnleashApiClient(httpClient, new UnleashApiClientRequestHeaders()
                 {
                     AppName = settings.AppName,
                     InstanceTag = settings.InstanceTag,

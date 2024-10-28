@@ -8,7 +8,6 @@ using Unleash.Scheduling;
 using Unleash.Internal;
 using Unleash.Events;
 using Unleash.Communication;
-using Unleash.Serialization;
 using FluentAssertions;
 using Unleash.Metrics;
 using Yggdrasil;
@@ -31,7 +30,7 @@ namespace Unleash.Tests.Internal
             {
                 ErrorEvent = evt => { callbackEvent = evt; }
             };
-            var unleashClient = new UnleashApiClient(httpClient, new DynamicNewtonsoftJsonSerializer(), new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
+            var unleashClient = new UnleashApiClient(httpClient, new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
             var cancellationTokenSource = new CancellationTokenSource();
 
             // Act
@@ -58,9 +57,7 @@ namespace Unleash.Tests.Internal
                 ErrorEvent = evt => { callbackEvent = evt; }
             };
 
-            var deserializer = new DynamicNewtonsoftJsonSerializer();
-            deserializer.TryLoad();
-            var unleashClient = new UnleashApiClient(httpClient, deserializer, new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
+            var unleashClient = new UnleashApiClient(httpClient, new UnleashApiClientRequestHeaders(), eventConfig: callbackConfig);
             var cancellationTokenSource = new CancellationTokenSource();
 
             // Act

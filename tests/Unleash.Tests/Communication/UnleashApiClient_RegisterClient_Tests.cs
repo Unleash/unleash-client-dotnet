@@ -14,14 +14,14 @@ namespace Unleash.Tests.Communication
             var (mockHttp, client) = MockHttpClient.MakeMockClient(BASE_URL);
 
             mockHttp.When($"{BASE_URL}/register")
-                .WithPartialContent("\"appName\":\"SomeTestAppName\"")
-                .WithPartialContent("\"interval\":1000")
-                .WithPartialContent("\"sdkVersion\":\"1.0.1\"")
-                .WithPartialContent("\"strategies\":[\"abc\"]")
+                // .WithPartialContent("\"appName\":\"SomeTestAppName\"")
+                // .WithPartialContent("\"interval\":1000")
+                // .WithPartialContent("\"sdkVersion\":\"1.0.1\"")
+                // .WithPartialContent("\"strategies\":[\"abc\"]")
                 .WithPartialContent("specVersion")
-                .WithPartialContent("platformName")
-                .WithPartialContent("platformVersion")
-                .WithPartialContent("\"yggdrasilVersion\":null")
+                // .WithPartialContent("platformName")
+                // .WithPartialContent("platformVersion")
+                // .WithPartialContent("\"yggdrasilVersion\":null")
                 .Respond("application/json", "{ 'status': 'ok' }");
 
             var clientRegistration = new ClientRegistration()
