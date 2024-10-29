@@ -442,7 +442,7 @@ var settings = new UnleashSettings()
 ## Bootstrapping
 * Unleash supports bootstrapping from a JSON string.
 * Configure your own custom provider implementing the `IToggleBootstrapProvider` interface's single method `ToggleCollection Read()`.
-  This should return a `String` that represents the API response from {unleash_url}/api/client/features
+  This should return a `String` that represents the API response from `{unleash_url}/api/client/features`
 * Example bootstrap files can be found in the json files located in [tests/Unleash.Tests/App_Data](tests/Unleash.Tests/App_Data)
 * Our assumption is this can be use for applications deployed to ephemeral containers or more locked down file systems where Unleash's need to write the backup file is not desirable or possible.
 * Loading with bootstrapping defaults to override feature toggles loaded from Local Backup, this override can be switched off by setting the `UnleashSettings.ToggleOverride` property to `false`
