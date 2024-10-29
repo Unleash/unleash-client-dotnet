@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json;
 using Unleash.Internal;
 using Unleash.Tests.Mock;
-using Unleash.Tests.Serialization;
 using Unleash.Utilities;
 
 namespace Unleash.Tests.Utilities
@@ -25,7 +24,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() });
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { });
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();
@@ -57,7 +56,6 @@ namespace Unleash.Tests.Utilities
 
             var settings = new UnleashSettings()
             {
-                JsonSerializer = new JsonNetSerializer(),
                 HttpClientFactory = fakeHttpClientFactory
             };
             settings.UseBootstrapUrlProvider(path, false);
@@ -125,7 +123,7 @@ namespace Unleash.Tests.Utilities
             };
             messageHandlerMock.Configure(path, returnMessage);
             var client = new HttpClient(messageHandlerMock);
-            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { JsonSerializer = new JsonNetSerializer() }, false, customHeaders);
+            var bootstrapUrlProvider = new ToggleBootstrapUrlProvider(path, client, new UnleashSettings() { }, false, customHeaders);
 
             // Act
             var responseContent = bootstrapUrlProvider.Read();

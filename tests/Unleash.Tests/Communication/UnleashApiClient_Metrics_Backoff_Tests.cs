@@ -3,7 +3,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 
 public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
 {
@@ -23,7 +22,6 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
 
         var apiClient = new UnleashApiClient(
             httpClient,
-            A.Fake<IJsonSerializer>(),
             A.Fake<UnleashApiClientRequestHeaders>(),
             new EventCallbackConfig()
         );
@@ -54,7 +52,6 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
 
         var apiClient = new UnleashApiClient(
             httpClient,
-            A.Fake<IJsonSerializer>(),
             A.Fake<UnleashApiClientRequestHeaders>(),
             new EventCallbackConfig()
         );
@@ -99,7 +96,6 @@ public class UnleashApiClient_Metrics_Backoff_Tests : BaseBackoffTest
 
         var apiClient = new UnleashApiClient(
             httpClient,
-            A.Fake<IJsonSerializer>(),
             A.Fake<UnleashApiClientRequestHeaders>(),
             new EventCallbackConfig()
         );

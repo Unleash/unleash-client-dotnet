@@ -1,6 +1,5 @@
 ﻿using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 using RichardSzalay.MockHttp;
 
 namespace Unleash.Tests.Communication
@@ -9,9 +8,6 @@ namespace Unleash.Tests.Communication
     {
         internal static Tuple<MockHttpMessageHandler, UnleashApiClient> MakeMockClient(string url)
         {
-            DynamicNewtonsoftJsonSerializer jsonSerializer = new DynamicNewtonsoftJsonSerializer();
-            jsonSerializer.TryLoad();
-
             var mockHttp = new MockHttpMessageHandler();
 
             var httpClient = new HttpClient(mockHttp)
@@ -29,7 +25,7 @@ namespace Unleash.Tests.Communication
                 CustomHttpHeaderProvider = null
             };
 
-            var unleashClient = new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig());
+            var unleashClient = new UnleashApiClient(httpClient, requestHeaders, new EventCallbackConfig());
             return new Tuple<MockHttpMessageHandler, UnleashApiClient>(mockHttp, unleashClient);
 
         }
