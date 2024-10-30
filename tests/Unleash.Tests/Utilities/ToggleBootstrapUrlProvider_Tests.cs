@@ -2,8 +2,6 @@
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text;
-using System.Text.Json;
-using Unleash.Internal;
 using Unleash.Tests.Mock;
 using Unleash.Utilities;
 
@@ -30,9 +28,7 @@ namespace Unleash.Tests.Utilities
             var responseContent = bootstrapUrlProvider.Read();
 
             // Assert
-            var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
-            deserializedResponseContent.Should().NotBeNull();
-            deserializedResponseContent.Features.Should().BeEmpty();
+            responseContent.Should().Be(content);
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -64,9 +60,7 @@ namespace Unleash.Tests.Utilities
             var responseContent = settings.ToggleBootstrapProvider.Read();
 
             // Assert
-            var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
-            deserializedResponseContent.Should().NotBeNull();
-            deserializedResponseContent.Features.Should().BeEmpty();
+            responseContent.Should().Be(content);
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
         }
@@ -129,10 +123,8 @@ namespace Unleash.Tests.Utilities
             var responseContent = bootstrapUrlProvider.Read();
 
             // Assert
-            var deserializedResponseContent = JsonSerializer.Deserialize<ToggleCollection>(responseContent);
-            deserializedResponseContent.Should().NotBeNull();
+            responseContent.Should().Be(content);
             var configuredHeader = customHeaders.First();
-            deserializedResponseContent.Features.Should().BeEmpty();
             messageHandlerMock.SentMessages.First().Method.Should().Be(HttpMethod.Get);
             messageHandlerMock.SentMessages.First().RequestUri.ToString().Should().Be(path);
             messageHandlerMock.SentMessages.First().Headers.Any(kvp => kvp.Key == configuredHeader.Key && kvp.Value.First() == configuredHeader.Value).Should().BeTrue();
