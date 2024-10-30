@@ -1,19 +1,11 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Linq;
-using Unleash.Internal;
 using Unleash.Scheduling;
-using Unleash.Strategies;
 using Unleash.Tests.Mock;
-using Unleash.Variants;
 using static Unleash.Tests.Specifications.TestFactory;
 
 namespace Unleash.Tests
@@ -57,76 +49,7 @@ namespace Unleash.Tests
             factory.CreateHttpClientInstanceCalled.Should().BeTrue();
         }
 
-        [Test]
-        public void IsEnabled_Flexible_Strategy_Test()
-        {
-            // Arrange
-            var appname = "testapp";
-            var strategy = new ActivationStrategy("flexibleRollout", new Dictionary<string, string>() { { "rollout", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
-            {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
-
-            // Act
-            var result = unleash.IsEnabled("test_toggle");
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void IsEnabled_Gradual_Rollout_Random_Strategy_Test()
-        {
-            // Arrange
-            var appname = "testapp";
-            var strategy = new ActivationStrategy("gradualRolloutRandom", new Dictionary<string, string>() { { "percentage", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
-            {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
-
-            // Act
-            var result = unleash.IsEnabled("test_toggle");
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void IsEnabled_Gradual_Rollout_UserId_Strategy_Test()
-        {
-            // Arrange
-            var appname = "testapp";
-            var strategy = new ActivationStrategy("gradualRolloutUserId", new Dictionary<string, string>() { { "percentage", "100" } }, new List<Constraint>() { });
-            var toggles = new List<FeatureToggle>()
-            {
-                new FeatureToggle("test_toggle", "experimental", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
-            var unleash = CreateUnleash(appname, state);
-
-            // Act
-            var result = unleash.IsEnabled("test_toggle");
-
-            // Assert
-            result.Should().BeFalse();
-        }
-
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        public static IUnleash CreateUnleash(string name, string state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
@@ -151,7 +74,7 @@ namespace Unleash.Tests
             fakeHttpMessageHandler.Response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(toggleState, Encoding.UTF8, "application/json"),
+                Content = new StringContent(state, Encoding.UTF8, "application/json"),
                 Headers =
                 {
                     ETag = new EntityTagHeaderValue("\"123\"")

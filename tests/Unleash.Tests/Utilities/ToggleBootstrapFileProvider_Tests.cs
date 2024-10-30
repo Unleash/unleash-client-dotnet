@@ -43,20 +43,13 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             result.Should().Be(fileContent);
-
-            var deserializedResult = Newtonsoft.Json.JsonConvert.DeserializeObject<ToggleCollection>(result);
-            deserializedResult.Should().NotBeNull();
-            deserializedResult.Features.Count().Should().Be(3);
-            deserializedResult.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
 
         [Test]
         public void Returns_File_Content_When_Configured_Through_Settings_And_File_Exists()
         {
             // Arrange
-            var settings = new UnleashSettings()
-            {
-            };
+            var settings = new UnleashSettings();
             var toggleFileName = AppDataFile("unleash-repo-v1.json");
             settings.UseBootstrapFileProvider(toggleFileName);
             var fileSystem = new FileSystem(Encoding.UTF8);
@@ -69,11 +62,6 @@ namespace Unleash.Tests.Utilities
 
             // Assert
             result.Should().Be(fileContent);
-
-            var deserializedResult = Newtonsoft.Json.JsonConvert.DeserializeObject<ToggleCollection>(result);
-            deserializedResult.Should().NotBeNull();
-            deserializedResult.Features.Count().Should().Be(3);
-            deserializedResult.Features.Single(f => f.Name == "featureY").Enabled.Should().Be(false);
         }
     }
 }

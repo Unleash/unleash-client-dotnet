@@ -3,40 +3,65 @@ using FluentAssertions;
 using NUnit.Framework;
 using System.Text;
 using Unleash.Internal;
-using Unleash.Variants;
 
 namespace Unleash.Tests.Internal
 {
     public class CachedFilesLoader_Bootstrap_Tests : CachedFilesLoaderTestBase
     {
-        private static string State = Newtonsoft.Json.JsonConvert.SerializeObject(new ToggleCollection(new List<FeatureToggle>
+        private static string State = @"
         {
-            new FeatureToggle("one-enabled",  "release", true, false, new List<ActivationStrategy>()
-            {
-                new ActivationStrategy("userWithId", new Dictionary<string, string>(){
-                    {"userIds", "userA" }
-                })
-            }, new List<VariantDefinition>()
-            {
-                new VariantDefinition("Aa", 33, null, null),
-                new VariantDefinition("Aa", 33, null, null),
-                new VariantDefinition("Ab", 34, null, new List<VariantOverride>{ new VariantOverride("context", new[] { "a", "b"}) }),
-            }
-            ),
-            new FeatureToggle("one-disabled",  "release", false, false, new List<ActivationStrategy>()
-            {
-                new ActivationStrategy("userWithId", new Dictionary<string, string>()
-                {
-                    {"userIds", "userB" }
-                })
-            })
-        }), new Newtonsoft.Json.JsonSerializerSettings
-        {
-            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-            {
-                NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
-            }
-        });
+            ""version"": 2,
+            ""features"": [
+              {
+                ""name"": ""one-enabled"",
+                ""type"": ""release"",
+                ""enabled"": true,
+                ""impressionData"": false,
+                ""strategies"": [
+                  {
+                    ""name"": ""userWithId"",
+                    ""parameters"": {
+                      ""userIds"": ""userA""
+                    }
+                  }
+                ],
+                ""variants"": [
+                  {
+                    ""name"": ""Aa"",
+                    ""weight"": 33
+                  },
+                  {
+                    ""name"": ""Aa"",
+                    ""weight"": 33
+                  },
+                  {
+                    ""name"": ""Ab"",
+                    ""weight"": 34,
+                    ""overrides"": [
+                      {
+                        ""contextName"": ""context"",
+                        ""values"": [""a"", ""b""]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                ""name"": ""one-disabled"",
+                ""type"": ""release"",
+                ""enabled"": false,
+                ""impression-data"": false,
+                ""strategies"": [
+                  {
+                    ""name"": ""userWithId"",
+                    ""parameters"": {
+                      ""userIds"": ""userB""
+                    }
+                  }
+                ]
+              }
+            ]
+        }";
 
         [Test]
         public void Loads_From_Bootstrap_Provider_When_Backup_File_Is_Missing()
