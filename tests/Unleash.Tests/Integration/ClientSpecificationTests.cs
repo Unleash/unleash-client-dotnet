@@ -30,7 +30,7 @@ namespace Unleash.Tests.Specifications
 
             using (var client = new HttpClient())
             {
-                var csTestsVersion = "v5.1.4";
+                var csTestsVersion = "v5.1.7";
                 var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/{csTestsVersion}/specifications/";
                 var indexResponse = client.GetStringAsync(indexPath + "index.json").Result;
                 var indexFilePath = Path.Combine(specificationsPath, "index.json");
@@ -119,7 +119,7 @@ namespace Unleash.Tests.Specifications
 
                 // Assert
                 Assert.That(result.Name, Is.EqualTo(testCase.ExpectedResult.Name), testCase.Description);
-                Assert.That(result.IsEnabled, Is.EqualTo(testCase.ExpectedResult.IsEnabled), testCase.Description);
+                Assert.That(result.Enabled, Is.EqualTo(testCase.ExpectedResult.Enabled), testCase.Description);
                 Assert.That(result.FeatureEnabled, Is.EqualTo(testCase.ExpectedResult.FeatureEnabled), testCase.Description);
                 Assert.That(result.Payload, Is.EqualTo(testCase.ExpectedResult.Payload), testCase.Description);
             };

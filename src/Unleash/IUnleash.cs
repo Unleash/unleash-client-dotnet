@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unleash.Internal;
 
 namespace Unleash
@@ -60,6 +61,14 @@ namespace Unleash
         /// <param name="defaultValue">If a toggle is not found, the default value will be returned.</param>
         /// <returns>A weighted variant or the supplied default value if feature is not available</returns>
         Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue);
+
+        /// <summary>
+        /// Lists all the feature flags currently known to the SDK. Dependent on what toggles
+        /// the used API key has access to. If the client has been bootstrapped but not yet
+        /// fetched from upstream, the returned list will match the bootstrap.
+        /// </summary>
+        /// <returns>A list of metadata about known feature flags</returns>
+        ICollection<ToggleDefinition> ListKnownToggles();
 
         void ConfigureEvents(Action<EventCallbackConfig> config);
     }

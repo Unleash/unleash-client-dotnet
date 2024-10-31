@@ -94,5 +94,18 @@ namespace Unleash.Tests
 
             return unleash;
         }
+
+        [Test]
+        public void ListingKnownFlagsReturnsFullList()
+        {
+            // Arrange
+            var unleash = CreateUnleash("testapp", "{\"version\":1,\"features\":[{\"name\":\"test-flag\",\"enabled\":true,\"strategies\":[{\"name\":\"default\"}]}]}");
+
+            // Act
+            var flags = unleash.ListKnownToggles();
+
+            // Assert
+            flags.First().Name.Should().Be("test-flag");
+        }
     }
 }
