@@ -11,7 +11,7 @@
 
         internal static Variant UpgradeVariant(Yggdrasil.Variant variant)
         {
-            return new Variant(variant.Name, variant.Payload, variant.IsEnabled, variant.FeatureEnabled);
+            return new Variant(variant.Name, variant.Payload, variant.Enabled, variant.FeatureEnabled);
         }
     }
 }

@@ -3,6 +3,8 @@ namespace Unleash
     using Internal;
     using Logging;
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using Unleash.Utilities;
@@ -83,6 +85,11 @@ namespace Unleash
             return enabled;
         }
 
+        public ICollection<ToggleDefinition> ListKnownToggles()
+        {
+            return services.engine.ListKnownToggles().Select(ToggleDefinition.FromYggdrasilDef).ToList();
+        }
+
         public Variant GetVariant(string toggleName)
         {
             return GetVariant(toggleName, services.ContextProvider.Context, Variant.DISABLED_VARIANT);
@@ -115,7 +122,7 @@ namespace Unleash
 
             if (services.engine.ShouldEmitImpressionEvent(toggleName))
             {
-                EmitImpressionEvent("getVariant", enhancedContext, variant.IsEnabled, toggleName, variant.Name);
+                EmitImpressionEvent("getVariant", enhancedContext, variant.Enabled, toggleName, variant.Name);
             }
 
             return Variant.UpgradeVariant(variant);
