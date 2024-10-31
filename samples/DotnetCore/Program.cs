@@ -5,10 +5,10 @@ using Unleash.Internal;
 var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
-    UnleashApi = new Uri("http://localhost:3063/api"),
+    UnleashApi = new Uri("http://localhost:4242/api"), //setup for running against a local unleash instance, feel free to change this
     CustomHttpHeaders = new Dictionary<string, string>()
     {
-      {"Authorization","*:development.86efeeed04ed49e6389fe848925289475b89996404c320154437d8e0" }
+      {"Authorization","add a valid client token here" }
     },
     SendMetricsInterval = TimeSpan.FromSeconds(1)
 };
