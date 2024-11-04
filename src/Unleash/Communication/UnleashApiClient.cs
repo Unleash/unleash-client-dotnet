@@ -190,7 +190,6 @@ namespace Unleash.Communication
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
                 request.Content = new StringContent(JsonSerializer.Serialize(registration, options), Encoding.UTF8, "application/json");
-                request.Content.Headers.AddContentTypeJson();
 
                 SetRequestHeaders(request, clientRequestHeaders);
 
@@ -230,7 +229,6 @@ namespace Unleash.Communication
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
                 request.Content = new StringContent(JsonSerializer.Serialize(clientMetrics, options), Encoding.UTF8, "application/json");
-                request.Content.Headers.AddContentTypeJson();
 
                 SetRequestHeaders(request, clientRequestHeaders);
 
