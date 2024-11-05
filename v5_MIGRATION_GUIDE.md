@@ -12,6 +12,8 @@ Direct access to the feature toggle objects through `UnleashClient.FeatureToggle
 
 The SDK now provides a `UnleashClient.ListKnownToggles` method, which will return a list of feature toggle names, their type and the project they're bound to.
 
+The client also no longer provides access to list the variants bound to a feature toggle through `UnleashClient.GetVariants`. We believe this was inappropriately leaking the internal abstractions out of the SDK but if you have a strong use case for this, please open an issue.
+
 ## Bootstrapping changes
 
 Due to the changes in the previous section, Bootstrapping classes are now required to return a `String` instead of a `FeatureToggleCollection`. The string should be a JSON string representing the response returned from your Unleash instance's api/client/features endpoint. In practice, that means if you previously had a `Read` method in your bootstrapping class like so:
