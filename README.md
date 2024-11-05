@@ -4,6 +4,11 @@
 [![NuGet](https://img.shields.io/nuget/v/Unleash.Client.svg)](https://www.nuget.org/packages/Unleash.Client/)
 
 
+>  **Migrating to v5**
+>
+> If you use, [bootstrapping](#bootstrapping), [custom strategies](#custom-strategies) or use a custom JSON serializer, read the complete [migration guide](./v5_MIGRATION_GUIDE.md) before upgrading to v5.
+
+
 ## Introduction
 
 Unleash Client SDK for .Net. It is compatible with the
