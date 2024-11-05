@@ -7,6 +7,7 @@ using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Scheduling;
+using Unleash.Strategies;
 using Yggdrasil;
 
 namespace Unleash
@@ -35,14 +36,14 @@ namespace Unleash
             "userWithId"
         };
 
-        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, List<IStrategy> strategies = null)
+        public UnleashServices(UnleashSettings settings, EventCallbackConfig eventConfig, List<Strategies.IStrategy> strategies = null)
         {
             if (settings.FileSystem == null)
             {
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
 
-            List<Yggdrasil.IStrategy> yggdrasilStrategies = strategies?.Cast<Yggdrasil.IStrategy>().ToList();
+            List<Yggdrasil.IStrategy> yggdrasilStrategies = strategies?.Select(s => new CustomStrategyAdapter(s)).Cast<Yggdrasil.IStrategy>().ToList();
 
             engine = new YggdrasilEngine(yggdrasilStrategies);
 

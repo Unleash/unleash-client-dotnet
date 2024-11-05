@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Yggdrasil;
+using Unleash.Strategies;
 
 namespace Unleash.ClientFactory
 {
@@ -14,7 +14,7 @@ namespace Unleash.ClientFactory
                           TaskScheduler.Default);
 
         /// <summary>
-        /// Initializes a new instance of Unleash client. 
+        /// Initializes a new instance of Unleash client.
         /// </summary>
         /// <param name="synchronousInitialization">If true, fetch and cache toggles before returning. If false, allow the unleash client schedule an initial poll of features in the background</param>
         /// <param name="strategies">Custom strategies, added in addtion to builtIn strategies.</param>
@@ -38,7 +38,7 @@ namespace Unleash.ClientFactory
 
 
         /// <summary>
-        /// Initializes a new instance of Unleash client. 
+        /// Initializes a new instance of Unleash client.
         /// </summary>
         /// <param name="synchronousInitialization">If true, fetch and cache toggles before returning. If false, allow the unleash client schedule an initial poll of features in the background</param>
         /// <param name="strategies">Custom strategies, added in addtion to builtIn strategies.</param>
