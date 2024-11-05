@@ -8,7 +8,7 @@ Custom strategies no longer provide the option to access the constraints in thei
 
 ## Direct access to feature toggles
 
-Direct access to the feature toggle objects through `UnleashClient.FeatureToggles` has been removed. All classes related to the internal representation of feature toggles is no longer publicly accessible in the SDK.
+Direct access to the feature toggle objects through `UnleashClient.FeatureToggles` has been removed. All classes related to the internal representation of feature toggles are no longer publicly accessible in the SDK.
 
 The SDK now provides a `UnleashClient.ListKnownToggles` method, which will return a list of feature toggle names, their type and the project they're bound to.
 
