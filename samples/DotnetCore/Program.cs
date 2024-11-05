@@ -8,7 +8,7 @@ var settings = new UnleashSettings()
     UnleashApi = new Uri("http://localhost:4242/api"), //setup for running against a local unleash instance, feel free to change this
     CustomHttpHeaders = new Dictionary<string, string>()
     {
-      {"Authorization","*:development.86efeeed04ed49e6389fe848925289475b89996404c320154437d8e0" }
+      {"Authorization","add a valid client token here" }
     },
     SendMetricsInterval = TimeSpan.FromSeconds(1)
 };
@@ -30,6 +30,8 @@ while (true)
     await Task.Delay(1000);
 }
 
+// If you want to test this, you'll need to setup a custom strategy in your
+// Unleash UI and add it to the 'test' toggle.
 class MyCustomStrategy : IStrategy
 {
     public string Name => "my-custom-strategy";
