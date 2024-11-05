@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Yggdrasil;
+using Unleash.Strategies;
 
 namespace Unleash.ClientFactory
 {

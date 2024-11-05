@@ -1,6 +1,6 @@
 ﻿using Unleash;
 using Unleash.ClientFactory;
-using Unleash.Internal;
+using Unleash.Strategies;
 
 var settings = new UnleashSettings()
 {
@@ -18,7 +18,7 @@ const string TOGGLE_NAME = "test";
 Console.WriteLine("Starting Unleash SDK");
 
 var unleashFactory = new UnleashClientFactory();
-IUnleash unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true);
+IUnleash unleash = await unleashFactory.CreateClientAsync(settings, synchronousInitialization: true, new MyCustomStrategy());
 
 
 while (true)
@@ -28,4 +28,16 @@ while (true)
 
     Console.WriteLine($"Toggle enabled: {enabled}, variant: {System.Text.Json.JsonSerializer.Serialize(variant)}");
     await Task.Delay(1000);
+}
+
+// If you want to test this, you'll need to setup a custom strategy in your
+// Unleash UI and add it to the 'test' toggle.
+class MyCustomStrategy : IStrategy
+{
+    public string Name => "my-custom-strategy";
+
+    public bool IsEnabled(Dictionary<string, string> parameters, UnleashContext context)
+    {
+        return true;
+    }
 }
