@@ -3,7 +3,6 @@ namespace Unleash
     using Internal;
     using Logging;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -29,7 +28,7 @@ namespace Unleash
         ///// </summary>
         ///// <param name="config">Unleash settings</param>
         ///// <param name="strategies">Custom strategies.</param>
-        public DefaultUnleash(UnleashSettings settings, params Yggdrasil.IStrategy[] strategies)
+        public DefaultUnleash(UnleashSettings settings, params IStrategy[] strategies)
         {
             var currentInstanceNo = Interlocked.Increment(ref InitializedInstanceCount);
 

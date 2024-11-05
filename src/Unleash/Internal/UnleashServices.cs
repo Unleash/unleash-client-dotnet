@@ -42,7 +42,9 @@ namespace Unleash
                 settings.FileSystem = new FileSystem(settings.Encoding);
             }
 
-            engine = new YggdrasilEngine(strategies);
+            List<Yggdrasil.IStrategy> yggdrasilStrategies = strategies?.Cast<Yggdrasil.IStrategy>().ToList();
+
+            engine = new YggdrasilEngine(yggdrasilStrategies);
 
             var backupFile = settings.GetFeatureToggleFilePath();
             var etagBackupFile = settings.GetFeatureToggleETagFilePath();
