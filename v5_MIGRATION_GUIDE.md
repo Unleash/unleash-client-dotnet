@@ -41,4 +41,6 @@ public string Read()
 
 ## Custom serializers
 
-In v4.x and before, the SDK provided the option to use NewtonSoft or mount a custom JSON serializer. This option has been removed in v5.x, the SDK now relies on System.Text.Json and no option to override that is provided. If you were previously providing a custom serializer to access System.Text.Json, that's now safe to remove. Users who were previously relying on NewtonSoft shouldn't have to make any changes.
+In v4.x and before, the SDK provided the option of mounting a custom JSON serializer. This option has been removed in v5.x; the SDK now relies on `System.Text.Json` with no option to override it. If you previously provided a custom serializer to access `System.Text.Json`, it's now safe to remove it.
+
+If you use NewtonSoft you don't have to make any changes.
