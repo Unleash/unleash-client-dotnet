@@ -24,7 +24,7 @@ namespace Unleash.Metrics
         {
             get
             {
-                return null;
+                return "0.14.0";
             }
         }
         public string SpecVersion
