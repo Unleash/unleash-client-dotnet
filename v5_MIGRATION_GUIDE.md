@@ -16,7 +16,7 @@ The client also no longer provides access to list the variants bound to a featur
 
 ## Bootstrapping changes
 
-Due to the changes in the previous section, Bootstrapping classes are now required to return a `String` instead of a `FeatureToggleCollection`. The string should be a JSON string representing the response returned from your Unleash instance's api/client/features endpoint. In practice, that means if you previously had a `Read` method in your bootstrapping class like so:
+Due to the changes in the previous section, bootstrapping classes are now required to return a `String` instead of a `FeatureToggleCollection`. The string should be a JSON string representing the response returned from your Unleash instance's `api/client/features` endpoint. In practice, that means if you previously had a `Read` method in your bootstrapping class like so:
 
 ``` dotnet
 
