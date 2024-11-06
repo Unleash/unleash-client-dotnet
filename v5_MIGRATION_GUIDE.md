@@ -28,7 +28,7 @@ public ToggleCollection Read()
 
 ```
 
-This can now be simplified to:
+You can simplify it to:
 
 ``` dotnet
 
