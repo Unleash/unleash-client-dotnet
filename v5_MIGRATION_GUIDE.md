@@ -12,7 +12,7 @@ Direct access to the feature toggle objects through `UnleashClient.FeatureToggle
 
 The SDK now provides a `UnleashClient.ListKnownToggles` method, which returns a list of feature toggle names, their type, and the project they're bound to.
 
-The client also no longer provides access to list the variants bound to a feature toggle through `UnleashClient.GetVariants`. We believe this was inappropriately leaking the internal abstractions out of the SDK but if you have a strong use case for this, please open an issue.
+The client also no longer provides access to listing the variants bound to a feature flag through `UnleashClient.GetVariants`. We determined that this was exposing internal abstractions that should remain within the SDK. However, if you have a strong use case for this, please open an issue.
 
 ## Bootstrapping changes
 
