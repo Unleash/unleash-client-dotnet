@@ -10,7 +10,7 @@ Custom strategies no longer provide the option to access the constraints in thei
 
 Direct access to the feature toggle objects through `UnleashClient.FeatureToggles` has been removed. All classes related to the internal representation of feature toggles are no longer publicly accessible in the SDK.
 
-The SDK now provides a `UnleashClient.ListKnownToggles` method, which will return a list of feature toggle names, their type and the project they're bound to.
+The SDK now provides a `UnleashClient.ListKnownToggles` method, which returns a list of feature toggle names, their type, and the project they're bound to.
 
 The client also no longer provides access to list the variants bound to a feature toggle through `UnleashClient.GetVariants`. We believe this was inappropriately leaking the internal abstractions out of the SDK but if you have a strong use case for this, please open an issue.
 
