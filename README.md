@@ -31,7 +31,7 @@ Supported Frameworks
 * .Net 4.5
 
 Extendable architecture
-- Inject your own implementations of key components (Json serializer, background task scheduler, http client factory)
+- Inject your own implementations of key components (background task scheduler, http client factory)
 
 ## Getting started
 
@@ -41,11 +41,6 @@ Install the latest version of `Unleash.Client` from [nuget.org](https://www.nuge
 
 ``` bash
 dotnet add package unleash.client
-```
-
-If you do not have a json library in your project:
-``` bash
-dotnet add package Newtonsoft.Json
 ```
 
 ### Create a new a Unleash instance
@@ -447,7 +442,7 @@ var settings = new UnleashSettings()
 ## Bootstrapping
 * Unleash supports bootstrapping from a JSON string.
 * Configure your own custom provider implementing the `IToggleBootstrapProvider` interface's single method `ToggleCollection Read()`.
-  This should return a `ToggleCollection`. The `UnleashSettings.JsonSerializer` can be used to deserialize a JSON string in the same format returned from `/api/client/features`.
+  This should return a `String` that represents the API response from `{unleash_url}/api/client/features`
 * Example bootstrap files can be found in the json files located in [tests/Unleash.Tests/App_Data](tests/Unleash.Tests/App_Data)
 * Our assumption is this can be use for applications deployed to ephemeral containers or more locked down file systems where Unleash's need to write the backup file is not desirable or possible.
 * Loading with bootstrapping defaults to override feature toggles loaded from Local Backup, this override can be switched off by setting the `UnleashSettings.ToggleOverride` property to `false`
@@ -493,67 +488,6 @@ var customHeaders = new Dictionary<string, string>()
 }; // Defaults to null
 settings.UseBootstrapUrlProvider("://domain.top/path/to/file.json", shouldThrowOnError, customHeaders);
 ```
-
-## Json Serialization
-The unleash client is dependant on a json serialization library. If your application already have Newtonsoft.Json >= 9.0.1 installed, everything should work out of the box. If not, you will get an error message during startup telling you to implement an 'IJsonSerializer' interface, which needs to be added to the configuration.
-
-With Newtonsoft.Json version 7.0.0.0, the following implementation can be used. For older versions, consider to upgrade.
-
-```csharp
-var settings = new UnleashSettings()
-{
-    AppName = "dotnet-test",
-    UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    JsonSerializer = new NewtonsoftJson7Serializer()
-};
-
-public class NewtonsoftJson7Serializer : IJsonSerializer
-{
-    private readonly Encoding utf8 = Encoding.UTF8;
-
-    private static readonly JsonSerializer Serializer = new JsonSerializer()
-    {
-        ContractResolver = new CamelCaseExceptDictionaryKeysResolver()
-    };
-
-    public T Deserialize<T>(Stream stream)
-    {
-        using (var streamReader = new StreamReader(stream, utf8))
-        using (var textReader = new JsonTextReader(streamReader))
-        {
-            return Serializer.Deserialize<T>(textReader);
-        }
-    }
-
-    public void Serialize<T>(Stream stream, T instance)
-    {
-        using (var writer = new StreamWriter(stream, utf8, 1024 * 4, leaveOpen: true))
-        using (var jsonWriter = new JsonTextWriter(writer))
-        {
-            Serializer.Serialize(jsonWriter, instance);
-
-            jsonWriter.Flush();
-        }
-    }
-
-    class CamelCaseExceptDictionaryKeysResolver : CamelCasePropertyNamesContractResolver
-    {
-        protected override JsonDictionaryContract CreateDictionaryContract(Type objectType)
-        {
-            var contract = base.CreateDictionaryContract(objectType);
-
-            contract.DictionaryKeyResolver = propertyName =>
-            {
-                return propertyName;
-            };
-
-            return contract;
-        }
-    }
-}
-```
-
-The server api needs camel cased json, but not for certain dictionary keys. The implementation can be naively validated by the `JsonSerializerTester.Assert` function. (Work in progress).
 
 ## Run unleash server with Docker locally
 The Unleash team have made a separate project which runs unleash server inside docker. Please see [unleash-docker](https://github.com/Unleash/unleash-docker) for more details.

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unleash.Internal;
-using Unleash.Variants;
 
 namespace Unleash
 {
@@ -11,12 +10,6 @@ namespace Unleash
     /// </summary>
     public interface IUnleash : IDisposable
     {
-        /// <summary>
-        /// Collection of currently loaded Feature Toggles
-        /// </summary>
-        [Obsolete("Will be removed in the next major version", false)]
-        ICollection<FeatureToggle> FeatureToggles { get; }
-
         /// <summary>
         /// Determines if the given feature toggle is enabled or not, defaulting to <c>false</c> if the toggle cannot be found.
         /// </summary>
@@ -70,21 +63,12 @@ namespace Unleash
         Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue);
 
         /// <summary>
-        /// Get available feature variants.
+        /// Lists all the feature flags currently known to the SDK. Dependent on what toggles
+        /// the used API key has access to. If the client has been bootstrapped but not yet
+        /// fetched from upstream, the returned list will match the bootstrap.
         /// </summary>
-        /// <param name="toggleName">The name of the toggle.</param>
-        /// <returns>A list of available variants.</returns>
-        [Obsolete("Will be removed in the next major version", false)]
-        IEnumerable<VariantDefinition> GetVariants(string toggleName);
-
-        /// <summary>
-        /// Get available feature variants.
-        /// </summary>
-        /// <param name="toggleName">The name of the toggle.</param>
-        /// /// <param name="context">The Unleash context to evaluate the toggle state against.</param>
-        /// <returns>A list of available variants.</returns>
-        [Obsolete("Will be removed in the next major version", false)]
-        IEnumerable<VariantDefinition> GetVariants(string toggleName, UnleashContext context);
+        /// <returns>A list of metadata about known feature flags</returns>
+        ICollection<ToggleDefinition> ListKnownToggles();
 
         void ConfigureEvents(Action<EventCallbackConfig> config);
     }

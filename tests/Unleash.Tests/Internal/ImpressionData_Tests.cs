@@ -1,20 +1,13 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using static Unleash.Tests.Specifications.TestFactory;
 using Unleash.Tests.Mock;
 using Unleash.Internal;
 using Unleash.Scheduling;
-using System.Threading;
-using Unleash.Variants;
 
 namespace Unleash.Tests.Internal
 {
@@ -26,15 +19,32 @@ namespace Unleash.Tests.Internal
             // Arrange
             ImpressionEvent callbackEvent = null;
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
-            };
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""item"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": true,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }";
 
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
             var unleash = CreateUnleash(appname, state);
             unleash.ConfigureEvents(cfg =>
             {
@@ -59,15 +69,31 @@ namespace Unleash.Tests.Internal
             // Arrange
             ImpressionEvent callbackEvent = null;
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("item", "release", true, false, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""item"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": false,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }";
             var unleash = CreateUnleash(appname, state);
             unleash.ConfigureEvents(cfg =>
             {
@@ -88,15 +114,31 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""item"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": true,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }";
             var unleash = CreateUnleash(appname, state);
             unleash.ConfigureEvents(cfg =>
             {
@@ -113,15 +155,31 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""item"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": true,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }";
             var unleash = CreateUnleash(appname, state);
             unleash.ConfigureEvents(cfg =>
             {
@@ -139,17 +197,41 @@ namespace Unleash.Tests.Internal
             // Arrange
             ImpressionEvent callbackEvent = null;
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var payload = new Payload("string", "val1");
-            var variant = new VariantDefinition("blue", 100, payload);
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("item", "release", true, true, new List<ActivationStrategy>() { strategy }, new List<VariantDefinition>() { variant })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""item"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": true,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ],
+                  ""variants"": [
+                    {
+                      ""name"": ""blue"",
+                      ""weight"": 100,
+                      ""payload"": {
+                        ""type"": ""string"",
+                        ""value"": ""val1""
+                      }
+                    }
+                  ]
+                }
+              ]
+            }";
             var unleash = CreateUnleash(appname, state);
             unleash.ConfigureEvents(cfg =>
             {
@@ -173,16 +255,41 @@ namespace Unleash.Tests.Internal
         {
             // Arrange
             var appname = "testapp";
-            var strategy = new ActivationStrategy("default", new Dictionary<string, string>(), new List<Constraint>() { new Constraint("item-id", Operator.NUM_EQ, false, false, "1") });
-            var payload = new Payload("string", "val1");
-            var toggles = new List<FeatureToggle>()
+            var state = @"
             {
-                new FeatureToggle("yup", "release", true, true, new List<ActivationStrategy>() { strategy })
-            };
-
-
-            var state = new ToggleCollection(toggles);
-            state.Version = 2;
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""yup"",
+                  ""type"": ""release"",
+                  ""enabled"": true,
+                  ""impressionData"": true,
+                  ""strategies"": [
+                    {
+                      ""name"": ""default"",
+                      ""parameters"": {},
+                      ""constraints"": [
+                        {
+                          ""contextName"": ""item-id"",
+                          ""operator"": ""NUM_EQ"",
+                          ""value"": ""1""
+                        }
+                      ]
+                    }
+                  ],
+                  ""variants"": [
+                    {
+                      ""name"": ""blue"",
+                      ""weight"": 100,
+                      ""payload"": {
+                        ""type"": ""string"",
+                        ""value"": ""val1""
+                      }
+                    }
+                  ]
+                }
+              ]
+            }";
             var unleash = CreateUnleash(appname, state);
 
             // Act
@@ -193,14 +300,13 @@ namespace Unleash.Tests.Internal
             enabled.Should().BeTrue();
         }
 
-        public static IUnleash CreateUnleash(string name, ToggleCollection state)
+        public static IUnleash CreateUnleash(string name, string state)
         {
             var fakeHttpClientFactory = A.Fake<IHttpClientFactory>();
             var fakeHttpMessageHandler = new TestHttpMessageHandler();
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             var fakeScheduler = A.Fake<IUnleashScheduledTaskManager>();
             var fakeFileSystem = new MockFileSystem();
-            var toggleState = Newtonsoft.Json.JsonConvert.SerializeObject(state);
 
             A.CallTo(() => fakeHttpClientFactory.Create(A<Uri>._)).Returns(httpClient);
             A.CallTo(() => fakeScheduler.Configure(A<IEnumerable<IUnleashScheduledTask>>._, A<CancellationToken>._)).Invokes(action =>
@@ -212,7 +318,7 @@ namespace Unleash.Tests.Internal
             fakeHttpMessageHandler.Response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(toggleState, Encoding.UTF8, "application/json"),
+                Content = new StringContent(state, Encoding.UTF8, "application/json"),
                 Headers =
                 {
                     ETag = new EntityTagHeaderValue("\"123\"")

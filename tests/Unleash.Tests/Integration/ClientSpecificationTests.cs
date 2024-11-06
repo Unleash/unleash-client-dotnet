@@ -1,19 +1,11 @@
 ﻿using FakeItEasy;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Scheduling;
-using Unleash.Strategies.Constraints;
 using Unleash.Tests.Mock;
 
 namespace Unleash.Tests.Specifications
@@ -38,8 +30,7 @@ namespace Unleash.Tests.Specifications
 
             using (var client = new HttpClient())
             {
-                var csTestsVersion = "v5.1.4";
-                var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/{csTestsVersion}/specifications/";
+                var indexPath = $"https://raw.githubusercontent.com/Unleash/client-specification/v{UnleashServices.supportedSpecVersion}/specifications/";
                 var indexResponse = client.GetStringAsync(indexPath + "index.json").Result;
                 var indexFilePath = Path.Combine(specificationsPath, "index.json");
                 if (File.Exists(indexFilePath))
@@ -127,7 +118,7 @@ namespace Unleash.Tests.Specifications
 
                 // Assert
                 Assert.That(result.Name, Is.EqualTo(testCase.ExpectedResult.Name), testCase.Description);
-                Assert.That(result.IsEnabled, Is.EqualTo(testCase.ExpectedResult.IsEnabled), testCase.Description);
+                Assert.That(result.Enabled, Is.EqualTo(testCase.ExpectedResult.Enabled), testCase.Description);
                 Assert.That(result.FeatureEnabled, Is.EqualTo(testCase.ExpectedResult.FeatureEnabled), testCase.Description);
                 Assert.That(result.Payload, Is.EqualTo(testCase.ExpectedResult.Payload), testCase.Description);
             };

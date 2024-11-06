@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Unleash.Communication;
-using Unleash.Events;
 using Unleash.Internal;
-using Unleash.Serialization;
 using Unleash.Tests.Mock;
 
 namespace Unleash.Tests.Communication
@@ -20,9 +11,6 @@ namespace Unleash.Tests.Communication
         private UnleashApiClient NewTestableClient(string project, MockHttpMessageHandler messageHandler)
         {
             var apiUri = new Uri("http://unleash.herokuapp.com/api/");
-
-            var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
-            jsonSerializer.TryLoad();
 
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
@@ -38,7 +26,7 @@ namespace Unleash.Tests.Communication
                 Timeout = TimeSpan.FromSeconds(5)
             };
 
-            return new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig(), project);
+            return new UnleashApiClient(httpClient, requestHeaders, new EventCallbackConfig(), project);
         }
 
         [Test]

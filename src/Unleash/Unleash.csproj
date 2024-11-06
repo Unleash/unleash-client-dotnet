@@ -71,6 +71,8 @@
     </PackageReference>
     <PackageReference Include="murmurhash" Version="1.0.3" />
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="Unleash.Yggdrasil" Version="1.0.0-beta.8" />
   </ItemGroup>
 
   <ItemGroup>

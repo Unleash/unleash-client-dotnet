@@ -5,13 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Metrics;
-using Unleash.Serialization;
 
 namespace Unleash.Communication
 {
@@ -20,9 +21,14 @@ namespace Unleash.Communication
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashApiClient));
 
         private readonly HttpClient httpClient;
-        private readonly IJsonSerializer jsonSerializer;
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
         private readonly EventCallbackConfig eventConfig;
+        private readonly JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            IncludeFields = true,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         private readonly string projectId;
         private int featureRequestsToSkip = 0;
         private int featureRequestsSkipped = 0;
@@ -46,13 +52,11 @@ namespace Unleash.Communication
                 };
         public UnleashApiClient(
             HttpClient httpClient,
-            IJsonSerializer jsonSerializer,
             UnleashApiClientRequestHeaders clientRequestHeaders,
             EventCallbackConfig eventConfig,
             string projectId = null)
         {
             this.httpClient = httpClient;
-            this.jsonSerializer = jsonSerializer;
             this.clientRequestHeaders = clientRequestHeaders;
             this.eventConfig = eventConfig;
             this.projectId = projectId;
@@ -157,14 +161,12 @@ namespace Unleash.Communication
                 {
                     HasChanged = false,
                     Etag = newEtag,
-                    ToggleCollection = null,
                 };
             }
 
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var toggleCollection = jsonSerializer.Deserialize<ToggleCollection>(stream);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (toggleCollection == null)
+            if (string.IsNullOrEmpty(content))
             {
                 return new FetchTogglesResult
                 {
@@ -177,7 +179,7 @@ namespace Unleash.Communication
             {
                 HasChanged = true,
                 Etag = newEtag,
-                ToggleCollection = toggleCollection
+                State = content
             };
         }
 
@@ -185,16 +187,9 @@ namespace Unleash.Communication
         {
             const string requestUri = "client/register";
 
-            var memoryStream = new MemoryStream();
-            jsonSerializer.Serialize(memoryStream, registration);
-            memoryStream.Position = 0;
-
-            const int bufferSize = 1024 * 4;
-
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
-                request.Content = new StreamContent(memoryStream, bufferSize);
-                request.Content.Headers.AddContentTypeJson();
+                request.Content = new StringContent(JsonSerializer.Serialize(registration, options), Encoding.UTF8, "application/json");
 
                 SetRequestHeaders(request, clientRequestHeaders);
 
@@ -212,7 +207,7 @@ namespace Unleash.Communication
             }
         }
 
-        public async Task<bool> SendMetrics(ThreadSafeMetricsBucket metrics, CancellationToken cancellationToken)
+        public async Task<bool> SendMetrics(Yggdrasil.MetricsBucket metrics, CancellationToken cancellationToken)
         {
             if (metricsRequestsToSkip > metricsRequestsSkipped)
             {
@@ -224,25 +219,16 @@ namespace Unleash.Communication
 
             const string requestUri = "client/metrics";
 
-            var memoryStream = new MemoryStream();
-
-            using (metrics.StopCollectingMetrics(out var bucket))
+            var clientMetrics = new ClientMetrics
             {
-                jsonSerializer.Serialize(memoryStream, new ClientMetrics
-                {
-                    AppName = clientRequestHeaders.AppName,
-                    InstanceId = clientRequestHeaders.InstanceTag,
-                    Bucket = bucket
-                });
-                memoryStream.Position = 0;
-            }
-
-            const int bufferSize = 1024 * 4;
+                AppName = clientRequestHeaders.AppName,
+                InstanceId = clientRequestHeaders.InstanceTag,
+                Bucket = metrics
+            };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
-                request.Content = new StreamContent(memoryStream, bufferSize);
-                request.Content.Headers.AddContentTypeJson();
+                request.Content = new StringContent(JsonSerializer.Serialize(clientMetrics, options), Encoding.UTF8, "application/json");
 
                 SetRequestHeaders(request, clientRequestHeaders);
 

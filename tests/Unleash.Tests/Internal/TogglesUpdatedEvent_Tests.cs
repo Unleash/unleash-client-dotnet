@@ -1,15 +1,11 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Internal;
 using Unleash.Scheduling;
-using Unleash.Serialization;
 using Unleash.Tests.Mock;
+using Yggdrasil;
 
 namespace Unleash.Tests.Internal
 {
@@ -27,15 +23,13 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = "", Etag = "one" }));
 
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+            var engine = new YggdrasilEngine();
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -56,15 +50,13 @@ namespace Unleash.Tests.Internal
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, ToggleCollection = new ToggleCollection(), Etag = "one" }));
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = false, State = "", Etag = "one" }));
 
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+            var engine = new YggdrasilEngine();
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
@@ -77,36 +69,41 @@ namespace Unleash.Tests.Internal
         public void TogglesUpdated_Event_Is_Raised_After_ToggleCollection_Is_Updated()
         {
             // Arrange
-            var fetchResultToggleCollection = new ToggleCollection();
-            fetchResultToggleCollection.Features.Add(new FeatureToggle("toggle-1", "operational", true, false, new List<ActivationStrategy>())); // after toggles are fetched, the toggle is enabled
-
-            var toggleCollection = new ThreadSafeToggleCollection();
-            toggleCollection.Instance = new ToggleCollection();
-            toggleCollection.Instance.Features.Add(new FeatureToggle("toggle-1", "operational", false, false, new List<ActivationStrategy>())); // initially, the toggle is NOT enabled
+            var fetchState = @"
+            {
+              ""version"": 2,
+              ""features"": [
+                {
+                  ""name"": ""toggle-1"",
+                  ""type"": ""operational"",
+                  ""enabled"": true,
+                  ""impressionData"": false,
+                  ""strategies"": []
+                }
+              ]
+            }";
+            var engine = new YggdrasilEngine();
 
             var toggleIsEnabledResultAfterEvent = false;
             var callbackConfig = new EventCallbackConfig
             {
                 // when toggles updated event is raised (after the fetch), check toggle collection to see if toggle is enabled
-                TogglesUpdatedEvent = evt => { toggleIsEnabledResultAfterEvent = toggleCollection.Instance.Features.ElementAt(0).Enabled; }
+                TogglesUpdatedEvent = evt => { toggleIsEnabledResultAfterEvent = engine.IsEnabled("toggle-1", new UnleashContext()) ?? false; }
             };
 
             var fakeApiClient = A.Fake<IUnleashApiClient>();
             A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, ToggleCollection = fetchResultToggleCollection, Etag = "one" }));
-
-            var serializer = new DynamicNewtonsoftJsonSerializer();
-            serializer.TryLoad();
+                .Returns(Task.FromResult(new FetchTogglesResult { HasChanged = true, State = fetchState, Etag = "one" }));
 
             var filesystem = new MockFileSystem();
             var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, toggleCollection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
+            var task = new FetchFeatureTogglesTask(engine, fakeApiClient, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
 
             // Act
             Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
 
             // Assert
-            toggleCollection.Instance.Features.ElementAt(0).Enabled.Should().BeTrue(); // verify that toggle collection has been updated after fetch and shows that toggle is enabled
+            engine.IsEnabled("toggle-1", new UnleashContext()).Should().BeTrue(); // verify that toggle is enabled after fetch
             toggleIsEnabledResultAfterEvent.Should().BeTrue(); // verify that toggles updated event handler got the correct result for the updated toggle state (should now be enabled)
         }
     }
