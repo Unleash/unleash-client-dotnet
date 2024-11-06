@@ -80,6 +80,9 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\resources\logo.png" Pack="true" PackagePath="\">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <PropertyGroup>
@@ -111,13 +114,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <Product>Unleash Feature Toggle Client</Product>
-    <PackageIconUrl>https://github.com/Unleash/unleash-client-dotnet/raw/main/resources/logo.png</PackageIconUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <AssemblyName>Unleash.Client</AssemblyName>
     <PackageProjectUrl>https://github.com/Unleash/unleash-client-dotnet</PackageProjectUrl>
     <IncludeSymbols>True</IncludeSymbols>
     <Company>Unleash</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
