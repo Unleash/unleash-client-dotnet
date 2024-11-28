@@ -121,9 +121,9 @@ var awesome = unleash.IsEnabled("SuperAwesomeFeature");
 The `CreateClientAsync` method was introduced in version 1.5.0, making the previous `Generate` method obsolete. There's also a `CreateClient` method available if you don't prefer the async version.
 
 
-#### Configuring projects in unleash client
+#### Project scoped Unleash client
 
-If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can specify the `ProjectId` on the `UnleashSettings` to select which project to fetch feature toggles for.
+If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can [scope your API tokens](https://docs.getunleash.io/how-to/how-to-create-project-api-tokens) to just the projects needed for your client. Then use that token when configuring Unleash Client:
 
 ```csharp
 
@@ -131,7 +131,10 @@ var settings = new UnleashSettings()
 {
     AppName = "dotnet-test",
     UnleashApi = new Uri("http://unleash.herokuapp.com/api/"),
-    ProjectId = "projectId"
+    CustomHttpHeaders = new Dictionary<string, string>()
+    {
+       {"Authorization","<your-project-scoped-api-token>" }
+    }
 };
 
 ```
