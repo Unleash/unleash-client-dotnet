@@ -123,7 +123,7 @@ The `CreateClientAsync` method was introduced in version 1.5.0, making the previ
 
 #### Project scoped Unleash client
 
-If you're organizing your feature toggles in `Projects` in Unleash Enterprise, you can [scope your API tokens](https://docs.getunleash.io/how-to/how-to-create-project-api-tokens) to just the projects needed for your client. Then use that token when configuring Unleash Client:
+If you're organizing your feature toggles in projects in Unleash Enterprise, you can [scope your API tokens](https://docs.getunleash.io/how-to/how-to-create-project-api-tokens) to include only the specific projects needed for your client. Then use that token when configuring the Unleash client:
 
 ```csharp
 
