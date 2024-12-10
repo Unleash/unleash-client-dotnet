@@ -223,7 +223,7 @@ namespace Unleash.Communication
             {
                 AppName = clientRequestHeaders.AppName,
                 InstanceId = clientRequestHeaders.InstanceTag,
-                Bucket = metrics
+                Bucket = metrics ?? new Yggdrasil.MetricsBucket(new Dictionary<string, Yggdrasil.FeatureCount>(), DateTimeOffset.UtcNow, DateTimeOffset.UtcNow)
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
