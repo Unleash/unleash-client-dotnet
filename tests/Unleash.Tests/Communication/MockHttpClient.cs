@@ -18,6 +18,8 @@ namespace Unleash.Tests.Communication
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
+                ConnectionId = "00000000-0000-4000-a000-000000000000",
+                SdkVersion = "unleash-client-mock:0.0.0",
                 CustomHttpHeaders = new Dictionary<string, string>()
                 {
                     { "Authorization", "*:default.some-mock-hash" }
