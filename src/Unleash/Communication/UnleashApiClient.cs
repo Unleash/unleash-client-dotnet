@@ -274,12 +274,20 @@ namespace Unleash.Communication
             const string userAgentHeader = "User-Agent";
             const string instanceIdHeader = "UNLEASH-INSTANCEID";
 
+            const string identifyConnectionHeader = "x-unleash-connection-id";
+            const string identifyAppNameHeader = "x-unleash-appname";
+            const string identifySdkHeader = "x-unleash-sdk";
+
             const string supportedSpecVersionHeader = "Unleash-Client-Spec";
 
             requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(userAgentHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
             requestMessage.Headers.TryAddWithoutValidation(supportedSpecVersionHeader, headers.SupportedSpecVersion);
+
+            requestMessage.Headers.TryAddWithoutValidation(identifyConnectionHeader, headers.ConnectionId);
+            requestMessage.Headers.TryAddWithoutValidation(identifyAppNameHeader, headers.AppName);
+            requestMessage.Headers.TryAddWithoutValidation(identifySdkHeader, headers.SdkVersion);
 
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider?.CustomHeaders);

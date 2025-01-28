@@ -17,6 +17,7 @@ namespace Unleash
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(UnleashServices));
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IUnleashScheduledTaskManager scheduledTaskManager;
+        private readonly string connectionId = Guid.NewGuid().ToString();
 
         public const string supportedSpecVersion = "5.1.9";
 
@@ -84,6 +85,8 @@ namespace Unleash
                 {
                     AppName = settings.AppName,
                     InstanceTag = settings.InstanceTag,
+                    ConnectionId = connectionId,
+                    SdkVersion = settings.SdkVersion,
                     CustomHttpHeaders = settings.CustomHttpHeaders,
                     CustomHttpHeaderProvider = settings.UnleashCustomHttpHeaderProvider,
                     SupportedSpecVersion = supportedSpecVersion
