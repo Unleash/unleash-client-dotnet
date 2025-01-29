@@ -16,6 +16,8 @@ namespace Unleash.Tests.Communication
             {
                 AppName = "api-test-client",
                 InstanceTag = "instance1",
+                ConnectionId = "00000000-0000-4000-a000-000000000000",
+                SdkVersion = "unleash-client-mock:0.0.0",
                 CustomHttpHeaders = httpHeaders,
                 CustomHttpHeaderProvider = httpHeadersProvider
             };
@@ -130,6 +132,32 @@ namespace Unleash.Tests.Communication
             {
                 call.Headers.Should().ContainEquivalentOf(new KeyValuePair<string, IEnumerable<string>>("expectedDynamicHeader1", new string[] { "expectedDynamicValue1" }));
                 call.Headers.Should().ContainEquivalentOf(new KeyValuePair<string, IEnumerable<string>>("expectedDynamicHeader2", new string[] { "expectedDynamicValue2" }));
+            }
+        }
+
+        [Test]
+        public async Task IdentificationHttpHeaders()
+        {
+            api = CreateApiClient();
+            var engine = new YggdrasilEngine();
+
+            var etag = "";
+            await api.FetchToggles(etag, CancellationToken.None);
+            await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
+            await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
+
+            messageHandler.calls.Count.Should().Be(3);
+            foreach (var call in messageHandler.calls)
+            {
+                call.Headers.Should().ContainEquivalentOf(
+                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-connection-id", new string[] { "00000000-0000-4000-a000-000000000000" })
+                );
+                call.Headers.Should().ContainEquivalentOf(
+                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-appname", new string[] { "api-test-client" })
+                );
+                call.Headers.Should().ContainEquivalentOf(
+                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-sdk", new string[] { "unleash-client-mock:0.0.0" })
+                );
             }
         }
 

@@ -16,6 +16,8 @@ namespace Unleash.Tests.Communication
             {
                 AppName = "api-test-client",
                 InstanceTag = "instance1",
+                ConnectionId = "00000000-0000-4000-a000-000000000000",
+                SdkVersion = "unleash-client-mock:0.0.0",
                 CustomHttpHeaders = null,
                 CustomHttpHeaderProvider = null
             };
