@@ -150,13 +150,13 @@ namespace Unleash.Tests.Communication
             foreach (var call in messageHandler.calls)
             {
                 call.Headers.Should().ContainEquivalentOf(
-                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-connection-id", new string[] { "00000000-0000-4000-a000-000000000000" })
+                    new KeyValuePair<string, IEnumerable<string>>("unleash-connection-id", new string[] { "00000000-0000-4000-a000-000000000000" })
                 );
                 call.Headers.Should().ContainEquivalentOf(
-                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-appname", new string[] { "api-test-client" })
+                    new KeyValuePair<string, IEnumerable<string>>("unleash-appname", new string[] { "api-test-client" })
                 );
                 call.Headers.Should().ContainEquivalentOf(
-                    new KeyValuePair<string, IEnumerable<string>>("x-unleash-sdk", new string[] { "unleash-client-mock:0.0.0" })
+                    new KeyValuePair<string, IEnumerable<string>>("unleash-sdk", new string[] { "unleash-client-mock:0.0.0" })
                 );
             }
         }

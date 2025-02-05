@@ -270,17 +270,15 @@ namespace Unleash.Communication
 
         private static void SetRequestHeaders(HttpRequestMessage requestMessage, UnleashApiClientRequestHeaders headers)
         {
-            const string appNameHeader = "UNLEASH-APPNAME";
             const string userAgentHeader = "User-Agent";
             const string instanceIdHeader = "UNLEASH-INSTANCEID";
 
-            const string identifyConnectionHeader = "x-unleash-connection-id";
-            const string identifyAppNameHeader = "x-unleash-appname";
-            const string identifySdkHeader = "x-unleash-sdk";
+            const string identifyConnectionHeader = "unleash-connection-id";
+            const string identifyAppNameHeader = "unleash-appname";
+            const string identifySdkHeader = "unleash-sdk";
 
             const string supportedSpecVersionHeader = "Unleash-Client-Spec";
 
-            requestMessage.Headers.TryAddWithoutValidation(appNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(userAgentHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
             requestMessage.Headers.TryAddWithoutValidation(supportedSpecVersionHeader, headers.SupportedSpecVersion);
