@@ -138,6 +138,10 @@ namespace Unleash.Tests.Communication
         [Test]
         public async Task IdentificationHttpHeaders()
         {
+            httpHeaders = new Dictionary<string, string>
+            {
+                {"unleash-connection-id", "ignore"}
+            };
             api = CreateApiClient();
             var engine = new YggdrasilEngine();
 

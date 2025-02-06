@@ -283,12 +283,13 @@ namespace Unleash.Communication
             requestMessage.Headers.TryAddWithoutValidation(instanceIdHeader, headers.InstanceTag);
             requestMessage.Headers.TryAddWithoutValidation(supportedSpecVersionHeader, headers.SupportedSpecVersion);
 
-            requestMessage.Headers.TryAddWithoutValidation(identifyConnectionHeader, headers.ConnectionId);
             requestMessage.Headers.TryAddWithoutValidation(identifyAppNameHeader, headers.AppName);
             requestMessage.Headers.TryAddWithoutValidation(identifySdkHeader, headers.SdkVersion);
 
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaders);
             SetCustomHeaders(requestMessage, headers.CustomHttpHeaderProvider?.CustomHeaders);
+
+            requestMessage.Headers.TryAddWithoutValidation(identifyConnectionHeader, headers.ConnectionId);
         }
 
         private static void SetCustomHeaders(HttpRequestMessage requestMessage, Dictionary<string, string> headers)
