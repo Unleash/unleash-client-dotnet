@@ -59,9 +59,9 @@ namespace Unleash
         /// <summary>
         /// Gets or sets the interval in which feature toggle changes are re-fetched.
         ///
-        /// Default: 30 seconds
+        /// Default: 15 seconds
         /// </summary>
-        public TimeSpan FetchTogglesInterval { get; set; } = TimeSpan.FromSeconds(30);
+        public TimeSpan FetchTogglesInterval { get; set; } = TimeSpan.FromSeconds(15);
 
         /// <summary>
         /// Gets or sets the interval in which metrics are sent to the server. When null, no metrics are sent.
