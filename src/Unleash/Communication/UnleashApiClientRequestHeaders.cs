@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Unleash.Communication
 {
@@ -11,5 +12,8 @@ namespace Unleash.Communication
         public Dictionary<string, string> CustomHttpHeaders { get; set; }
         public IUnleashCustomHttpHeaderProvider CustomHttpHeaderProvider { get; set; }
         public string SupportedSpecVersion { get; internal set; }
+        public TimeSpan SendMetricsInterval { get; set; }
+        public TimeSpan FetchTogglesInterval { get; set; }
+
     }
 }
