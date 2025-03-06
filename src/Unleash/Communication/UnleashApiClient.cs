@@ -86,7 +86,7 @@ namespace Unleash.Communication
 
                 if (EntityTagHeaderValue.TryParse(etag, out var etagHeaderValue))
                     request.Headers.IfNoneMatch.Add(etagHeaderValue);
-                
+
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
                     if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NotModified)

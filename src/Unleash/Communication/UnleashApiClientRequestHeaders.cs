@@ -14,6 +14,6 @@ namespace Unleash.Communication
         public string SupportedSpecVersion { get; internal set; }
         public TimeSpan SendMetricsInterval { get; set; }
         public TimeSpan FetchTogglesInterval { get; set; }
-        
+
     }
 }
