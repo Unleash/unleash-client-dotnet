@@ -73,7 +73,6 @@ namespace Unleash.Communication
                     Etag = null,
                 };
             }
-
             featureRequestsSkipped = 0;
 
             string resourceUri = "client/features";
@@ -83,10 +82,11 @@ namespace Unleash.Communication
             using (var request = new HttpRequestMessage(HttpMethod.Get, resourceUri))
             {
                 SetRequestHeaders(request, clientRequestHeaders);
+                request.Headers.TryAddWithoutValidation("Unleash-Interval", clientRequestHeaders.FetchTogglesInterval.TotalMilliseconds.ToString());
 
                 if (EntityTagHeaderValue.TryParse(etag, out var etagHeaderValue))
                     request.Headers.IfNoneMatch.Add(etagHeaderValue);
-
+                
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
                     if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NotModified)
@@ -189,6 +189,7 @@ namespace Unleash.Communication
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, requestUri))
             {
+                registration.ConnectionId = clientRequestHeaders.ConnectionId;
                 request.Content = new StringContent(JsonSerializer.Serialize(registration, options), Encoding.UTF8, "application/json");
 
                 SetRequestHeaders(request, clientRequestHeaders);
@@ -223,6 +224,7 @@ namespace Unleash.Communication
             {
                 AppName = clientRequestHeaders.AppName,
                 InstanceId = clientRequestHeaders.InstanceTag,
+                ConnectionId = clientRequestHeaders.ConnectionId,
                 Bucket = metrics ?? new Yggdrasil.MetricsBucket(new Dictionary<string, Yggdrasil.FeatureCount>(), DateTimeOffset.UtcNow, DateTimeOffset.UtcNow)
             };
 
@@ -231,7 +233,7 @@ namespace Unleash.Communication
                 request.Content = new StringContent(JsonSerializer.Serialize(clientMetrics, options), Encoding.UTF8, "application/json");
 
                 SetRequestHeaders(request, clientRequestHeaders);
-
+                request.Headers.TryAddWithoutValidation("Unleash-Interval", clientRequestHeaders.SendMetricsInterval.TotalMilliseconds.ToString());
                 using (var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotModified)

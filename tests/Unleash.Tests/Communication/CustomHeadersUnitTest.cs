@@ -19,7 +19,9 @@ namespace Unleash.Tests.Communication
                 ConnectionId = "00000000-0000-4000-a000-000000000000",
                 SdkVersion = "unleash-client-mock:0.0.0",
                 CustomHttpHeaders = httpHeaders,
-                CustomHttpHeaderProvider = httpHeadersProvider
+                CustomHttpHeaderProvider = httpHeadersProvider,
+                FetchTogglesInterval = TimeSpan.FromSeconds(1),
+                SendMetricsInterval = TimeSpan.FromSeconds(2),
             };
 
             var httpClient = new HttpClient(messageHandler)
@@ -147,6 +149,19 @@ namespace Unleash.Tests.Communication
             await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
 
             messageHandler.calls.Count.Should().Be(3);
+
+
+
+            var fetchCall = messageHandler.calls[0];
+            fetchCall.Headers.Should().ContainEquivalentOf(
+                new KeyValuePair<string, IEnumerable<string>>("Unleash-Interval", new string[] { "1000" })
+            );
+
+            var metricsCall = messageHandler.calls[2];
+            metricsCall.Headers.Should().ContainEquivalentOf(
+                new KeyValuePair<string, IEnumerable<string>>("Unleash-Interval", new string[] { "2000" })
+            );
+
             foreach (var call in messageHandler.calls)
             {
                 call.Headers.Should().ContainEquivalentOf(
