@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Unleash.Communication;
 using Unleash.Metrics;
 using Unleash.Tests.Mock;
@@ -9,89 +10,71 @@ using Yggdrasil;
 
 namespace Unleash.Tests.Communication
 {
-    public class UnleasRequestBodyUnitTest
+    public class UnleashRequestBodyUnitTest
     {
-        private IUnleashApiClient CreateApiClient()
-        {
-            var requestHeaders = new UnleashApiClientRequestHeaders
-            {
-                ConnectionId = "00000000-0000-4000-a000-000000000000",
-            };
+        private const string ExpectedConnectionId = "00000000-0000-4000-a000-000000000000";
 
-            var httpClient = new HttpClient(messageHandler)
-            {
-                BaseAddress = new Uri("http://example.com")
-            };
-            var client = new UnleashApiClient(httpClient, requestHeaders, null);
-            return client;
-        }
-
-        private class MockHttpMessageHandler : HttpMessageHandler
-        {
-            public List<HttpRequestMessage> calls
-            {
-                get;
-                set;
-            } = new List<HttpRequestMessage>();
-
-            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            {
-                calls.Add(request);
-
-                bool isValidConnectionId = false;
-
-                if (request.Content != null)
-                {
-                    string requestBody = await request.Content.ReadAsStringAsync();
-
-                    using (JsonDocument doc = JsonDocument.Parse(requestBody))
-                    {
-                        if (doc.RootElement.TryGetProperty("connectionId", out JsonElement connectionIdElement))
-                        {
-                            if (connectionIdElement.ValueKind == JsonValueKind.String)
-                            {
-                                string connectionId = connectionIdElement.GetString();
-                                isValidConnectionId = connectionId == "00000000-0000-4000-a000-000000000000";
-                            }
-                        }
-                    }
-                }
-
-                return new HttpResponseMessage(isValidConnectionId ? System.Net.HttpStatusCode.OK : System.Net.HttpStatusCode.BadRequest);
-            }
-        }
-
-        private IUnleashApiClient api
-        {
-            get => TestExecutionContext.CurrentContext.CurrentTest.Properties.Get("api") as IUnleashApiClient;
-            set => TestExecutionContext.CurrentContext.CurrentTest.Properties.Set("api", value);
-        }
-
-        MockHttpMessageHandler messageHandler
-        {
-            get => TestExecutionContext.CurrentContext.CurrentTest.Properties.Get("messageHandler") as MockHttpMessageHandler;
-            set => TestExecutionContext.CurrentContext.CurrentTest.Properties.Set("messageHandler", value);
-        }
+        private MockHttpMessageHandler _messageHandler;
+        private IUnleashApiClient _apiClient;
 
         [SetUp]
         public void SetupTest()
         {
-            messageHandler = new MockHttpMessageHandler();
+            _messageHandler = new MockHttpMessageHandler();
+            _apiClient = CreateApiClient();
         }
 
+        private IUnleashApiClient CreateApiClient()
+        {
+            var requestParams = new UnleashApiClientRequestHeaders
+            {
+                ConnectionId = ExpectedConnectionId,
+            };
+
+            var httpClient = new HttpClient(_messageHandler)
+            {
+                BaseAddress = new Uri("http://example.com")
+            };
+
+            return new UnleashApiClient(httpClient, requestParams, null);
+        }
+
+        private class MockHttpMessageHandler : HttpMessageHandler
+        {
+            public List<HttpRequestMessage> Calls { get; } = new List<HttpRequestMessage>();
+            public List<string> RequestBodies { get; } = new List<string>();
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                Calls.Add(request);
+                if (request.Content != null)
+                {
+                    string requestBody = await request.Content.ReadAsStringAsync();
+                    RequestBodies.Add(requestBody);
+                }
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
+        }
 
         [Test]
-        public async Task IdentificationHttpHeaders()
+        public async Task Should_Send_Correct_ConnectionId_In_Body_When_Sending_Metrics_And_Registering()
         {
-            api = CreateApiClient();
-
             var engine = new YggdrasilEngine();
-            var metricsResult = await api.SendMetrics(engine.GetMetrics(), CancellationToken.None);
-            var registerResult = await api.RegisterClient(new Unleash.Metrics.ClientRegistration(), CancellationToken.None);
+            var metricsResult = await _apiClient.SendMetrics(engine.GetMetrics(), CancellationToken.None);
+            var registerResult = await _apiClient.RegisterClient(new ClientRegistration(), CancellationToken.None);
 
-            messageHandler.calls.Count.Should().Be(2);
-            metricsResult.Should().Be(true);
-            registerResult.Should().Be(true);
+            _messageHandler.Calls.Count.Should().Be(2);
+            _messageHandler.RequestBodies.All(body => ValidateRequestBody(body)).Should().BeTrue();
+        }
+
+        private bool ValidateRequestBody(string requestBody)
+        {
+            using (JsonDocument doc = JsonDocument.Parse(requestBody))
+            {
+                return doc.RootElement.TryGetProperty("connectionId", out JsonElement connectionIdElement) &&
+                       connectionIdElement.ValueKind == JsonValueKind.String &&
+                       connectionIdElement.GetString() == ExpectedConnectionId;
+            }
         }
     }
 }
