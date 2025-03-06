@@ -64,10 +64,10 @@ namespace Unleash.Tests.Communication
             var registerResult = await _apiClient.RegisterClient(new ClientRegistration(), CancellationToken.None);
 
             _messageHandler.Calls.Count.Should().Be(2);
-            _messageHandler.RequestBodies.All(body => ValidateRequestBody(body)).Should().BeTrue();
+            _messageHandler.RequestBodies.All(body => MatchesExpectedConnectionId(body)).Should().BeTrue();
         }
 
-        private bool ValidateRequestBody(string requestBody)
+        private bool MatchesExpectedConnectionId(string requestBody)
         {
             using (JsonDocument doc = JsonDocument.Parse(requestBody))
             {
