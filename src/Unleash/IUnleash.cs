@@ -58,6 +58,14 @@ namespace Unleash
         /// </summary>
         /// <param name="toggleName">The name of the toggle</param>
         /// <param name="context">The Unleash context to evaluate the toggle state against</param>
+        /// <returns>A weighted variant or Variant.DISABLED_VARIANT if feature is not available</returns>
+        Variant GetVariant(string toggleName, UnleashContext context);
+
+        /// <summary>
+        /// Get a weighted variant from a feature that is available.
+        /// </summary>
+        /// <param name="toggleName">The name of the toggle</param>
+        /// <param name="context">The Unleash context to evaluate the toggle state against</param>
         /// <param name="defaultValue">If a toggle is not found, the default value will be returned.</param>
         /// <returns>A weighted variant or the supplied default value if feature is not available</returns>
         Variant GetVariant(string toggleName, UnleashContext context, Variant defaultValue);
