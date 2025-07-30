@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using Unleash.Communication;
 using Unleash.Internal;
-using Unleash.Serialization;
 using Unleash.Tests.Mock;
 
 namespace Unleash.Tests.Communication
@@ -13,13 +12,12 @@ namespace Unleash.Tests.Communication
         {
             var apiUri = new Uri("http://unleash.herokuapp.com/api/");
 
-            var jsonSerializer = new DynamicNewtonsoftJsonSerializer();
-            jsonSerializer.TryLoad();
-
             var requestHeaders = new UnleashApiClientRequestHeaders
             {
                 AppName = "api-test-client",
                 InstanceTag = "instance1",
+                ConnectionId = "00000000-0000-4000-a000-000000000000",
+                SdkVersion = "unleash-client-mock:0.0.0",
                 CustomHttpHeaders = null,
                 CustomHttpHeaderProvider = null
             };
@@ -30,7 +28,7 @@ namespace Unleash.Tests.Communication
                 Timeout = TimeSpan.FromSeconds(5)
             };
 
-            return new UnleashApiClient(httpClient, jsonSerializer, requestHeaders, new EventCallbackConfig());
+            return new UnleashApiClient(httpClient, requestHeaders, new EventCallbackConfig());
         }
 
         [Test]
