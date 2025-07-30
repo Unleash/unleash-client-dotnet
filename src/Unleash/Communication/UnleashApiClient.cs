@@ -154,7 +154,7 @@ namespace Unleash.Communication
         {
             featureRequestsToSkip = Math.Max(0, featureRequestsToSkip - 1);
 
-            var newEtag = response.Headers.ETag?.Tag;
+            var newEtag = response.Headers.ETag?.ToString();
             if (newEtag == etag || response.StatusCode == HttpStatusCode.NotModified)
             {
                 return new FetchTogglesResult
