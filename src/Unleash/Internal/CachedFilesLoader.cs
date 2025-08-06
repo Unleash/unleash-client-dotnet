@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Unleash.Events;
 using Unleash.Logging;
@@ -13,7 +14,7 @@ namespace Unleash.Internal
         private readonly IFileSystem fileSystem;
         private readonly IToggleBootstrapProvider toggleBootstrapProvider;
         private readonly EventCallbackConfig eventConfig;
-        private readonly UnleashSettings settings;
+        private readonly IUnleashSettings settings;
         private readonly bool bootstrapOverride;
 
         public CachedFilesLoader(
@@ -21,7 +22,7 @@ namespace Unleash.Internal
             IFileSystem fileSystem,
             IToggleBootstrapProvider toggleBootstrapProvider,
             EventCallbackConfig eventConfig,
-            UnleashSettings settings,
+            IUnleashSettings settings,
             bool bootstrapOverride = true)
         {
             this.jsonSerializer = jsonSerializer;
@@ -90,7 +91,15 @@ namespace Unleash.Internal
                 return SafeReadJson<T>(legacyPath);
             }
 
-            fileSystem.WriteAllText(primaryPath, string.Empty);
+            try
+            {
+                fileSystem.WriteAllText(primaryPath, string.Empty);
+            }
+            catch (IOException ex)
+            {
+                // Should get handled later when we try to write
+                Logger.Debug(() => $"UNLEASH: Failed to create backup file: {primaryPath}", ex);
+            }
             return null;
         }
 
@@ -129,7 +138,7 @@ namespace Unleash.Internal
             catch (IOException ex)
             {
                 Logger.Warn(() => $"UNLEASH: Failed to load backup file: {path}", ex);
-                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
+                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.FileCache, Error = ex });
                 return null;
             }
         }

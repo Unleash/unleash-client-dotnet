@@ -13,10 +13,21 @@ using Unleash.Utilities;
 
 namespace Unleash
 {
+    public interface IUnleashSettings
+    {
+        string GetFeatureToggleFilePath();
+
+        string GetFeatureToggleETagFilePath();
+
+        string GetLegacyFeatureToggleFilePath();
+
+        string GetLegacyFeatureToggleETagFilePath();
+    }
+
     /// <summary>
     /// Unleash settings
     /// </summary>
-    public class UnleashSettings
+    public class UnleashSettings : IUnleashSettings
     {
         internal readonly Encoding Encoding = Encoding.UTF8;
 
