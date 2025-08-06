@@ -99,7 +99,7 @@ namespace Unleash.Internal
             try { return fileSystem.ReadAllText(path); }
             catch (IOException ex)
             {
-                Logger.Info(() => $"UNLEASH: Failed to read etag file '{path}'.", ex);
+                Logger.Warn(() => $"UNLEASH: Failed to read etag file '{path}'.", ex);
                 return defaultContent;
             }
         }
@@ -112,7 +112,7 @@ namespace Unleash.Internal
             }
             catch (IOException ex)
             {
-                Logger.Info(() => $"UNLEASH: Failed to create backup file: {path}", ex);
+                Logger.Warn(() => $"UNLEASH: Failed to create backup file: {path}", ex);
             }
             return defaultContent;
         }
@@ -128,7 +128,8 @@ namespace Unleash.Internal
             }
             catch (IOException ex)
             {
-                Logger.Info(() => $"UNLEASH: Failed to load backup file: {path}", ex);
+                Logger.Warn(() => $"UNLEASH: Failed to load backup file: {path}", ex);
+                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
                 return null;
             }
         }
