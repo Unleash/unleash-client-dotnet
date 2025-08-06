@@ -13,7 +13,7 @@ using Unleash.Utilities;
 
 namespace Unleash
 {
-    public interface IUnleashSettings
+    internal interface IUnleashSettings
     {
         string GetFeatureToggleFilePath();
 
@@ -222,13 +222,13 @@ namespace Unleash
             return Path.Combine(tempFolder, PrependFileName(EtagFilename));
         }
 
-        public string GetLegacyFeatureToggleFilePath()
+        string IUnleashSettings.GetLegacyFeatureToggleFilePath()
         {
             var tempFolder = LocalStorageFolder();
             return Path.Combine(tempFolder, LegacyPrependFileName(FeatureToggleFilename));
         }
 
-        public string GetLegacyFeatureToggleETagFilePath()
+        string IUnleashSettings.GetLegacyFeatureToggleETagFilePath()
         {
             var tempFolder = LocalStorageFolder();
             return Path.Combine(tempFolder, LegacyPrependFileName(EtagFilename));
