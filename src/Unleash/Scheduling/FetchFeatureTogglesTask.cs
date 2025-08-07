@@ -81,15 +81,12 @@ namespace Unleash.Scheduling
 
             try
             {
-                using (var fs = fileSystem.FileOpenCreate(toggleFile))
-                {
-                    jsonSerializer.Serialize(fs, result.ToggleCollection);
-                }
+                var json = SerializeToString(result.ToggleCollection);
+                fileSystem.WriteAllText(toggleFile, json);
             }
             catch (IOException ex)
             {
-                Logger.Warn(() => $"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
-                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
+                Logger.Info(() => $"UNLEASH: Exception when writing to toggle file '{toggleFile}'.", ex);
             }
 
             Etag = result.Etag;
@@ -100,13 +97,23 @@ namespace Unleash.Scheduling
             }
             catch (IOException ex)
             {
-                Logger.Warn(() => $"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
-                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.TogglesBackup, Error = ex });
+                Logger.Info(() => $"UNLEASH: Exception when writing to ETag file '{etagFile}'.", ex);
             }
         }
 
         public string Name => "fetch-feature-toggles-task";
         public TimeSpan Interval { get; set; }
         public bool ExecuteDuringStartup { get; set; }
+
+        private string SerializeToString<T>(T obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                jsonSerializer.Serialize(ms, obj);
+                ms.Position = 0;
+                return fileSystem.Encoding.GetString(ms.ToArray());
+            }
+        }
+
     }
 }

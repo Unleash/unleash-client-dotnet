@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
 using System.IO;
 using System.Text;
@@ -13,12 +14,12 @@ namespace Unleash.Tests.Internal
         public void Sets_Etag_From_Etag_File_And_Toggles_From_Backup_When_Backup_Is_Not_Empty()
         {
             // Arrange
-            string toggleFileName = AppDataFile("unleash-repo-v1.json");
-            string etagFileName = AppDataFile("etag-12345.txt");
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(AppDataFile("unleash-repo-v1.json"));
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(AppDataFile("etag-12345.txt"));
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -34,10 +35,12 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-v1.json");
             string etagFileName = AppDataFile("etag-missing.txt");
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -55,10 +58,12 @@ namespace Unleash.Tests.Internal
             // Arrange
             string toggleFileName = AppDataFile("unleash-repo-missing.json");
             string etagFileName = AppDataFile("etag-12345.txt");
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -74,12 +79,14 @@ namespace Unleash.Tests.Internal
         public void Sets_Etag_To_Empty_String_And_Toggles_To_Null_When_Neither_File_Exists()
         {
             // Arrange
+            var settings = A.Fake<IUnleashSettings>();
             string toggleFileName = AppDataFile("unleash-repo-missing.json");
             string etagFileName = AppDataFile("etag-missing.txt");
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();

@@ -117,75 +117,6 @@ namespace Unleash.Tests.Internal
         }
 
         [Test]
-        public void FetchFeatureToggleTask_Serialization_Throws_Raises_ErrorEvent()
-        {
-            // Arrange
-            ErrorEvent callbackEvent = null;
-            var exceptionMessage = "Serialization failed";
-            var callbackConfig = new EventCallbackConfig()
-            {
-                ErrorEvent = evt => { callbackEvent = evt; }
-            };
-
-            var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
-
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = A.Fake<IJsonSerializer>();
-            A.CallTo(() => serializer.Serialize(A<Stream>._, A<ToggleCollection>._))
-                .Throws(() => new IOException(exceptionMessage));
-
-            var filesystem = new MockFileSystem();
-            var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
-
-            // Act
-            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
-
-            // Assert
-            callbackEvent.Should().NotBeNull();
-            callbackEvent.Error.Should().NotBeNull();
-            callbackEvent.Error.Message.Should().Be(exceptionMessage);
-            callbackEvent.ErrorType.Should().Be(ErrorType.TogglesBackup);
-        }
-
-        [Test]
-        public void FetchFeatureToggleTask_Etag_Writing_Throws_Raises_ErrorEvent()
-        {
-            // Arrange
-            ErrorEvent callbackEvent = null;
-            var exceptionMessage = "Writing failed";
-            var callbackConfig = new EventCallbackConfig()
-            {
-                ErrorEvent = evt => { callbackEvent = evt; }
-            };
-
-            var fakeApiClient = A.Fake<IUnleashApiClient>();
-            A.CallTo(() => fakeApiClient.FetchToggles(A<string>._, A<CancellationToken>._, false))
-                .Returns(Task.FromResult(new FetchTogglesResult() { HasChanged = true, ToggleCollection = new ToggleCollection(), Etag = "one" }));
-
-            var collection = new ThreadSafeToggleCollection();
-            var serializer = A.Fake<IJsonSerializer>();
-
-            var filesystem = A.Fake<IFileSystem>();
-            A.CallTo(() => filesystem.WriteAllText(A<string>._, A<string>._))
-                .Throws(() => new IOException(exceptionMessage));
-
-            var tokenSource = new CancellationTokenSource();
-            var task = new FetchFeatureTogglesTask(fakeApiClient, collection, serializer, filesystem, callbackConfig, "togglefile.txt", "etagfile.txt", false);
-
-            // Act
-            Task.WaitAll(task.ExecuteAsync(tokenSource.Token));
-
-            // Assert
-            callbackEvent.Should().NotBeNull();
-            callbackEvent.Error.Should().NotBeNull();
-            callbackEvent.Error.Message.Should().Be(exceptionMessage);
-            callbackEvent.ErrorType.Should().Be(ErrorType.TogglesBackup);
-        }
-
-        [Test]
         public void CachedFilesLoader_Raises_ErrorEvent()
         {
             // Arrange
@@ -199,12 +130,18 @@ namespace Unleash.Tests.Internal
 
             var exceptionMessage = "Writing failed";
             var filesystem = A.Fake<IFileSystem>();
-            A.CallTo(() => filesystem.WriteAllText(A<string>._, A<string>._))
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns("toggle.txt");
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns("etag.txt");
+            A.CallTo(() => settings.GetLegacyFeatureToggleFilePath()).Returns("legacy-toggle.txt");
+            A.CallTo(() => settings.GetLegacyFeatureToggleETagFilePath()).Returns("legacy-etag.txt");
+            A.CallTo(() => filesystem.FileExists(A<string>._)).Returns(true);
+            A.CallTo(() => filesystem.FileOpenRead(A<string>._))
                 .Throws(() => new IOException(exceptionMessage));
 
             var toggleBootstrapProvider = A.Fake<IToggleBootstrapProvider>();
 
-            var filecache = new CachedFilesLoader(serializer, filesystem, toggleBootstrapProvider, callbackConfig, "toggle.txt", "etag.txt");
+            var filecache = new CachedFilesLoader(serializer, filesystem, toggleBootstrapProvider, callbackConfig, settings);
 
             // Act
             filecache.EnsureExistsAndLoad();

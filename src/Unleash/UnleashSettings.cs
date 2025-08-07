@@ -13,10 +13,21 @@ using Unleash.Utilities;
 
 namespace Unleash
 {
+    internal interface IUnleashSettings
+    {
+        string GetFeatureToggleFilePath();
+
+        string GetFeatureToggleETagFilePath();
+
+        string GetLegacyFeatureToggleFilePath();
+
+        string GetLegacyFeatureToggleETagFilePath();
+    }
+
     /// <summary>
     /// Unleash settings
     /// </summary>
-    public class UnleashSettings
+    public class UnleashSettings : IUnleashSettings
     {
         internal readonly Encoding Encoding = Encoding.UTF8;
 
@@ -211,7 +222,19 @@ namespace Unleash
             return Path.Combine(tempFolder, PrependFileName(EtagFilename));
         }
 
-        private string PrependFileName(string filename)
+        string IUnleashSettings.GetLegacyFeatureToggleFilePath()
+        {
+            var tempFolder = LocalStorageFolder();
+            return Path.Combine(tempFolder, LegacyPrependFileName(FeatureToggleFilename));
+        }
+
+        string IUnleashSettings.GetLegacyFeatureToggleETagFilePath()
+        {
+            var tempFolder = LocalStorageFolder();
+            return Path.Combine(tempFolder, LegacyPrependFileName(EtagFilename));
+        }
+
+        private string LegacyPrependFileName(string filename)
         {
             var invalidFileNameChars = Path.GetInvalidFileNameChars();
 
@@ -219,6 +242,18 @@ namespace Unleash
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
 
             return new string($"{fileNameWithoutExtension}-{AppName}-{InstanceTag}-{SdkVersion}{extension}"
+                .Where(c => !invalidFileNameChars.Contains(c))
+                .ToArray());
+        }
+
+        private string PrependFileName(string filename)
+        {
+            var invalidFileNameChars = Path.GetInvalidFileNameChars();
+
+            var extension = Path.GetExtension(filename);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+
+            return new string($"{fileNameWithoutExtension}-{AppName}-{SdkVersion}{extension}"
                 .Where(c => !invalidFileNameChars.Contains(c))
                 .ToArray());
         }

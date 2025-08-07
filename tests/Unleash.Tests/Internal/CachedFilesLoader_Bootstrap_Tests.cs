@@ -48,11 +48,14 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -73,11 +76,14 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             ToggleCollection bootstrapToggles = null;
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -98,11 +104,14 @@ namespace Unleash.Tests.Internal
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -124,8 +133,11 @@ namespace Unleash.Tests.Internal
             var fileSystem = new FileSystem(Encoding.UTF8);
             var bootstrapToggles = GetTestToggles();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
 
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, false);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -145,8 +157,10 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, toggleFileName, etagFileName);
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, null, null, settings, true);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -164,11 +178,13 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(null);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings, true);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -186,11 +202,13 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(new ToggleCollection());
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, true);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings, true);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();
@@ -208,12 +226,14 @@ namespace Unleash.Tests.Internal
             string etagFileName = AppDataFile("etag-12345.txt");
             var serializer = new JsonNetSerializer();
             var fileSystem = new FileSystem(Encoding.UTF8);
-            var settings = new UnleashSettings();
+            var settings = A.Fake<IUnleashSettings>();
+            A.CallTo(() => settings.GetFeatureToggleFilePath()).Returns(toggleFileName);
+            A.CallTo(() => settings.GetFeatureToggleETagFilePath()).Returns(etagFileName);
             var bootstrapToggles = GetTestToggles();
             var bootstrapProviderFake = A.Fake<IToggleBootstrapProvider>();
             A.CallTo(() => bootstrapProviderFake.Read())
                 .Returns(bootstrapToggles);
-            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, toggleFileName, etagFileName, false);
+            var fileLoader = new CachedFilesLoader(serializer, fileSystem, bootstrapProviderFake, null, settings, false);
 
             // Act
             var ensureResult = fileLoader.EnsureExistsAndLoad();

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Unleash.Events;
 using Unleash.Logging;
@@ -13,8 +14,7 @@ namespace Unleash.Internal
         private readonly IFileSystem fileSystem;
         private readonly IToggleBootstrapProvider toggleBootstrapProvider;
         private readonly EventCallbackConfig eventConfig;
-        private readonly string toggleFile;
-        private readonly string etagFile;
+        private readonly IUnleashSettings settings;
         private readonly bool bootstrapOverride;
 
         public CachedFilesLoader(
@@ -22,93 +22,130 @@ namespace Unleash.Internal
             IFileSystem fileSystem,
             IToggleBootstrapProvider toggleBootstrapProvider,
             EventCallbackConfig eventConfig,
-            string toggleFile,
-            string etagFile,
+            IUnleashSettings settings,
             bool bootstrapOverride = true)
         {
             this.jsonSerializer = jsonSerializer;
             this.fileSystem = fileSystem;
             this.toggleBootstrapProvider = toggleBootstrapProvider;
             this.eventConfig = eventConfig;
-            this.toggleFile = toggleFile;
-            this.etagFile = etagFile;
+            this.settings = settings;
             this.bootstrapOverride = bootstrapOverride;
         }
 
         public CachedFilesResult EnsureExistsAndLoad()
         {
-            var result = new CachedFilesResult();
+            string toggleFilePath = settings.GetFeatureToggleFilePath();
+            string etagFilePath = settings.GetFeatureToggleETagFilePath();
 
-            if (!fileSystem.FileExists(etagFile))
-            {
-                // Ensure files exists.
-                try
-                {
-                    fileSystem.WriteAllText(etagFile, string.Empty);
-                    result.InitialETag = string.Empty;
-                }
-                catch (IOException ex)
-                {
-                    Logger.Error(() => $"UNLEASH: Unhandled exception when writing to ETag file '{etagFile}'.", ex);
-                    eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
-                }
-            }
-            else
-            {
-                try
-                {
-                    result.InitialETag = fileSystem.ReadAllText(etagFile);
-                }
-                catch (IOException ex)
-                {
-                    Logger.Error(() => $"UNLEASH: Unhandled exception when reading from ETag file '{etagFile}'.", ex);
-                    eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
-                }
-            }
+            string legacyToggleFilePath = settings.GetLegacyFeatureToggleFilePath();
+            string legacyEtagFilePath = settings.GetLegacyFeatureToggleETagFilePath();
 
-            // Toggles
-            if (!fileSystem.FileExists(toggleFile))
+            var result = new CachedFilesResult
             {
-                try
-                {
-                    fileSystem.WriteAllText(toggleFile, string.Empty);
-                    result.InitialToggleCollection = null;
-                }
-                catch (IOException ex)
-                {
-                    Logger.Error(() => $"UNLEASH: Unhandled exception when writing to toggle file '{toggleFile}'.", ex);
-                    eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
-                }
-            }
-            else
-            {
-                try
-                {
-                    using (var fileStream = fileSystem.FileOpenRead(toggleFile))
-                    {
-                        result.InitialToggleCollection = jsonSerializer.Deserialize<ToggleCollection>(fileStream);
-                    }
-                }
-                catch (IOException ex)
-                {
-                    Logger.Error(() => $"UNLEASH: Unhandled exception when reading from toggle file '{toggleFile}'.", ex);
-                    eventConfig?.RaiseError(new ErrorEvent() { Error = ex, ErrorType = ErrorType.FileCache });
-                }
-            }
+                InitialETag = EnsureFileAndReadWithLegacy(etagFilePath, legacyEtagFilePath, string.Empty),
+                InitialToggleCollection = EnsureFileAndReadJsonWithLegacy<ToggleCollection>(toggleFilePath, legacyToggleFilePath)
+            };
 
             if (result.InitialToggleCollection == null)
             {
                 result.InitialETag = string.Empty;
             }
 
-            if ((result.InitialToggleCollection == null || result.InitialToggleCollection.Features?.Count == 0 || bootstrapOverride) && toggleBootstrapProvider != null)
+            if (NeedsBootstrap(result.InitialToggleCollection) && toggleBootstrapProvider != null)
             {
                 var bootstrapCollection = toggleBootstrapProvider.Read();
-                if (bootstrapCollection != null && bootstrapCollection.Features?.Count > 0)
+                if (bootstrapCollection?.Features?.Count > 0)
+                {
                     result.InitialToggleCollection = bootstrapCollection;
+                }
             }
 
             return result;
+        }
+
+        private string EnsureFileAndReadWithLegacy(string primaryPath, string legacyPath, string defaultContent)
+        {
+            if (fileSystem.FileExists(primaryPath))
+            {
+                return SafeRead(primaryPath, defaultContent);
+            }
+
+            if (fileSystem.FileExists(legacyPath))
+            {
+                return SafeRead(legacyPath, defaultContent);
+            }
+
+            return SafeCreateAndReturn(primaryPath, defaultContent);
+        }
+
+        private T EnsureFileAndReadJsonWithLegacy<T>(string primaryPath, string legacyPath) where T : class
+        {
+            if (fileSystem.FileExists(primaryPath))
+            {
+                return SafeReadJson<T>(primaryPath);
+            }
+
+            if (fileSystem.FileExists(legacyPath))
+            {
+                return SafeReadJson<T>(legacyPath);
+            }
+
+            try
+            {
+                fileSystem.WriteAllText(primaryPath, string.Empty);
+            }
+            catch (IOException ex)
+            {
+                // Should get handled later when we try to write
+                Logger.Debug(() => $"UNLEASH: Failed to create backup file: {primaryPath}", ex);
+            }
+            return null;
+        }
+
+        private string SafeRead(string path, string defaultContent)
+        {
+            try { return fileSystem.ReadAllText(path); }
+            catch (IOException ex)
+            {
+                Logger.Warn(() => $"UNLEASH: Failed to read etag file '{path}'.", ex);
+                return defaultContent;
+            }
+        }
+
+        private string SafeCreateAndReturn(string path, string defaultContent)
+        {
+            try
+            {
+                fileSystem.WriteAllText(path, defaultContent);
+            }
+            catch (IOException ex)
+            {
+                Logger.Warn(() => $"UNLEASH: Failed to create backup file: {path}", ex);
+            }
+            return defaultContent;
+        }
+
+        private T SafeReadJson<T>(string path) where T : class
+        {
+            try
+            {
+                using (var stream = fileSystem.FileOpenRead(path))
+                {
+                    return jsonSerializer.Deserialize<T>(stream);
+                }
+            }
+            catch (IOException ex)
+            {
+                Logger.Warn(() => $"UNLEASH: Failed to load backup file: {path}", ex);
+                eventConfig?.RaiseError(new ErrorEvent() { ErrorType = ErrorType.FileCache, Error = ex });
+                return null;
+            }
+        }
+
+        private bool NeedsBootstrap(ToggleCollection toggleCollection)
+        {
+            return toggleCollection == null || toggleCollection.Features?.Count == 0 || bootstrapOverride;
         }
 
         internal class CachedFilesResult
