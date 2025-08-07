@@ -146,7 +146,7 @@ namespace Unleash
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
             var version = assemblyName.Version.ToString(3);
 
-            return $"unleash-client-dotnet:{version}";
+            return $"unleash-dotnet-sdk:{version}";
         }
 
         private static string GetDefaultInstanceTag()
