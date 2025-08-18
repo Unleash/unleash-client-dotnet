@@ -53,7 +53,7 @@ internal class StubbedApiClient : IUnleashApiClient
 public class StreamingFeatureFetcherTests
 {
     [Test]
-    public async Task Handles_Messages()
+    public void Handles_Messages()
     {
         // Arrange
         var apiClient = new StubbedApiClient();
