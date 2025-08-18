@@ -1,6 +1,7 @@
 using System;
 
-namespace Unleash {
+namespace Unleash
+{
     public class ExperimentalSettings
     {
         public void UseStreaming(Uri apiUri)
