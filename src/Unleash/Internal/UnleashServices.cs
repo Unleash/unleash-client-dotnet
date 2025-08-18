@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Unleash.Communication;
 using Unleash.Events;
 using Unleash.Internal;
 using Unleash.Logging;
 using Unleash.Scheduling;
 using Unleash.Strategies;
+using Unleash.Streaming;
 using Yggdrasil;
 
 namespace Unleash
@@ -26,6 +28,8 @@ namespace Unleash
         internal bool IsMetricsDisabled { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
         internal YggdrasilEngine engine { get; }
+        internal IStreamingFeatureFetcher StreamingFeatureFetcher { get; }
+
         private static readonly IList<string> DefaultStrategyNames = new List<string> {
             "applicationHostname",
             "default",
@@ -102,24 +106,37 @@ namespace Unleash
 
             IsMetricsDisabled = settings.SendMetricsInterval == null;
 
-            var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
-                engine,
-                apiClient,
-                settings.FileSystem,
-                eventConfig,
-                backupFile,
-                etagBackupFile,
-                settings.ThrowOnInitialFetchFail)
-            {
-                ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
-                Interval = settings.FetchTogglesInterval,
-                Etag = cachedFilesResult.InitialETag
-            };
-            FetchFeatureTogglesTask = fetchFeatureTogglesTask;
+            var scheduledTasks = new List<IUnleashScheduledTask>(3);
 
-            var scheduledTasks = new List<IUnleashScheduledTask>(){
-                fetchFeatureTogglesTask
-            };
+            if (!settings.Experimental.EnableStreaming)
+            {
+                var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
+                    engine,
+                    apiClient,
+                    settings.FileSystem,
+                    eventConfig,
+                    backupFile,
+                    etagBackupFile,
+                    settings.ThrowOnInitialFetchFail)
+                {
+                    ExecuteDuringStartup = settings.ScheduleFeatureToggleFetchImmediatly,
+                    Interval = settings.FetchTogglesInterval,
+                    Etag = cachedFilesResult.InitialETag
+                };
+                FetchFeatureTogglesTask = fetchFeatureTogglesTask;
+
+                scheduledTasks.Add(fetchFeatureTogglesTask);
+            }
+            else
+            {
+                StreamingFeatureFetcher = new StreamingFeatureFetcher(
+                    settings,
+                    apiClient,
+                    engine,
+                    eventConfig
+                );
+            }
+
 
             if (settings.SendMetricsInterval != null)
             {
@@ -149,6 +166,10 @@ namespace Unleash
             }
 
             scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
+            if (settings.Experimental.EnableStreaming)
+            {
+                Task.Run(() => StreamingFeatureFetcher.StartAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
+            }
         }
 
         public void Dispose()
@@ -160,6 +181,7 @@ namespace Unleash
 
             engine?.Dispose();
             scheduledTaskManager?.Dispose();
+            StreamingFeatureFetcher?.Dispose();
         }
     }
 }
