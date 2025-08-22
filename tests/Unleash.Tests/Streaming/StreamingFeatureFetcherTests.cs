@@ -146,7 +146,7 @@ public class StreamingFeatureFetcherTests
     public async Task Receives_Successive_Events_From_Sse_Server()
     {
         // Arrange
-        var updated = false;
+        var updated = 0;
         var server = new TestServer(new WebHostBuilder()
         .ConfigureServices(services =>
         {
@@ -189,10 +189,10 @@ public class StreamingFeatureFetcherTests
         var unleash = new DefaultUnleash(settings);
         unleash.ConfigureEvents(events =>
         {
-            events.TogglesUpdatedEvent = ev => { updated = true; };
+            events.TogglesUpdatedEvent = ev => { updated++; };
         });
         var timer = Stopwatch.StartNew();
-        while (!updated && timer.Elapsed < TimeSpan.FromMilliseconds(500))
+        while (updated < 2 && timer.Elapsed < TimeSpan.FromMilliseconds(500))
         {
             await Task.Delay(TimeSpan.FromMilliseconds(2));
         }
