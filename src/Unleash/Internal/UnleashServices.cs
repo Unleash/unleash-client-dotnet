@@ -135,7 +135,7 @@ namespace Unleash
                     engine,
                     eventConfig
                 );
-                Task.Run(() => StreamingFeatureFetcher.StartAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
+                Task.Run(() => StreamingFeatureFetcher.StartAsync().ConfigureAwait(false));
             }
 
 
