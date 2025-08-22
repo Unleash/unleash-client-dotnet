@@ -29,7 +29,7 @@ internal class MockedTaskManager : Unleash.Scheduling.IUnleashScheduledTaskManag
 
 internal class StubbedApiClient : IUnleashApiClient
 {
-    public IStreamingEventHandler StreamingEventHandler { get; private set; }
+    public StreamingFeatureFetcher StreamingEventHandler { get; private set; }
 
     public Task<FetchTogglesResult> FetchToggles(string etag, CancellationToken cancellationToken, bool throwOnFail = false)
     {
@@ -46,7 +46,7 @@ internal class StubbedApiClient : IUnleashApiClient
         return Task.FromResult(true);
     }
 
-    public Task StartStreamingAsync(Uri apiUri, IStreamingEventHandler streamingEventHandler)
+    public Task StartStreamingAsync(Uri apiUri, StreamingFeatureFetcher streamingEventHandler)
     {
         StreamingEventHandler = streamingEventHandler;
         return Task.CompletedTask;

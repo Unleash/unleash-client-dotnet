@@ -86,7 +86,7 @@ namespace Unleash.Tests.Mock
             return Task.FromResult(true);
         }
 
-        public Task StartStreamingAsync(Uri apiUri, IStreamingEventHandler streamingEventHandler)
+        public Task StartStreamingAsync(Uri apiUri, StreamingFeatureFetcher streamingEventHandler)
         {
             throw new NotImplementedException();
         }
