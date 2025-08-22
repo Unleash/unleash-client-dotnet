@@ -27,7 +27,7 @@ namespace Unleash.Communication
         private readonly UnleashApiClientRequestHeaders clientRequestHeaders;
         private readonly EventCallbackConfig eventConfig;
         private EventSource EventSource { get; set; }
-        private IStreamingEventHandler StreamingEventHandler { get; set; }
+        private StreamingFeatureFetcher StreamingEventHandler { get; set; }
 
         private readonly JsonSerializerOptions options = new JsonSerializerOptions
         {
@@ -256,7 +256,7 @@ namespace Unleash.Communication
 
         public async Task StartStreamingAsync(
             Uri apiUri,
-            IStreamingEventHandler streamingEventHandler
+            StreamingFeatureFetcher streamingEventHandler
         )
         {
             StreamingEventHandler = streamingEventHandler;

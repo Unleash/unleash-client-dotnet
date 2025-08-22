@@ -14,7 +14,7 @@ namespace Unleash.Communication
         // TODO: Can be simplified to `using Yggdrasil;` once MetricsBucket is dropped from Unleash.Metrics
         Task<bool> SendMetrics(Yggdrasil.MetricsBucket metrics, CancellationToken cancellationToken);
 
-        Task StartStreamingAsync(Uri apiUri, IStreamingEventHandler streamingEventHandler);
+        Task StartStreamingAsync(Uri apiUri, StreamingFeatureFetcher streamingEventHandler);
 
         void StopStreaming();
     }

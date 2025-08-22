@@ -11,7 +11,7 @@ namespace Unleash.Streaming
 {
     /// <summary>
     /// </summary>
-    internal class StreamingFeatureFetcher : IStreamingFeatureFetcher, IStreamingEventHandler
+    internal class StreamingFeatureFetcher
     {
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(StreamingFeatureFetcher));
 
@@ -61,6 +61,8 @@ namespace Unleash.Streaming
             try
             {
                 Engine.TakeState(data);
+                // TODO: implement backup storage
+
                 // now that the toggle collection has been updated, raise the toggles updated event if configured
                 EventConfig?.RaiseTogglesUpdated(new TogglesUpdatedEvent { UpdatedOn = DateTime.UtcNow });
             }

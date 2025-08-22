@@ -28,7 +28,7 @@ namespace Unleash
         internal bool IsMetricsDisabled { get; }
         internal FetchFeatureTogglesTask FetchFeatureTogglesTask { get; }
         internal YggdrasilEngine engine { get; }
-        internal IStreamingFeatureFetcher StreamingFeatureFetcher { get; }
+        internal StreamingFeatureFetcher StreamingFeatureFetcher { get; }
 
         private static readonly IList<string> DefaultStrategyNames = new List<string> {
             "applicationHostname",
