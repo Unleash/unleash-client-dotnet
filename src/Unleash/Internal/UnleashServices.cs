@@ -108,7 +108,7 @@ namespace Unleash
 
             var scheduledTasks = new List<IUnleashScheduledTask>(3);
 
-            if (!settings.Experimental.EnableStreaming)
+            if (settings.ExperimentalStreamingUri == null)
             {
                 var fetchFeatureTogglesTask = new FetchFeatureTogglesTask(
                     engine,
@@ -135,6 +135,7 @@ namespace Unleash
                     engine,
                     eventConfig
                 );
+                Task.Run(() => StreamingFeatureFetcher.StartAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
             }
 
 
@@ -166,10 +167,6 @@ namespace Unleash
             }
 
             scheduledTaskManager.Configure(scheduledTasks, CancellationToken);
-            if (settings.Experimental.EnableStreaming)
-            {
-                Task.Run(() => StreamingFeatureFetcher.StartAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
-            }
         }
 
         public void Dispose()
