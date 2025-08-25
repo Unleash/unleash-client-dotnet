@@ -208,6 +208,8 @@ public class StreamingFeatureFetcherTests
     public async Task Receives_Hydration_Events_From_Sse_Server()
     {
         // Arrange
+
+        
         var updated = false;
         var server = new TestServer(new WebHostBuilder()
         .ConfigureServices(services =>
