@@ -209,7 +209,7 @@ public class StreamingFeatureFetcherTests
     {
         // Arrange
 
-        
+
         var updated = false;
         var server = new TestServer(new WebHostBuilder()
         .ConfigureServices(services =>
